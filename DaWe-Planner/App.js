@@ -37,7 +37,7 @@ export default function App() {
     db.transaction(tx => {
       tx.executeSql("INSERT INTO tasks (name) values (?)", [currentTask],
       (txObj, resultSet) => {
-        let existingTasks = [...tasks];
+        let existingTasks = [...tasks]; //[...tasks], this basically unpacks and clones an array without modifying the original array
         existingTasks.push({ id: resultSet.insertId, name: currentTask});
         setTasks(existingTasks);
         setCurrentTask(undefined);
@@ -46,12 +46,46 @@ export default function App() {
       );
     });
   }
+  //Logic for deleting tasks
+  const deleteTask = (id) =>{
+    db.transaction(tx=>{
+      tx.executeSql("DELETE FROM tasks WHERE id = ?",[id],
+      (txObj, resultSet) =>{
+        if(resultSet.rowsAffected > 0){
+          let existingTasks = [...tasks].filter(name=>name.id !==id);
+          setTasks(existingTasks);
+        }
+      },
+      (txObj, error) => console.log(error)
+      );
+    });
+  };
+  //Logic for updating tasks
+  const updateTask = (id) =>{
+    db.transaction(tx=>{
+      tx.executeSql("UPDATE tasks SET name = ? WHERE id = ?",[currentTask, id],
+        (txObj, resultSet) =>{
+          if(resultSet.rowsAffected>0){
+            let existingTasks = [...tasks];
+            const indexToUpdate = existingTasks.findIndex(name => name.id ===id);
+            existingTasks[indexToUpdate].name = currentTask;
+            setTasks(existingTasks);
+            setCurrentTask(undefined);
+          }
+        },
+        (txObj, error) => console.log(error)
+      );
+    });
+  }
+
   //Logic for showing tasks
   const showTasks = () =>{
     return tasks.map((task, index) =>{
       return(
         <View key={index} style ={styles.row}>
           <Text>{task.name}</Text>
+          <Button title='mark as done' onPress={()=>deleteTask(task.id)}></Button>
+          <Button title="edit" onPress={()=>updateTask(task.id)}></Button>
         </View>
       )
     });
