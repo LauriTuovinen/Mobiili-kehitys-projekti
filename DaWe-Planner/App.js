@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
 import * as SQLite from "expo-sqlite"
 import { useState, useEffect } from 'react';
+import Navigation from './components/navigation';
 
  //SQLite should always be used in app.js to avoid any errors
 export default function App() {
@@ -93,6 +94,7 @@ export default function App() {
 
   return (
     <View style={styles.container}>
+      <Navigation />
       <TextInput value={currentTask} placeholder='type task here' onChangeText={setCurrentTask}/>
       <Button title='add a task' onPress={addTask}></Button>
       {showTasks()}
