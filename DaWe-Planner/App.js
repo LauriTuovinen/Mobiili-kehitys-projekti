@@ -12,8 +12,14 @@ export default function App() {
   //This creates a new table if table doesn't exist yet
   useEffect(()=>{
     db.transaction(tx=>{
-      tx.executeSql("CREATE TABLE IF NOT EXISTS tasks (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)")
+      tx.executeSql("CREATE TABLE IF NOT EXISTS tasks (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, priority INT, date TEXT NOT NULL, time TEXT, description TEXT, notification INT NOT NULL, tag TEXT )")
     });
+    //This is for removing tables from database
+    /*
+    db.transaction(tx=>{
+      tx.executeSql("DROP TABLE IF EXISTS tasks")
+    });*/
+    
   //This gets all data from table tasks
     db.transaction(tx=>{
       tx.executeSql("SELECT * FROM tasks", null,
@@ -35,10 +41,10 @@ export default function App() {
   // Logic for adding a task
   const addTask = () => {
     db.transaction(tx => {
-      tx.executeSql("INSERT INTO tasks (name) values (?)", [currentTask],
+      tx.executeSql("INSERT INTO tasks (name, description, priority, date, time, notification, tag) values (?, ?, ?, ?, ?, ?, ?)", [currentTask,"desc", 1, "date", "time", 0, "tag"],
       (txObj, resultSet) => {
         let existingTasks = [...tasks]; //[...tasks], this basically unpacks and clones an array without modifying the original array
-        existingTasks.push({ id: resultSet.insertId, name: currentTask});
+        existingTasks.push({ id: resultSet.insertId, name: currentTask, description: "desc", priority: 1, date: "date", time: "time", notification: 0, tag: "tag"});
         setTasks(existingTasks);
         setCurrentTask(undefined);
       },
