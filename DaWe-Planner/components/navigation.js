@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createBottomtabNavigator } from '@react-navigation/bottom-tabs';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Home from '../screens/Home'
 import Monthly from '../screens/Monthly'
 import Weekly from '../screens/Weekly' 
@@ -11,11 +11,11 @@ const HomeScreen = 'Home';
 const WeeklyScreen = 'Weekly';
 const MonthlyScreen = 'Monthly';
 
-const Tab = createBottomtabNavigator();
+const Tab = createBottomTabNavigator();
  
 export default function Navigation() {
     return(
-        <NavigationContainer>
+        <NavigationContainer styles={StyleSheet.container}>
             <Tab.Navigator
             initialRouteName={HomeScreen}
             screenOptions={({route}) => ({
@@ -43,3 +43,10 @@ export default function Navigation() {
         </NavigationContainer>
     )
 }
+
+const styles = StyleSheet.create({
+    container: {
+      marginTop: 50,
+      backgroundColor: '#ffb8b1'
+    }
+  });
