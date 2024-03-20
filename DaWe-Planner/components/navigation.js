@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Home from '../screens/Home'
 import Monthly from '../screens/Monthly'
 import Weekly from '../screens/Weekly' 
-import Ionicons from 'react-native-vector-icons/Ionicons'
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const HomeScreen = 'Home';
 const WeeklyScreen = 'Weekly';
@@ -16,7 +16,6 @@ const Tab = createBottomTabNavigator();
 export default function Navigation() {
     return(
         <NavigationContainer style={styles.container}>
-            <Header style={styles.container}/>
             <Tab.Navigator
             initialRouteName={HomeScreen}
             screenOptions={({route}) => ({
@@ -25,15 +24,23 @@ export default function Navigation() {
                     let rn = route.name;
 
                     if (rn === HomeScreen){
-                        iconName = focused ? 'Home' : 'home-outline'
+                        iconName = focused ? 'home' : 'home-outline'
                     } else if (rn === WeeklyScreen) {
-                        iconName = focused ? 'Weekly' : 'weekly-outline'
+                        iconName = focused ? 'list' : 'list-outline'
                     } else if (rn === MonthlyScreen) {
-                        iconName = focused ? 'Monthly' : 'monthly-outline'
+                        iconName = focused ? 'settings' : 'settings-outline'
                     }
                     return <Ionicons name={iconName} size={size} color={color}/>
                 },
-            })}>
+
+            })}
+            
+            tabBarOptions={{
+                activeTintColor: 'tomato',
+                inactiveTintColor: 'grey',
+                labelStyle: { paddingBottom: 10, fontSize: 10 },
+                style: { padding: 10, height: 70}
+              }}>
 
                 <Tab.Screen name = {HomeScreen} component={Home}/>
                 <Tab.Screen name = {WeeklyScreen} component={Weekly}/>
@@ -50,3 +57,4 @@ const styles = StyleSheet.create({
       backgroundColor: '#ffb8b1'
     }
   });
+
