@@ -15,7 +15,8 @@ const Tab = createBottomTabNavigator();
  
 export default function Navigation() {
     return(
-        <NavigationContainer styles={StyleSheet.container}>
+        <NavigationContainer style={styles.container}>
+            <Header style={styles.container}/>
             <Tab.Navigator
             initialRouteName={HomeScreen}
             screenOptions={({route}) => ({
@@ -46,7 +47,6 @@ export default function Navigation() {
 
 const styles = StyleSheet.create({
     container: {
-      marginTop: 50,
       backgroundColor: '#ffb8b1'
     }
   });
