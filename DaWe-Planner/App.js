@@ -3,7 +3,6 @@ import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
 import * as SQLite from "expo-sqlite"
 import { useState, useEffect } from 'react';
 import Navigation from './components/navigation';
-import WeeklyScreen from './screens/Weekly';
 
  //SQLite should always be used in app.js to avoid any errors
 export default function App() {
@@ -107,8 +106,6 @@ export default function App() {
       {showTasks()}
       <StatusBar style="auto" />
     </View>
-    
-    
   );
 }
 
