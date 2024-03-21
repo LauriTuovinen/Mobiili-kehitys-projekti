@@ -93,12 +93,12 @@ export default function App() {
   };
 
   return (
-    <View style={styles.container}>
-      <Navigation />
+    <View>
       <TextInput value={currentTask} placeholder='type task here' onChangeText={setCurrentTask}/>
       <Button title='add a task' onPress={addTask}></Button>
       {showTasks()}
       <StatusBar style="auto" />
+      <Navigation />
     </View>
   );
 }
