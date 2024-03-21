@@ -93,7 +93,7 @@ export default function App() {
   };
 
   return (
-    <View>
+    <View style={styles.container}>
       <TextInput value={currentTask} placeholder='type task here' onChangeText={setCurrentTask}/>
       <Button title='add a task' onPress={addTask}></Button>
       {showTasks()}
@@ -106,8 +106,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
+    backgroundColor: '#f9efdb',
     justifyContent: 'center',
   },
   row: {
