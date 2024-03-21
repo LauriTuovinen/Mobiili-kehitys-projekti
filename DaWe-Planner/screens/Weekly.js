@@ -2,6 +2,7 @@ import { View, Text } from "react-native";
 import { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 import { FlatList } from "react-native";
+import CreateTaskButton from "../components/CreateTaskButton";
 const DayCard = ({ day }) => {
     return(
         <View style={styles.cardContainer}>
@@ -26,6 +27,7 @@ const WeeklyScreen = () =>{
             keyExtractor={(item) => item.day}
             showsVerticalScrollIndicator={false}
           />
+          <CreateTaskButton/>
         </View>
       );
 }
