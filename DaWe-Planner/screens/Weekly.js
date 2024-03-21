@@ -19,11 +19,12 @@ const WeeklyScreen = () =>{
 
     return (
         <View style={styles.container}>
-          <Text style={styles.cardText}>Week number</Text>
+          <Text style={[styles.cardText, {fontSize: 22}, {paddingTop:10}]}>Week number</Text>
           <FlatList
             data={days}
             renderItem={({ item }) => <DayCard day={item} />}
             keyExtractor={(item) => item.day}
+            showsVerticalScrollIndicator={false}
           />
         </View>
       );
@@ -41,6 +42,10 @@ const styles = StyleSheet.create({
       margin: 5,
       borderRadius: 5,
       height: 100,
+      shadowColor:"#000000",
+      shadowOffset: { width: 0, height:3},
+      shadowOpacity: 0.3,
+      shadowRadius: 2,
       
     },
     cardText: {
