@@ -15,7 +15,7 @@ const Tab = createBottomTabNavigator();
  
 export default function Navigation() {
     return(
-        <NavigationContainer style={styles.container}>
+        <NavigationContainer>
             <Tab.Navigator 
             initialRouteName={homeScreen}
             screenOptions={({route}) => ({
@@ -26,9 +26,9 @@ export default function Navigation() {
                     if (rn === homeScreen){
                         iconName = focused ? 'home' : 'home-outline'
                     } else if (rn === weeklyScreen) {
-                        iconName = focused ? 'list' : 'list-outline'
+                        iconName = focused ? 'calendar-clear' : 'calendar-clear-outline'
                     } else if (rn === monthlyScreen) {
-                        iconName = focused ? 'settings' : 'settings-outline'
+                        iconName = focused ? 'calendar' : 'calendar-outline'
                     }
                     return <Ionicons name={iconName} size={size} color={color}/>
                 },
@@ -38,12 +38,12 @@ export default function Navigation() {
             tabBarOptions={{
                 activeTintColor: 'black',
                 inactiveTintColor: 'grey',
+                backgroundColor:'#ffb8b1',
                 labelStyle: { paddingBottom: 10, fontSize: 10 },
-                style: { padding: 10, height: 70},
-                navigationBarColor: 'gold'
+                style: { padding: 16, height: 70},
               }}>
 
-                <Tab.Screen style={styles.container} name = {homeScreen} component={Home}/>
+                <Tab.Screen name = {homeScreen} component={Home}/>
                 <Tab.Screen name = {weeklyScreen} component={Weekly}/>
                 <Tab.Screen name = {monthlyScreen} component={Monthly}/>
 
