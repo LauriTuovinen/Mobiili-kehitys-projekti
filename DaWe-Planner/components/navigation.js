@@ -19,7 +19,8 @@ export default function Navigation() {
     return(
         <NavigationContainer>
             <Tab.Navigator 
-            initialRouteName={homeScreen}
+            // initialRouteName={homeScreen}
+            initialRouteName={monthlyScreen}
             screenOptions={({route}) => ({
                 tabBarIcon: ({focused, color, size}) => {
                     let iconName;
@@ -39,7 +40,7 @@ export default function Navigation() {
 
             })}
             
-            tabBarOptions={{
+            screenOptions={{
                 activeTintColor: 'black',
                 inactiveTintColor: 'grey',
                 labelStyle: { backgroundColor:'#ffb8b1', paddingBottom: 10, fontSize: 10 },
