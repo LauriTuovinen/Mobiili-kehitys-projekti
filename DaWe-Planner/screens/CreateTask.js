@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button, Text, TextInput, View, Image, Picker } from 'react-native';
 import DatePicker from 'react-native-datepicker'
-import DateTimePicker from 'react-native-ui-datepicker'
+// import DateTimePicker from 'react-native-ui-datepicker'
 
 
 export default function CreateTask() {
