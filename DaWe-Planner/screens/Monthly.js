@@ -95,19 +95,23 @@ function Monthly() {
     return (
         <View style={styles.container}>
                 <Text style = {{marginTop: 5, marginLeft: 5}}>2024</Text>
+
             <Text style={styles.header}>
                 <Icon
                     name='keyboard-arrow-left'
                     size={40}
                     color={navbarColorLight}
+
                     onPress={decreaseMonth}
                 // backgroundColor={'red'}
                 />
                 <Text style={{ fontWeight: 'bold', }}>{monthName}</Text>
+
                 <Icon
                     name='keyboard-arrow-right'
                     size={40}
                     color={navbarColorLight}
+
                     onPress={increaseMonth}
                 // backgroundColor={'red'}
                 />
@@ -122,6 +126,7 @@ function Monthly() {
                     </Pressable>
                 )
             })}
+
         </View>
     );
 }
@@ -150,6 +155,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
 
     }
+
 })
 
 export default Monthly;
