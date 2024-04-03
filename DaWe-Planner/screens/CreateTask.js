@@ -3,6 +3,7 @@ import { Button, Text, TextInput, View, Image, Pressable, TouchableOpacity } fro
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
 import dayjs from 'dayjs';
+import CheckBox  from 'expo-checkbox';
 
 // {/* */}   comment format inside react native code
 
@@ -12,13 +13,13 @@ export default function CreateTask() {
     const [date, setDate] = useState(new Date());
     const [startTime, setStartTime] = useState(new Date());
     const [endTime, setEndTime] = useState(new Date());
-    const [priority, setPriority] = useState(2); // default priority set to medium
-    const [repeatInterval, setRepeatInterval] = useState('none');
+    const [priority, setPriority] = useState(1); // default priority set to high
+    const [repeatInterval, setRepeatInterval] = useState('none'); //not yet implemented
     const [image, setImage] = useState(null);
     const [showStartTimePicker, setShowStartTimePicker] = useState(false);
     const [showEndTimePicker, setShowEndTimePicker] = useState(false);
     const [showDatePicker, setShowDatePicker] = useState(false);
-    
+    const [notification, setNotification] = useState(false);
 
     const handleSaveTask = () => {
         //for now we print the data from the created task
@@ -28,6 +29,7 @@ export default function CreateTask() {
         console.log("Date: ", date.toLocaleDateString());
         console.log("Start Time: ", startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }));
         console.log("End Time: ", endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }));
+        console.log("Notification: ", notification);
         
     }
 
@@ -121,6 +123,15 @@ export default function CreateTask() {
                             onChange={onChangeEndTime}
                         />
                     )}
+                </View>
+                <View>
+                    <Text>Do you want to get notified?</Text>
+                    
+                    <CheckBox
+                        disabled={false}
+                        value={notification}
+                        onValueChange={(notification) => setNotification(notification)}    
+                    />
                 </View>
                 <Button title="Save Task" onPress={handleSaveTask} />
             </View>
