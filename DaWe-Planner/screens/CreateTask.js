@@ -26,23 +26,18 @@ export default function CreateTask() {
     const db = database.db;
 
 
-    useEffect(() => {
-        const getTasks = async () => {
-            try {
-                const tasksData = await database.getAllTasks(db);
-                if (tasksData.rows._array) {
-                    setTasks(tasksData.rows._array);
-                }
-            } catch (error) {
-                console.error('Error fetching tasks:', error);
-            }
-        };
-        getTasks();
-    }, []); // Empty dependency array [] ensures it runs only on mount
-    
+
+    const getTasks = async () => {
+        const taskData = await database.getAllTasks(db);
+        setTasks(taskData);
+        console.log(taskData);
+    };
+    // Empty dependency array [] ensures it runs only on mount
+
 
     const handleSaveTask = () => {
-        database.addTask(db, taskName, description, priority, date, startTime, endTime, notification);
+        database.addTask(db, taskName, description, priority, date, startTime, endTime, notification, "");
+        getTasks();
         //for now we print the data from the created task
         /*
         console.log("Task Name: ", taskName);
@@ -157,24 +152,9 @@ export default function CreateTask() {
                 </View>
                 <Button title="Save Task" onPress={handleSaveTask} />
             </View>
-            
-            <View>
-                
-                <Text>Tasks:</Text>
-                {tasks.map((task, index) => (
-                    <View key={index}>
-                        <Text>Task Name: {task.name}</Text>
-                        <Text>Description: {task.description}</Text>
-                        <Text>Priority: {task.priority}</Text>
-                        <Text>Date: {task.date}</Text>
-                        <Text>Start Time: {task.startTime}</Text>
-                        <Text>End Time: {task.endTime}</Text>
-                        <Text>Notification: {task.notification}</Text>
-                        
-                    </View>
-                ))}
-            </View>
-            
+
+
+
         </View>
 
     )
