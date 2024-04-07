@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button, Text, TextInput, View, Image, Pressable, TouchableOpacity } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
 import dayjs from 'dayjs';
-import CheckBox  from 'expo-checkbox';
+import CheckBox from 'expo-checkbox';
+import database from '../components/database';
 
 // {/* */}   comment format inside react native code
 
@@ -20,9 +21,30 @@ export default function CreateTask() {
     const [showEndTimePicker, setShowEndTimePicker] = useState(false);
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [notification, setNotification] = useState(false);
+    const [tasks, setTasks] = useState([]);
+
+    const db = database.db;
+
+
+    useEffect(() => {
+        const getTasks = async () => {
+            try {
+                const tasksData = await database.getAllTasks(db);
+                if (tasksData.rows._array) {
+                    setTasks(tasksData.rows._array);
+                }
+            } catch (error) {
+                console.error('Error fetching tasks:', error);
+            }
+        };
+        getTasks();
+    }, []); // Empty dependency array [] ensures it runs only on mount
+    
 
     const handleSaveTask = () => {
+        database.addTask(db, taskName, description, priority, date, startTime, endTime, notification);
         //for now we print the data from the created task
+        /*
         console.log("Task Name: ", taskName);
         console.log("Description: ", description);
         console.log("Priority", priority);
@@ -30,7 +52,7 @@ export default function CreateTask() {
         console.log("Start Time: ", startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }));
         console.log("End Time: ", endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }));
         console.log("Notification: ", notification);
-        
+        */
     }
 
     const onChangeStartTime = (event, selectedTime) => {
@@ -56,13 +78,13 @@ export default function CreateTask() {
             <Text>Create task screen</Text>
             <View>
                 <Text>Create a task:</Text>
-                <TextInput 
+                <TextInput
                     placeholder='Enter task title'
                     value={taskName}
                     onChangeText={text => setTaskName(text)}
                 />
                 <Text>Info:</Text>
-                <TextInput 
+                <TextInput
                     placeholder='Enter Description'
                     value={description}
                     onChangeText={text => setDescription(text)}
@@ -88,10 +110,10 @@ export default function CreateTask() {
                         onChange={onChangeDate}
                     />
                 )}
-                
+
                 <Text>Set start and end times:</Text>
-                
-                
+
+
                 <View style={{ flexDirection: 'column' }}>
                     <Text>Start Time: </Text>
                     {/* instead of using a normal pressable, we are going to use TouchableOpacity since
@@ -126,15 +148,34 @@ export default function CreateTask() {
                 </View>
                 <View>
                     <Text>Do you want to get notified?</Text>
-                    
+
                     <CheckBox
                         disabled={false}
                         value={notification}
-                        onValueChange={(notification) => setNotification(notification)}    
+                        onValueChange={(notification) => setNotification(notification)}
                     />
                 </View>
                 <Button title="Save Task" onPress={handleSaveTask} />
             </View>
+            
+            <View>
+                
+                <Text>Tasks:</Text>
+                {tasks.map((task, index) => (
+                    <View key={index}>
+                        <Text>Task Name: {task.name}</Text>
+                        <Text>Description: {task.description}</Text>
+                        <Text>Priority: {task.priority}</Text>
+                        <Text>Date: {task.date}</Text>
+                        <Text>Start Time: {task.startTime}</Text>
+                        <Text>End Time: {task.endTime}</Text>
+                        <Text>Notification: {task.notification}</Text>
+                        
+                    </View>
+                ))}
+            </View>
+            
         </View>
+
     )
 }
