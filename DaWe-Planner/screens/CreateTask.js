@@ -5,6 +5,7 @@ import { Picker } from '@react-native-picker/picker';
 import dayjs from 'dayjs';
 import CheckBox from 'expo-checkbox';
 import database from '../components/database';
+import { dropTaskTable } from '../components/database';
 
 // {/* */}   comment format inside react native code
 
@@ -30,22 +31,27 @@ export default function CreateTask() {
     const getTasks = async () => {
         const taskData = await database.getAllTasks(db);
         setTasks(taskData);
-        console.log(taskData);
+        console.log(tasks);
     };
     // Empty dependency array [] ensures it runs only on mount
 
 
     const handleSaveTask = () => {
-        database.addTask(db, taskName, description, priority, date.toLocaleDateString, startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }), endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }), notification, "");
-        getTasks();
+
+       database.addTask(db, taskName, description, priority, date.toISOString(), startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }), endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }), notification, "");
+        //getTasks();
+        //console.log("Date: ", date.toISOString());
         //for now we print the data from the created task
-        
-       //console.log("Priority", priority);
-       // console.log("Date: ", date.toLocaleDateString());
-       // console.log("Start Time: ", startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }));
-       // console.log("End Time: ", endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }));
-        //console.log("Notification: ", notification);
-        
+        /*
+        console.log("Task Name: ", taskName);
+        console.log("Descriptsion: ", description);
+        console.log("Priority", priority);
+        console.log("Date: ", date.toLocaleDateString());
+        console.log("Start Time: ", startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }));
+        console.log("End Time: ", endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }));
+        console.log("Notification: ", notification);
+        */
+
     }
 
     const onChangeStartTime = (event, selectedTime) => {
