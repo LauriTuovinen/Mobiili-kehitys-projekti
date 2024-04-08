@@ -36,18 +36,16 @@ export default function CreateTask() {
 
 
     const handleSaveTask = () => {
-        database.addTask(db, taskName, description, priority, date.toISOString, startTime, endTime, notification, "");
+        database.addTask(db, taskName, description, priority, date.toLocaleDateString, startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }), endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }), notification, "");
         getTasks();
         //for now we print the data from the created task
-        /*
-        console.log("Task Name: ", taskName);
-        console.log("Description: ", description);
-        console.log("Priority", priority);
-        console.log("Date: ", date.toLocaleDateString());
-        console.log("Start Time: ", startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }));
-        console.log("End Time: ", endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }));
-        console.log("Notification: ", notification);
-        */
+        
+       //console.log("Priority", priority);
+       // console.log("Date: ", date.toLocaleDateString());
+       // console.log("Start Time: ", startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }));
+       // console.log("End Time: ", endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }));
+        //console.log("Notification: ", notification);
+        
     }
 
     const onChangeStartTime = (event, selectedTime) => {
