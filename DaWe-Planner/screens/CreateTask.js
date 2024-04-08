@@ -37,6 +37,7 @@ export default function CreateTask() {
 
 
     const handleSaveTask = () => {
+
        database.addTask(db, taskName, description, priority, date.toISOString(), startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }), endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }), notification, "");
         //getTasks();
         //console.log("Date: ", date.toISOString());
@@ -50,6 +51,7 @@ export default function CreateTask() {
         console.log("End Time: ", endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }));
         console.log("Notification: ", notification);
         */
+
     }
 
     const onChangeStartTime = (event, selectedTime) => {

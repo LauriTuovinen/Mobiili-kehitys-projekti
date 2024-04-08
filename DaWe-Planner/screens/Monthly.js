@@ -1,6 +1,6 @@
 import { Card, Icon, Text } from "@rneui/themed";
 import { useEffect, useState } from "react";
-import { Pressable, StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, Touchable, TouchableOpacity, View } from "react-native";
 import CreateTaskButton from "../components/CreateTaskButton";
 import 'moment/locale/en-gb'
 import { useNavigation } from "@react-navigation/native";
@@ -25,7 +25,7 @@ function Monthly() {
 
         const forWeeks = weeksDifference - 3
         const newWeekNumbers = []
-        //Push current weeks of the current month to weekNumbers
+        //Push weeks of the current month to weekNumbers
         for (i = forWeeks; i <= weeksDifference + 1; i++) {
             if (i < 53)
                 newWeekNumbers.push({
@@ -80,7 +80,7 @@ function Monthly() {
     const decreaseMonth = () => {
         if (monthNumber > 1) { setMonthNumber((prevMonthNumber) => prevMonthNumber - 1) }
     }
-    
+
     const increaseMonth = () => {
         if (monthNumber < 12) { setMonthNumber((prevMonthNumber) => prevMonthNumber + 1) }
     }
@@ -89,12 +89,12 @@ function Monthly() {
     //When weekCard is pressed navigate to corresponding weeklyScreen
     const navigateToWeekly = (weeks) => {
         navigation.navigate('Weekly');
-        console.log('navigate to week number',weeks);
+        console.log('navigate to week number', weeks);
     };
 
     return (
         <View style={styles.container}>
-                <Text style = {{marginTop: 5, marginLeft: 5}}>2024</Text>
+            <Text style={{ marginTop: 5, marginLeft: 5 }}>2024</Text>
 
             <Text style={styles.header}>
                 <Icon
@@ -118,15 +118,16 @@ function Monthly() {
             </Text>
             {weekNumbers.map((w, i) => {
                 return (
-                    <Pressable key={i} onPress={() => navigateToWeekly(w.weeks)}>
+                    <TouchableOpacity key={i} onPress={() => navigateToWeekly(w.weeks)}>
                         <Card containerStyle={styles.weeksCards}>
-                            <Text style={{ fontSize: 45, fontWeight: 'bold' }}>week {w.weeks}</Text>
+                            <Text style={{ fontSize: 45, fontWeight: 'bold', backgroundColor: 'transparent' }}>week {w.weeks}</Text>
                             <Text>This week you have {i} tasks</Text>
                         </Card>
-                    </Pressable>
+                    </TouchableOpacity>
                 )
             })}
 
+            <CreateTaskButton />
         </View>
     );
 }
@@ -150,8 +151,8 @@ const styles = StyleSheet.create({
         shadowColor: 'black',
         shadowOffset: { width: -2, height: 4 },
         shadowOpacity: 1,
-        shadowRadius: 5,
-        elevation: 10,
+        shadowRadius: 10,
+        elevation: 5,
         marginBottom: 20,
 
     }
