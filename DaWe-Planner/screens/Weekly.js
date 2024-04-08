@@ -3,9 +3,9 @@ import { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 import { FlatList } from "react-native";
 import CreateTaskButton from "../components/CreateTaskButton";
+import database from "../components/database";
 
 const DayCard = ({ day, tasks = "4 tasks" }) => {
-
     return(
         <View style={styles.cardContainer}>
             <Text style={[styles.cardText, { textAlign: 'right' }]}>{day.day}</Text>
