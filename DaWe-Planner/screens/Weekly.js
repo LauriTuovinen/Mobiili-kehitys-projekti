@@ -3,28 +3,48 @@ import { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 import { FlatList } from "react-native";
 import CreateTaskButton from "../components/CreateTaskButton";
-import database from "../components/database";
+import database, { getTasksForDate } from "../components/database";
+import moment from "moment";
 
-const DayCard = ({ day, tasks = "4 tasks" }) => {
+const db = database.db;
+
+const DayCard = ({ day, tasks = 0 }) => {
     return(
         <View style={styles.cardContainer}>
             <Text style={[styles.cardText, { textAlign: 'right' }]}>{day.day}</Text>
-            <Text style={{ textAlign: 'right' }}>{tasks}</Text>
+            <Text style={{ textAlign: 'right' }}>{tasks} tasks</Text>
         </View>
     )
 }
 
-
 const WeeklyScreen = () =>{
     const [days, setDays] = useState([]);
-    useEffect(()=> {
-        const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-        setDays(days.map((day)=>({day})));
-    },[]);
+    const [tasks, setTasks] = useState([]);
+
+    useEffect(() => {
+      const getTasks = async () => {
+        const taskData = await database.getAllTasks(db);
+        setTasks(taskData);
+        console.log(tasks);
+    };
+    getTasks();
+      const weekStart = moment().startOf('week'); // Set to Monday by default
+      const weekDays = [];
+      
+      for (let i = 0; i < 7; i++) {
+        const currentDay = weekStart.clone().add(i, 'days');
+        const formattedDate = currentDay.format('DD/MM/YYYY')
+        console.log(formattedDate);
+        weekDays.push({ day: formattedDate});
+      }
+      setDays(weekDays);
+
+      
+    }, []);
 
     return (
         <View style={styles.container}>
-          <Text style={[styles.cardText, {fontSize: 22}, {paddingTop:10}]}>Week number</Text>
+          <Text style={[styles.cardText, {fontSize: 22}, {paddingTop:10}]}> Week {moment().week()}</Text>
           <FlatList
             data={days}
             renderItem={({ item }) => <DayCard day={item} />}

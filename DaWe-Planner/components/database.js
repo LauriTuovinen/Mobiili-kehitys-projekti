@@ -71,15 +71,23 @@ export const updateTask = (db, id) => {
     });
 }
 
-//This gets all data from table tasks
-/*
-export const getAllTasks = (db) => {
-    db.transaction(tx => {
-        tx.executeSql("SELECT * FROM tasks", null,);
-        console.log("GOTEM!")
+export const getTasksForDate = (db, date) => {
+    return new Promise((resolve, reject) => {
+      db.transaction(tx => {
+        tx.executeSql(
+          "SELECT id, name, startTime, endTime FROM tasks WHERE date = ?",
+          [date],
+          (_, { rows }) => {
+            console.log("gettingForDate");
+            resolve(rows);
+          },
+          (_, error) => {
+            reject(error);
+          }
+        );
+      });
     });
-};
-*/
+  };
 
 export const getAllTasks = (db) => {
     return new Promise((resolve, reject) => {
@@ -100,4 +108,5 @@ export default {
     deleteTask,
     updateTask,
     getAllTasks,
+    getTasksForDate,
   };
