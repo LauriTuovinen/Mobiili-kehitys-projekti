@@ -36,7 +36,7 @@ export default function CreateTask() {
 
 
     const handleSaveTask = () => {
-        database.addTask(db, taskName, description, priority, date, startTime, endTime, notification, "");
+        database.addTask(db, taskName, description, priority, date.toISOString, startTime, endTime, notification, "");
         getTasks();
         //for now we print the data from the created task
         /*
