@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Home from '../screens/Home'
@@ -13,8 +12,10 @@ import { useFocusEffect } from '@react-navigation/native';
 const homeScreen = 'Home';
 const weeklyScreen = 'Weekly';
 const monthlyScreen = 'Monthly';
+
 const createTaskScreen = 'Create';
 const settingsScreen = 'Settings'
+
 
 const Tab = createBottomTabNavigator();
  
@@ -38,20 +39,21 @@ export default function Navigation() {
                     } else if (rn === createTaskScreen) {
                         iconName = focused ? 'add-outline' : 'add-outline'
                     }
+
                     else if (rn === settingsScreen) {
                         iconName = focused ? 'add-outline' : 'add-outline'
                     }
                     
                     return <Ionicons backgroundColor={'#ffb8b1'}name={iconName} size={size} color={color}/>
+
                 },
 
             })}
             
-            screenOptions={{
+            NavBarOptions={{
                 activeTintColor: 'black',
                 inactiveTintColor: 'grey',
                 labelStyle: { backgroundColor:'#ffb8b1', paddingBottom: 10, fontSize: 10 },
-                style: { color:'#ffb8b1', padding: 16, height: 80},
               }}>
 
                 <Tab.Screen name = {homeScreen} component={Home}/>
@@ -65,26 +67,4 @@ export default function Navigation() {
         </NavigationContainer>
     )
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#f9efdb',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-
-    NavContainer: {
-        position: 'absolute',
-        alignItems: 'center',
-        bottom: 20,
-    },
-
-    NavBar: {
-        flexDirection: 'row',
-        backgroundColor: '#ffb8b1',
-        width:'100%',
-        justifyContent: 'space-evenly',
-    },
-  });
 
