@@ -1,14 +1,17 @@
 import { Card, Icon, Text } from "@rneui/themed";
 import { useEffect, useState } from "react";
-import { Pressable, StyleSheet, Touchable, TouchableOpacity, View } from "react-native";
+import { Pressable, ScrollView, StatusBar, StyleSheet, Touchable, TouchableOpacity, View } from "react-native";
 import CreateTaskButton from "../components/CreateTaskButton";
 import 'moment/locale/en-gb'
 import { useNavigation } from "@react-navigation/native";
+import database from "../components/database";
+
 const bgColorLight = '#f9efdb'
 const cardColorLight = '#ffdac1'
 const navbarColorLight = '#ffb8b1'
 
 var moment = require('moment');
+const db = database.db;
 
 function Monthly() {
     var month = new Date().getMonth() + 1
@@ -16,25 +19,57 @@ function Monthly() {
     const [monthNumber, setMonthNumber] = useState(month);
     const [weekNumbers, setWeekNumbers] = useState([]);
 
-    function getWeeks(month) {
-        //Get how many weeks has passed from the start of the year to the start of the selected month 
-        var startOfYear = moment().startOf('year');
-        var startOfGivenMonth = moment().month(month).startOf('month');
-        var daysDifference = startOfGivenMonth.diff(startOfYear, 'days');
-        var weeksDifference = Math.floor(daysDifference / 7);
-
-        const forWeeks = weeksDifference - 3
-        const newWeekNumbers = []
-        //Push weeks of the current month to weekNumbers
-        for (i = forWeeks; i <= weeksDifference + 1; i++) {
-            if (i < 53)
-                newWeekNumbers.push({
-                    weeks: i
-                })
+    //get all tasks
+    const getTasks = async (newWeekNumbers) => {
+        // dropTaskTable(db)
+        const taskData = await database.getAllTasks(db)
+        
+        // These loops check how many task dates are between each start and end state of each week and adds the number to newWeekNumbers numberOfTasks
+        for (var i = 0; i < taskData._array.length; i++) {
+            const taskDate = moment(taskData._array[i].date)
+            for (var j = 0; j < newWeekNumbers.length; j++) {
+                const weekStart = moment(newWeekNumbers[j].weekStarts);
+                const weekEnd = moment(newWeekNumbers[j].weekEnds);
+                if (taskDate.isBetween(weekStart, weekEnd, null, '[]')) {
+                    newWeekNumbers[j].numberOfTasks++
+                }
+            }
         }
         setWeekNumbers(newWeekNumbers)
-        console.log(weekNumbers);
     }
+
+    function getWeeks(month) {
+        //Gets start date of the month, end date of the month and start of the month.
+        var startOfGivenMonth = moment().month(month - 1).startOf('month')//months here are from 0-11, hence the -1
+        var EndOfGivenMonth = moment(startOfGivenMonth).endOf('month')
+        let startOfWeek = moment(startOfGivenMonth).startOf('isoWeek')
+
+        const weeksInMonth = []
+        //While start of the weeks is before the month ends, get the end of the week based on the start of week and push the end ans start dates to and rray.
+        while (startOfWeek.isBefore(EndOfGivenMonth)) {
+
+                const endOfWeek = moment(startOfWeek).endOf('isoWeek')
+                weeksInMonth.push({
+                    start: startOfWeek.format('YYYY-MM-DD'),
+                    end: endOfWeek.format('YYYY-MM-DD')
+                })
+                startOfWeek = moment(endOfWeek).add(1, 'days') //One day is added to the start of week, so next new week is just after the first week ends. And loop again.
+        }
+
+        //Here week numbers are pushed based on the month and all the start and and dates of the weeks are pushed also.
+        const newWeekNumbers = weeksInMonth.map((week, i) => {
+            const weekNumber = moment(week.start).isoWeek()
+            return {
+                weeks: weekNumber,
+                weekStarts: week.start,
+                weekEnds: week.end,
+                numberOfTasks: 0
+            }
+        })
+        //passs newWeekNumbers to getTasks
+        getTasks(newWeekNumbers)
+    }
+
     //When monthNumber is changed, monthName is changed to reflect the monthNumber.
     useEffect(() => {
         if (monthNumber == 1) {
@@ -94,6 +129,9 @@ function Monthly() {
 
     return (
         <View style={styles.container}>
+            <ScrollView>
+
+            <StatusBar style = {{backgroundColor: bgColorLight}}/>
             <Text style={{ marginTop: 5, marginLeft: 5 }}>2024</Text>
 
             <Text style={styles.header}>
@@ -101,33 +139,35 @@ function Monthly() {
                     name='keyboard-arrow-left'
                     size={40}
                     color={navbarColorLight}
-
+                    
                     onPress={decreaseMonth}
-                // backgroundColor={'red'}
-                />
+                    />
                 <Text style={{ fontWeight: 'bold', }}>{monthName}</Text>
 
                 <Icon
                     name='keyboard-arrow-right'
                     size={40}
                     color={navbarColorLight}
-
+                    
                     onPress={increaseMonth}
-                // backgroundColor={'red'}
-                />
+                    />
             </Text>
+
+            {/* count total number of tasks per month */}
+            <Text>This month you have {weekNumbers.reduce((total, w) => total + w.numberOfTasks, 0)} tasks</Text>
+            {/* map through weekNumbers and display weeks of each month and the tasks in the month. Also each card has navigation to corresponding Weekly.js screen */}
             {weekNumbers.map((w, i) => {
                 return (
                     <TouchableOpacity key={i} onPress={() => navigateToWeekly(w.weeks)}>
                         <Card containerStyle={styles.weeksCards}>
                             <Text style={{ fontSize: 45, fontWeight: 'bold', backgroundColor: 'transparent' }}>week {w.weeks}</Text>
-                            <Text>This week you have {i} tasks</Text>
+                            <Text>This week you have {w.numberOfTasks} tasks</Text>
                         </Card>
                     </TouchableOpacity>
                 )
             })}
-
             <CreateTaskButton />
+            </ScrollView>
         </View>
     );
 }
