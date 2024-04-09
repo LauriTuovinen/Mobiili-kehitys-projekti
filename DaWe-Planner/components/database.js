@@ -71,23 +71,23 @@ export const updateTask = (db, id) => {
     });
 }
 
-export const getTasksForDate = (db, date) => {
+export const getTaskAmount = (db, date) => {
     return new Promise((resolve, reject) => {
-      db.transaction(tx => {
-        tx.executeSql(
-          "SELECT id, name, startTime, endTime FROM tasks WHERE date = ?",
-          [date],
-          (_, { rows }) => {
-            console.log("gettingForDate");
-            resolve(rows);
-          },
-          (_, error) => {
-            reject(error);
-          }
-        );
-      });
+        db.transaction(tx => {
+            tx.executeSql(
+                "SELECT COUNT(*) AS taskCount FROM tasks WHERE date = ?",
+                [date],
+                (_, { rows: { _array } }) => {
+                    console.log("gettingForDate");
+                    resolve(_array[0].taskCount);
+                },
+                (_, error) => {
+                    reject(error);
+                }
+            );
+        });
     });
-  };
+};
 
 export const getAllTasks = (db) => {
     return new Promise((resolve, reject) => {
@@ -108,5 +108,5 @@ export default {
     deleteTask,
     updateTask,
     getAllTasks,
-    getTasksForDate,
+    getTaskAmount,
   };
