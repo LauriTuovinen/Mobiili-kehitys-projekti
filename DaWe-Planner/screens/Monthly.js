@@ -26,7 +26,7 @@ function Monthly() {
         
         // These loops check how many task dates are between each start and end state of each week and adds the number to newWeekNumbers numberOfTasks
         for (var i = 0; i < taskData._array.length; i++) {
-            const taskDate = moment(taskData._array[i].date)
+            const taskDate = moment(taskData._array[i].date, 'DD/MM/YYYY')
             for (var j = 0; j < newWeekNumbers.length; j++) {
                 const weekStart = moment(newWeekNumbers[j].weekStarts);
                 const weekEnd = moment(newWeekNumbers[j].weekEnds);
@@ -50,8 +50,8 @@ function Monthly() {
 
                 const endOfWeek = moment(startOfWeek).endOf('isoWeek')
                 weeksInMonth.push({
-                    start: startOfWeek.format('YYYY-MM-DD'),
-                    end: endOfWeek.format('YYYY-MM-DD')
+                    start: startOfWeek,
+                    end: endOfWeek
                 })
                 startOfWeek = moment(endOfWeek).add(1, 'days') //One day is added to the start of week, so next new week is just after the first week ends. And loop again.
         }
