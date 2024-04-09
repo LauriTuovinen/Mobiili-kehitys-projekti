@@ -37,7 +37,8 @@ export default function CreateTask() {
 
 
     const handleSaveTask = () => {
-        // dropTaskTable(db)
+
+
         const formattedDate = dayjs(date).format('DD/MM/YYYY');
         database.addTask(db, taskName, description, priority, formattedDate, startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }), endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }), notification, "");
         //getTasks();
