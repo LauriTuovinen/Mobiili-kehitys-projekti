@@ -14,9 +14,9 @@ export const createDB = (db) => {
 
 export const dropTaskTable = (db) => {
     db.transaction(tx => {
-        tx.executeSql("DROP TABLE IF EXISTS tasks")
+        tx.executeSql("DELETE FROM tasks")
     });
-    console.log("Table Dropped");
+    console.log("Tasks deleted ");
 }
 
 
