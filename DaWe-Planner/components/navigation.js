@@ -6,6 +6,7 @@ import Monthly from '../screens/Monthly'
 import Weekly from '../screens/Weekly' 
 import CreateTask from '../screens/CreateTask';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useFocusEffect } from '@react-navigation/native';
 
 const homeScreen = 'Home';
 const weeklyScreen = 'Weekly';

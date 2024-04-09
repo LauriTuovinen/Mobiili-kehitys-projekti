@@ -1,7 +1,9 @@
 import { View, Text } from "react-native";
 import { useEffect, useState } from "react";
+import React from "react";
 import { StyleSheet } from "react-native";
 import { FlatList } from "react-native";
+import { useFocusEffect } from '@react-navigation/native';
 import CreateTaskButton from "../components/CreateTaskButton";
 import moment from "moment";
 import database, { getTaskAmount } from "../components/database";
@@ -17,12 +19,11 @@ const DayCard = ({ day, tasks = 0 }) => {
     )
 }
 
-const WeeklyScreen = () =>{
+export const WeeklyScreen = () =>{
     const [days, setDays] = useState([]);
     const [tasks, setTasks] = useState([]);
-    
 
-    useEffect(() => {
+    const fetchTasks = () => {
       const weekStart = moment().startOf('week'); // Set to Monday by default
       const weekDays = [];
       
@@ -45,8 +46,19 @@ const WeeklyScreen = () =>{
         setTasks(tasksPerDay);
       }
         fetchAmountOfTasks();
+    }
+    
+
+    useEffect(() => {
+      fetchTasks();
       
     }, []);
+
+    useFocusEffect(
+      React.useCallback(()=>{
+        fetchTasks();
+      }, [])
+    )
 
     return (
         <View style={styles.container}>
