@@ -4,6 +4,7 @@ import { Modal, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } fr
 import { Card, Image } from '@rneui/themed';
 import hyi from '../assets/hyi.jpg'
 import database from "../components/database";
+import { useFocusEffect } from '@react-navigation/native';
 
 const bgColorLight = '#f9efdb'
 const cardColorLight = '#ffdac1'
@@ -16,21 +17,28 @@ function Home({ day }) {
     const [tasks, setTasks] = useState([]);
     const correctDay = day ? moment(day) : moment()
     const formattedDay = moment(correctDay).format('DD/MM/YYYY')
+    const fetchData = async () => {
+        // dropTaskTable(db)
+        const taskData = await database.getAllTasks(db) //get tasks
+
+        const newTasks = taskData._array.filter(task => {
+            const taskDate = moment(task.date, 'DD/MM/YYYY')
+            return taskDate.isSame(correctDay, 'day')
+        })
+
+        setTasks(newTasks)
+    }
+    
     useEffect(() => {
-
-        const fetchData = async () => {
-            // dropTaskTable(db)
-            const taskData = await database.getAllTasks(db) //get tasks
-
-            const newTasks = taskData._array.filter(task => {
-                const taskDate = moment(task.date, 'DD/MM/YYYY')
-                return taskDate.isSame(correctDay, 'day')
-            })
-
-            setTasks(newTasks)
-        }
         fetchData()
+        
     }, [])
+
+    useFocusEffect(
+        React.useCallback(()=>{
+          fetchData()
+        }, [])
+      )
 
 
     const [OpenPhoto, setOpenPhoto] = useState(false);
