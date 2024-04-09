@@ -31,7 +31,6 @@ export default function CreateTask() {
     const getTasks = async () => {
         const taskData = await database.getAllTasks(db);
         setTasks(taskData);
-
         console.log(tasks);
     };
 
@@ -44,7 +43,6 @@ export default function CreateTask() {
         database.addTask(db, taskName, description, priority, formattedDate, startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }), endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }), notification, "");
         //getTasks();
        
-
         //console.log("Date: ", date.toISOString());
         //for now we print the data from the created task
         /*
