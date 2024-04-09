@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Button, Text, TextInput, View, Image, Pressable, TouchableOpacity } from 'react-native';
+import { Button, Text, TextInput, View, Image, Pressable, TouchableOpacity, StyleSheet } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
 import dayjs from 'dayjs';
 import CheckBox from 'expo-checkbox';
 import database from '../components/database';
+import { Card } from '@rneui/themed';
+import { dropTaskTable } from '../components/database';
 
 // {/* */}   comment format inside react native code
 
@@ -29,26 +31,32 @@ export default function CreateTask() {
     const getTasks = async () => {
         const taskData = await database.getAllTasks(db);
         setTasks(taskData);
-        // console.log(taskData);
-        }
-    
 
+        console.log(tasks);
+    };
 
 
 
     const handleSaveTask = () => {
 
-       database.addTask(db, taskName, description, priority, date.toISOString().slice(0,10), startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }), endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }), notification, "");
-        getTasks();
+
+        const formattedDate = dayjs(date).format('DD/MM/YYYY');
+        database.addTask(db, taskName, description, priority, formattedDate, startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }), endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }), notification, "");
+        //getTasks();
+       
+
         //console.log("Date: ", date.toISOString());
         //for now we print the data from the created task
-        
-       //console.log("Priority", priority);
-       // console.log("Date: ", date.toLocaleDateString());
-       // console.log("Start Time: ", startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }));
-       // console.log("End Time: ", endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }));
-        //console.log("Notification: ", notification);
-        
+        /*
+        console.log("Task Name: ", taskName);
+        console.log("Descriptsion: ", description);
+        console.log("Priority", priority);
+        console.log("Date: ", date.toLocaleDateString());
+        console.log("Start Time: ", startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }));
+        console.log("End Time: ", endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }));
+        console.log("Notification: ", notification);
+        */
+
     }
 
     const onChangeStartTime = (event, selectedTime) => {
@@ -70,20 +78,22 @@ export default function CreateTask() {
     };
 
     return (
-        <View>
-            <Text>Create task screen</Text>
+        <View style={styles.container}>
             <View>
-                <Text>Create a task:</Text>
+                <Card containerStyle={styles.createTaskCard}>
+                <Text style={styles.font}>Create a task:</Text>
                 <TextInput
                     placeholder='Enter task title'
                     value={taskName}
                     onChangeText={text => setTaskName(text)}
+                    style={styles.input}
                 />
-                <Text>Info:</Text>
+                <Text style={styles.font}>Info:</Text>
                 <TextInput
                     placeholder='Enter Description'
                     value={description}
                     onChangeText={text => setDescription(text)}
+                    style={styles.input}
                 />
                 <View>
                     <Picker selectedValue={priority} onValueChange={(itemValue, itemIndex) => setPriority(itemValue)}>
@@ -93,7 +103,7 @@ export default function CreateTask() {
                     </Picker>
                 </View>
 
-                <Text>Set Date:</Text>
+                <Text style={styles.font}>Set Date:</Text>
                 <TouchableOpacity onPress={() => setShowDatePicker(true)}>
                     <Text>{dayjs(date).format('YYYY-MM-DD')}</Text>
                 </TouchableOpacity>
@@ -107,11 +117,11 @@ export default function CreateTask() {
                     />
                 )}
 
-                <Text>Set start and end times:</Text>
+                <Text style={styles.font}>Set start and end times:</Text>
 
 
                 <View style={{ flexDirection: 'column' }}>
-                    <Text>Start Time: </Text>
+                    <Text style={styles.font}>Start Time: </Text>
                     {/* instead of using a normal pressable, we are going to use TouchableOpacity since
                     it gives additional feedback to users that you have pressed the thing */}
                     <TouchableOpacity onPress={() => setShowStartTimePicker(true)}>
@@ -128,7 +138,7 @@ export default function CreateTask() {
                     )}
                 </View>
                 <View style={{ flexDirection: 'column' }}>
-                    <Text>End Time: </Text>
+                    <Text style={styles.font}>End Time: </Text>
                     <TouchableOpacity onPress={() => setShowEndTimePicker(true)}>
                         <Text>{dayjs(endTime).format('HH:mm')}</Text>
                     </TouchableOpacity>
@@ -143,7 +153,7 @@ export default function CreateTask() {
                     )}
                 </View>
                 <View>
-                    <Text>Do you want to get notified?</Text>
+                    <Text style={styles.font}>Do you want to get notified?</Text>
 
                     <CheckBox
                         disabled={false}
@@ -152,12 +162,34 @@ export default function CreateTask() {
                     />
                 </View>
                 <Button title="Save Task" onPress={handleSaveTask} />
-                <Button title="Print tasks" onPress={getTasks} />
+                </Card>
             </View>
-
-
-
         </View>
-
     )
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#f9efdb',
+        alignItems: 'center',
+    },
+    createTaskCard: {
+        backgroundColor: '#ffdac1',
+        borderWidth: 0,
+        shadowColor: 'black',
+        shadowOffset: { width: -2, height: 4 },
+        shadowOpacity: 1,
+        shadowRadius: 5,
+        elevation: 10,
+        width: 300,
+    },
+    font: {
+        fontSize: 20,
+        fontWeight: "bold"
+    },
+    input: {
+        backgroundColor: 'white',
+        width: 200,
+    }
+  });
