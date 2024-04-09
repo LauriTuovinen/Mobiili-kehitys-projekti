@@ -18,8 +18,8 @@ export default function Navigation() {
     return(
         <NavigationContainer>
             <Tab.Navigator 
-            // initialRouteName={homeScreen}
-            initialRouteName={monthlyScreen}
+            initialRouteName={homeScreen}
+            // initialRouteName={monthlyScreen}
             screenOptions={({route}) => ({
                 tabBarIcon: ({focused, color, size}) => {
                     let iconName;
