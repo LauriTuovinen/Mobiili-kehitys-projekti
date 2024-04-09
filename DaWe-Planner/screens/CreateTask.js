@@ -28,20 +28,23 @@ export default function CreateTask() {
     const db = database.db;
 
 
-
     const getTasks = async () => {
         const taskData = await database.getAllTasks(db);
         setTasks(taskData);
+
         console.log(tasks);
     };
 
 
 
     const handleSaveTask = () => {
+
+
         const formattedDate = dayjs(date).format('DD/MM/YYYY');
         database.addTask(db, taskName, description, priority, formattedDate, startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }), endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }), notification, "");
         //getTasks();
        
+
         //console.log("Date: ", date.toISOString());
         //for now we print the data from the created task
         /*
