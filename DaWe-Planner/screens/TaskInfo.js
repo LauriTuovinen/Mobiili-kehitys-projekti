@@ -2,17 +2,32 @@ import { View, Text, Button } from "react-native";
 import React, { useState, useEffect } from 'react';
 import database from "../components/database";
 import { StyleSheet } from "react-native";
+import { Image } from "react-native";
+import * as FileSystem from 'expo-file-system';
 
 const db = database.db;
+const modifyUri = (uri) => {
+  
+    if (uri.startsWith('file://')) {
+      
+      return uri.replace('file://', 'asset://');
+    } else {
+      
+      return uri;
+    }
+  };
 
-export const TaskInfo = ({ id }) => {
-    const taskId = id || 6;
+  export const TaskInfo = ({ id }) => {
+    const taskId = id || 3;
     const [task, setTask] = useState(null);
 
     useEffect(() => {
         const fetchTask = async () => {
             try {
                 const fetchedTask = await getTaskByID(taskId);
+                if (fetchedTask.image) {
+                    await copyImageToLocalDirectory(fetchedTask.image);
+                }
                 setTask(fetchedTask);
             } catch (error) {
                 console.error('Error fetching task:', error);
@@ -22,11 +37,26 @@ export const TaskInfo = ({ id }) => {
         fetchTask();
     }, [id]);
 
+    const copyImageToLocalDirectory = async (imageUri) => {
+        try {
+            const fileName = imageUri.split('/').pop();
+            const localUri = `${FileSystem.documentDirectory}${fileName}`;
+            await FileSystem.copyAsync({ from: imageUri, to: localUri });
+            setTask((prevTask) => ({
+                ...prevTask,
+                image: localUri, 
+            }));
+        } catch (error) {
+            console.error('Error copying image:', error);
+        }
+    };
+
     const getTaskByID = async (id) => {
         const task = await database.getTaskbyId(db, id);
         return task;
     };
 
+    // Render the component
     return (
         <View style={styles.container}>
             {task ? (
@@ -41,6 +71,9 @@ export const TaskInfo = ({ id }) => {
                         <Text style={styles.value}>{task.date}</Text>
                         <Text style={styles.label}>Priority:</Text>
                         <Text style={styles.value}>{task.priority}</Text>
+                        {task.image && (
+                            <Image source={{ uri: task.image }} style={{ width: 120, height: 120 }} />
+                        )}
                     </View>
                 </View>
             ) : (
@@ -75,6 +108,7 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 3 },
         shadowOpacity: 0.3,
         shadowRadius: 2,
+        width: 320,
     },
     label: {
         fontWeight: 'bold',
