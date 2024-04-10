@@ -6,15 +6,22 @@ export const db = SQLite.openDatabase("DaWe.db");
 //This creates a new table if table doesn't exist yet
 export const createDB = (db) => {
     db.transaction(tx => {
-        tx.executeSql("CREATE TABLE IF NOT EXISTS tasks (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, priority INT, date TEXT NOT NULL, startTime TEXT, endTime TEXT, description TEXT, notification INT NOT NULL, tag TEXT )")
+        tx.executeSql("CREATE TABLE IF NOT EXISTS tasks (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, priority INT, date TEXT NOT NULL, startTime TEXT, endTime TEXT, description TEXT, image TEXT, notification INT NOT NULL, tag TEXT )")
     });
-    console.log("Database Created!");
+    console.log("Task Table Created!");
 }
 //This is for removing tables from database
 
 export const dropTaskTable = (db) => {
     db.transaction(tx => {
         tx.executeSql("DELETE FROM tasks")
+    });
+    console.log("Tasks deleted ");
+}
+
+export const dropTable = (db) => {
+    db.transaction(tx => {
+        tx.executeSql("DROP TABLE IF EXISTS tasks")
     });
     console.log("Tasks deleted ");
 }
@@ -32,12 +39,12 @@ export const addTask = (db, taskName, description, priority, date, startTime, en
     });
 }
 */
-export const addTask = (db, taskName, description, priority, date, startTime, endTime, notification) => {
+export const addTask = (db, taskName, description, priority, date, startTime, endTime, image, notification, tag) => {
     return new Promise((resolve, reject) => {
         db.transaction(tx => {
             tx.executeSql(
-                "INSERT INTO tasks (name, description, priority, date, startTime, endTime, notification, tag) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-                [taskName, description, priority, date, startTime, endTime, notification, ''],
+                "INSERT INTO tasks (name, description, priority, date, startTime, endTime, image, notification, tag) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                [taskName, description, priority, date, startTime, endTime, image, notification, ''],
                 (_, { rowsAffected }) => {
                     if (rowsAffected > 0) {
                         console.log("Task added!");
@@ -92,7 +99,7 @@ export const getTaskAmount = (db, date) => {
 export const getAllTasks = (db) => {
     return new Promise((resolve, reject) => {
         db.transaction(tx => {
-            tx.executeSql("SELECT id, name, description, priority, date, startTime, endTime, notification, tag FROM tasks", [], (_, { rows }) => {
+            tx.executeSql("SELECT id, name, description, priority, date, startTime, endTime, image, notification, tag FROM tasks", [], (_, { rows }) => {
                 resolve(rows);
             }, (_, error) => {
                 reject(error);

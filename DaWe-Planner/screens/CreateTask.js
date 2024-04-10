@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Button, Text, TextInput, View, Image, Pressable, TouchableOpacity, StyleSheet } from 'react-native';
+import { Button, Text, TextInput, View, Image, Pressable, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
 import dayjs from 'dayjs';
@@ -7,6 +7,7 @@ import CheckBox from 'expo-checkbox';
 import database from '../components/database';
 import { Card } from '@rneui/themed';
 import { dropTaskTable } from '../components/database';
+import * as ImagePicker from 'expo-image-picker';
 
 // {/* */}   comment format inside react native code
 
@@ -27,6 +28,22 @@ export default function CreateTask() {
 
     const db = database.db;
 
+    const pickImage = async () => {
+        // No permissions request is necessary for launching the image library
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+
+        console.log(result);
+
+        if (!result.canceled) {
+            setImage(result.assets[0].uri);
+        }
+    };
+
 
     const getTasks = async () => {
         const taskData = await database.getAllTasks(db);
@@ -36,12 +53,14 @@ export default function CreateTask() {
 
 
 
-    const handleSaveTask = () => {
+    const handleSaveTask = async () => {
 
 
         const formattedDate = dayjs(date).format('DD/MM/YYYY');
-        database.addTask(db, taskName, description, priority, formattedDate, startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }), endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }), notification, "");
-        
+
+        await database.addTask(db, taskName, description, priority, formattedDate, startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }), endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }), image, notification);
+        //getTasks();
+
         //console.log("Date: ", date.toISOString());
         //for now we print the data from the created task
         /*
@@ -76,91 +95,100 @@ export default function CreateTask() {
 
     return (
         <View style={styles.container}>
-            <View>
-                <Card containerStyle={styles.createTaskCard}>
-                <Text style={styles.font}>Create a task:</Text>
-                <TextInput
-                    placeholder='Enter task title'
-                    value={taskName}
-                    onChangeText={text => setTaskName(text)}
-                    style={styles.input}
-                />
-                <Text style={styles.font}>Info:</Text>
-                <TextInput
-                    placeholder='Enter Description'
-                    value={description}
-                    onChangeText={text => setDescription(text)}
-                    style={styles.input}
-                />
+            <ScrollView>
                 <View>
-                    <Picker selectedValue={priority} onValueChange={(itemValue, itemIndex) => setPriority(itemValue)}>
-                        <Picker.Item label="High Priority" value="1" />
-                        <Picker.Item label="Medium Priority" value="2" />
-                        <Picker.Item label="Low Priority" value="3" />
-                    </Picker>
-                </View>
+                    <Card containerStyle={styles.createTaskCard}>
+                        <Text style={styles.font}>Create a task:</Text>
+                        <TextInput
+                            placeholder='Enter task title'
+                            value={taskName}
+                            onChangeText={text => setTaskName(text)}
+                            style={styles.input}
+                        />
+                        <Text style={styles.font}>Info:</Text>
+                        <TextInput
+                            placeholder='Enter Description'
+                            value={description}
+                            onChangeText={text => setDescription(text)}
+                            style={styles.input}
+                        />
+                        <View>
+                            <Picker selectedValue={priority} onValueChange={(itemValue, itemIndex) => setPriority(itemValue)}>
+                                <Picker.Item label="High Priority" value="1" />
+                                <Picker.Item label="Medium Priority" value="2" />
+                                <Picker.Item label="Low Priority" value="3" />
+                            </Picker>
+                        </View>
 
-                <Text style={styles.font}>Set Date:</Text>
-                <TouchableOpacity onPress={() => setShowDatePicker(true)}>
-                    <Text>{dayjs(date).format('YYYY-MM-DD')}</Text>
-                </TouchableOpacity>
-                {showDatePicker && (
-                    <DateTimePicker
-                        value={date}
-                        mode="date"
-                        is24Hour={true}
-                        display="spinner"
-                        onChange={onChangeDate}
-                    />
-                )}
+                        <Text style={styles.font}>Set Date:</Text>
+                        <TouchableOpacity onPress={() => setShowDatePicker(true)}>
+                            <Text>{dayjs(date).format('YYYY-MM-DD')}</Text>
+                        </TouchableOpacity>
+                        {showDatePicker && (
+                            <DateTimePicker
+                                value={date}
+                                mode="date"
+                                is24Hour={true}
+                                display="spinner"
+                                onChange={onChangeDate}
+                            />
+                        )}
 
-                <Text style={styles.font}>Set start and end times:</Text>
+                        <Text style={styles.font}>Set start and end times:</Text>
 
 
-                <View style={{ flexDirection: 'column' }}>
-                    <Text style={styles.font}>Start Time: </Text>
-                    {/* instead of using a normal pressable, we are going to use TouchableOpacity since
+                        <View style={{ flexDirection: 'column' }}>
+                            <Text style={styles.font}>Start Time: </Text>
+                            {/* instead of using a normal pressable, we are going to use TouchableOpacity since
                     it gives additional feedback to users that you have pressed the thing */}
-                    <TouchableOpacity onPress={() => setShowStartTimePicker(true)}>
-                        <Text>{dayjs(startTime).format('HH:mm')}</Text>
-                    </TouchableOpacity>
-                    {showStartTimePicker && (
-                        <DateTimePicker
-                            value={startTime}
-                            mode="time"
-                            is24Hour={true}
-                            display="spinner"
-                            onChange={onChangeStartTime}
-                        />
-                    )}
-                </View>
-                <View style={{ flexDirection: 'column' }}>
-                    <Text style={styles.font}>End Time: </Text>
-                    <TouchableOpacity onPress={() => setShowEndTimePicker(true)}>
-                        <Text>{dayjs(endTime).format('HH:mm')}</Text>
-                    </TouchableOpacity>
-                    {showEndTimePicker && (
-                        <DateTimePicker
-                            value={endTime}
-                            mode="time"
-                            is24Hour={true}
-                            display="spinner"
-                            onChange={onChangeEndTime}
-                        />
-                    )}
-                </View>
-                <View>
-                    <Text style={styles.font}>Do you want to get notified?</Text>
+                            <TouchableOpacity onPress={() => setShowStartTimePicker(true)}>
+                                <Text>{dayjs(startTime).format('HH:mm')}</Text>
+                            </TouchableOpacity>
+                            {showStartTimePicker && (
+                                <DateTimePicker
+                                    value={startTime}
+                                    mode="time"
+                                    is24Hour={true}
+                                    display="spinner"
+                                    onChange={onChangeStartTime}
+                                />
+                            )}
+                        </View>
+                        <View style={{ flexDirection: 'column' }}>
+                            <Text style={styles.font}>End Time: </Text>
+                            <TouchableOpacity onPress={() => setShowEndTimePicker(true)}>
+                                <Text>{dayjs(endTime).format('HH:mm')}</Text>
+                            </TouchableOpacity>
+                            {showEndTimePicker && (
+                                <DateTimePicker
+                                    value={endTime}
+                                    mode="time"
+                                    is24Hour={true}
+                                    display="spinner"
+                                    onChange={onChangeEndTime}
+                                />
+                            )}
+                        </View>
+                        <View>
+                            <Text style={styles.font}>Image:</Text>
+                            <TouchableOpacity onPress={pickImage}>
+                                <Button title='Select Image' onPress={pickImage} />
+                                {image && <Image source={{ uri: image }} style={styles.image} />}
+                            </TouchableOpacity>
+                        </View>
+                        <View>
+                            <Text style={styles.font}>Do you want to get notified?</Text>
 
-                    <CheckBox
-                        disabled={false}
-                        value={notification}
-                        onValueChange={(notification) => setNotification(notification)}
-                    />
+                            <CheckBox
+                                disabled={false}
+                                value={notification}
+                                onValueChange={(notification) => setNotification(notification)}
+                            />
+                        </View>
+                        <Button title="Save Task" onPress={handleSaveTask} />
+                    </Card>
                 </View>
-                <Button title="Save Task" onPress={handleSaveTask} />
-                </Card>
-            </View>
+            </ScrollView>
         </View>
     )
 }
@@ -188,5 +216,9 @@ const styles = StyleSheet.create({
     input: {
         backgroundColor: 'white',
         width: 200,
-    }
-  });
+    },
+    image: {
+        width: 200,
+        height: 200,
+    },
+});
