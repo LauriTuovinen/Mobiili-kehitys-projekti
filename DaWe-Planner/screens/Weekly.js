@@ -19,12 +19,14 @@ const DayCard = ({ day, tasks = 0 }) => {
     )
 }
 
-export const WeeklyScreen = () =>{
+
+export const WeeklyScreen = (weekNumber) =>{
     const [days, setDays] = useState([]);
     const [tasks, setTasks] = useState([]);
-
     const fetchTasks = () => {
-      const weekStart = moment().startOf('week'); // Set to Monday by default
+      const weekStart =  weekNumber ? 
+      moment().day("Monday").week(weekNumber).startOf('week') :
+      moment().startOf('week'); 
       const weekDays = [];
       
       for (let i = 0; i < 7; i++) {
