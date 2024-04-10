@@ -6,6 +6,7 @@ import Monthly from '../screens/Monthly'
 import Weekly from '../screens/Weekly' 
 import CreateTask from '../screens/CreateTask';
 import Settings from '../screens/Settings';
+import { TaskInfo } from '../screens/TaskInfo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -15,6 +16,7 @@ const monthlyScreen = 'Monthly';
 
 const createTaskScreen = 'Create';
 const settingsScreen = 'Settings'
+const taskInfoScreen = 'TaskInfo'
 
 
 const Tab = createBottomTabNavigator();
@@ -39,8 +41,10 @@ export default function Navigation() {
                     } else if (rn === createTaskScreen) {
                         iconName = focused ? 'add-outline' : 'add-outline'
                     }
-
                     else if (rn === settingsScreen) {
+                        iconName = focused ? 'add-outline' : 'add-outline'
+                    }
+                    else if (rn === taskInfoScreen) {
                         iconName = focused ? 'add-outline' : 'add-outline'
                     }
                     
@@ -61,6 +65,7 @@ export default function Navigation() {
                 <Tab.Screen name = {monthlyScreen} component={Monthly}/>
                 <Tab.Screen name = {createTaskScreen} component={CreateTask}/>
                 <Tab.Screen name = {settingsScreen} component={Settings}/>
+                <Tab.Screen name = {taskInfoScreen} component={TaskInfo}/>
 
 
             </Tab.Navigator>

@@ -108,6 +108,25 @@ export const getAllTasks = (db) => {
     });
 };
 
+export const getTaskbyId = (db, id) => {
+    return new Promise((resolve, reject) => {
+        db.transaction(tx => {
+            tx.executeSql("SELECT * FROM tasks WHERE id =?", [id], (_, { rows }) => {
+                // Check if there are any rows returned
+                if (rows.length > 0) {
+                    // Extract the first row as an object
+                    const task = rows._array[0];
+                    resolve(task);
+                } else {
+                    resolve(null); // Resolve with null if no task found
+                }
+            }, (_, error) => {
+                reject(error);
+            });
+        });
+    });
+};
+
 export default {
     db,
     createDB,
@@ -116,4 +135,5 @@ export default {
     updateTask,
     getAllTasks,
     getTaskAmount,
+    getTaskbyId,
   };
