@@ -17,12 +17,13 @@ var moment = require('moment')
 const db = database.db;
 function Home() {
     const [tasks, setTasks] = useState([]);
-    const route = useRoute()
-    const navigation = useNavigation()
-    const { correctDay } = route.params || moment()
+    const [openPhotos, setOpenPhotos] = useState(Array(tasks.length).fill(false)); // State to track modal open status
+    const route = useRoute();
+    const navigation = useNavigation();
+    const { correctDay } = route.params || moment();
 
     const formattedDay = moment(correctDay).format('DD/MM/YYYY');
-    
+
     const fetchData = async () => {
         try {
             const taskData = await database.getAllTasks(db);
@@ -77,8 +78,13 @@ function Home() {
         });
     };
 
-
-    const [OpenPhoto, setOpenPhoto] = useState(false);
+    const handleOpenPhoto = (index) => {
+        setOpenPhotos(prevState => {
+            const newState = [...prevState];
+            newState[index] = true;
+            return newState;
+        });
+    };
 
     function OwnButton(props) {
         const { onPress, title = 'Save' } = props;
@@ -111,11 +117,12 @@ function Home() {
             </Modal>
         );
     }
-    //navigate to tasks info based on id
+
+    // Navigate to task info based on id
     const navigateToTaskInfo = (id) => {
         navigation.navigate('TaskInfo', { taskId: id });
-        console.log('navigate to task id:', id);
-    }
+        console.log('Navigate to task id:', id);
+    };
 
     return (
         <SafeAreaView style={styles.container}>
@@ -127,30 +134,28 @@ function Home() {
                     {tasks.map((t, i) => {
                         return (
                             <TouchableOpacity key={i} onPress={() => navigateToTaskInfo(t.id)}>
-                                {/*mapping tasks to cards */}
+                                {/* Mapping tasks to cards */}
                                 <Card containerStyle={styles.upcomingTaskCard}>
                                     <Card.Title>{t.name}</Card.Title>
                                     <Card.Divider />
                                     {/* <Text style={{ paddingLeft: 13, paddingBottom: 5 }}>{t.date}</Text> */}
-                                    <Text style={{ flex: 1, overflow: 'hidden', paddingLeft: 13 }}>starting at {t.startTime}</Text>
-                                    <Text style={{ flex: 1, overflow: 'hidden', paddingLeft: 13 }}>ends at {t.endTime}</Text>
+                                    <Text style={{ flex: 1, overflow: 'hidden', paddingLeft: 13 }}>Starting at {t.startTime}</Text>
+                                    <Text style={{ flex: 1, overflow: 'hidden', paddingLeft: 13 }}>Ends at {t.endTime}</Text>
                                     <View style={{ flex: 1, flexDirection: 'row' }}>
                                         <Image
-                                            source={hyi}
-                                            style={styles.image}
-                                            onPress={handleOpenPhoto}
+                                            source={{ uri: t.image }} // Assuming t.image is the URI
+                                            style={{ width: 120, height: 120, borderRadius: 10 }}
+                                            onPress={() => handleOpenPhoto(i)} // Open modal on press
                                         />
                                         <Text style={{ flex: 1, overflow: 'hidden' }}>{t.description}</Text>
                                         <Text style={{ flex: 1, overflow: 'hidden' }}>{t.notification}</Text>
                                         <Text style={{ flex: 1, overflow: 'hidden' }}>{t.priority}</Text>
                                     </View>
-                                    {/* if OpenPhoto is true or false show PhotoModal */}
-                                    {OpenPhoto ? <PhotoModal ImageSource={hyi} /> :
-                                        <View></View>
-                                    }
+                                    {/* Conditionally render the PhotoModal */}
+                                    {openPhotos[i] && <PhotoModal ImageSource={{ uri: t.image }} index={i} />}
                                 </Card>
                             </TouchableOpacity>
-                        )
+                        );
                     })}
                 </View>
             </ScrollView>
