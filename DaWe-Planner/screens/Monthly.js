@@ -19,11 +19,12 @@ function Monthly() {
     const [monthNumber, setMonthNumber] = useState(month);
     const [weekNumbers, setWeekNumbers] = useState([]);
 
+
     //get all tasks
     const getTasks = async (newWeekNumbers) => {
         // dropTaskTable(db)
         const taskData = await database.getAllTasks(db)
-        
+
         // These loops check how many task dates are between each start and end state of each week and adds the number to newWeekNumbers numberOfTasks
         for (var i = 0; i < taskData._array.length; i++) {
             const taskDate = moment(taskData._array[i].date, 'DD/MM/YYYY')
@@ -48,12 +49,12 @@ function Monthly() {
         //While start of the weeks is before the month ends, get the end of the week based on the start of week and push the end ans start dates to and rray.
         while (startOfWeek.isBefore(EndOfGivenMonth)) {
 
-                const endOfWeek = moment(startOfWeek).endOf('isoWeek')
-                weeksInMonth.push({
-                    start: startOfWeek,
-                    end: endOfWeek
-                })
-                startOfWeek = moment(endOfWeek).add(1, 'days') //One day is added to the start of week, so next new week is just after the first week ends. And loop again.
+            const endOfWeek = moment(startOfWeek).endOf('isoWeek')
+            weeksInMonth.push({
+                start: startOfWeek,
+                end: endOfWeek
+            })
+            startOfWeek = moment(endOfWeek).add(1, 'days') //One day is added to the start of week, so next new week is just after the first week ends. And loop again.
         }
 
         //Here week numbers are pushed based on the month and all the start and and dates of the weeks are pushed also.
@@ -123,50 +124,51 @@ function Monthly() {
     const navigation = useNavigation();
     //When weekCard is pressed navigate to corresponding weeklyScreen
     const navigateToWeekly = (weeks) => {
-        navigation.navigate('Weekly');
+        navigation.navigate('Weekly', {weekNumber: weeks});
         console.log('navigate to week number', weeks);
     };
 
     return (
-        <View style={styles.container}>
+        <View
+            style={styles.container}>
             <ScrollView>
 
-            <StatusBar style = {{backgroundColor: bgColorLight}}/>
-            <Text style={{ marginTop: 5, marginLeft: 5 }}>2024</Text>
+                <StatusBar style={{ backgroundColor: bgColorLight }} />
+                <Text style={{ marginTop: 5, marginLeft: 5 }}>2024</Text>
 
-            <Text style={styles.header}>
-                <Icon
-                    name='keyboard-arrow-left'
-                    size={40}
-                    color={navbarColorLight}
-                    
-                    onPress={decreaseMonth}
+                <Text style={styles.header}>
+                    <Icon
+                        name='keyboard-arrow-left'
+                        size={40}
+                        color={navbarColorLight}
+
+                        onPress={decreaseMonth}
                     />
-                <Text style={{ fontWeight: 'bold', }}>{monthName}</Text>
+                    <Text style={{ fontWeight: 'bold', }}>{monthName}</Text>
 
-                <Icon
-                    name='keyboard-arrow-right'
-                    size={40}
-                    color={navbarColorLight}
-                    
-                    onPress={increaseMonth}
+                    <Icon
+                        name='keyboard-arrow-right'
+                        size={40}
+                        color={navbarColorLight}
+
+                        onPress={increaseMonth}
                     />
-            </Text>
+                </Text>
 
-            {/* count total number of tasks per month */}
-            <Text>This month you have {weekNumbers.reduce((total, w) => total + w.numberOfTasks, 0)} tasks</Text>
-            {/* map through weekNumbers and display weeks of each month and the tasks in the month. Also each card has navigation to corresponding Weekly.js screen */}
-            {weekNumbers.map((w, i) => {
-                return (
-                    <TouchableOpacity key={i} onPress={() => navigateToWeekly(w.weeks)}>
-                        <Card containerStyle={styles.weeksCards}>
-                            <Text style={{ fontSize: 45, fontWeight: 'bold', backgroundColor: 'transparent' }}>week {w.weeks}</Text>
-                            <Text>This week you have {w.numberOfTasks} tasks</Text>
-                        </Card>
-                    </TouchableOpacity>
-                )
-            })}
-            <CreateTaskButton />
+                {/* count total number of tasks per month */}
+                <Text>This month you have {weekNumbers.reduce((total, w) => total + w.numberOfTasks, 0)} tasks</Text>
+                {/* map through weekNumbers and display weeks of each month and the tasks in the month. Also each card has navigation to corresponding Weekly.js screen */}
+                {weekNumbers.map((w, i) => {
+                    return (
+                        <TouchableOpacity key={i} onPress={() => navigateToWeekly(w.weeks)}>
+                            <Card containerStyle={styles.weeksCards}>
+                                <Text style={{ fontSize: 45, fontWeight: 'bold', backgroundColor: 'transparent' }}>week {w.weeks}</Text>
+                                <Text>This week you have {w.numberOfTasks} tasks</Text>
+                            </Card>
+                        </TouchableOpacity>
+                    )
+                })}
+                <CreateTaskButton />
             </ScrollView>
         </View>
     );
