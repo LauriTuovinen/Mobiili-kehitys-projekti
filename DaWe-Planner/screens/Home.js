@@ -54,9 +54,9 @@ function Home() {
 
     useFocusEffect(
         React.useCallback(() => {
-            fetchData();
-        }, [])
-    );
+            fetchData()
+        }, [correctDay])
+    )
 
     const copyImageToLocalDirectory = async (imageUri) => {
         try {
