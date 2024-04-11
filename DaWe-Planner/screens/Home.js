@@ -41,7 +41,7 @@ function Home() {
     useFocusEffect(
         React.useCallback(() => {
             fetchData()
-        }, [])
+        }, [correctDay])
     )
 
 

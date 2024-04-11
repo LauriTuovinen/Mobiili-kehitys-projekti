@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import { useEffect, useState } from "react";
 import React from "react";
 import { StyleSheet } from "react-native";
@@ -7,17 +7,25 @@ import { useFocusEffect } from '@react-navigation/native';
 import CreateTaskButton from "../components/CreateTaskButton";
 import moment, { weekdays } from "moment";
 import database, { getTaskAmount } from "../components/database";
-import { useRoute } from "@react-navigation/native";
+import { useRoute, useNavigation } from "@react-navigation/native";
 
 
 const db = database.db;
-
 const DayCard = ({ day, tasks = 0 }) => {
+  const navigation = useNavigation()
+  //Navigate to home.js to correct day
+  const navigateToDay = (day) =>{
+    navigation.navigate('Home', {correctDay: day})
+    console.log('navigate to day:', day);
+  }
+  //onPress nagateToDay
   return (
-    <View style={styles.cardContainer}>
+    // <View style={styles.cardContainer}>
+      <TouchableOpacity  style={styles.cardContainer} onPress= {() => navigateToDay(day)}> 
       <Text style={[styles.cardText, { textAlign: 'right' }]}>{day.day}</Text>
       <Text style={{ textAlign: 'right' }}>{tasks} tasks</Text>
-    </View>
+      </TouchableOpacity>
+    // </View>
   )
 }
 
@@ -64,19 +72,20 @@ export const WeeklyScreen = () => {
     }, [weekNumber])
   )
 
+
   return (
     <View style={styles.container}>
       <Text style={[styles.cardText, { fontSize: 22 }, { paddingTop: 10 }]}> Week {weekNumber ? weekNumber : moment().week()}</Text>
       <FlatList
-        data={days}
-        renderItem={({ item }) => {
-          const matchingTaskData = tasks.find(dayData => dayData.day === item.day);
-          console.log('Matching data for', item.day, ':', matchingTaskData);
-          const taskCount = matchingTaskData?.tasks || 0;
-          return <DayCard day={item} tasks={taskCount} />;
-        }}
-        keyExtractor={(item) => item.day}
-        showsVerticalScrollIndicator={false}
+      data={days}
+      renderItem={({ item }) => {
+        const matchingTaskData = tasks.find(dayData => dayData.day === item.day);
+        console.log('Matching data for', item.day, ':', matchingTaskData);
+        const taskCount = matchingTaskData?.tasks || 0;
+        return <DayCard day={item} tasks={taskCount} />;
+      }}
+      keyExtractor={(item) => item.day}
+      showsVerticalScrollIndicator={false}
       />
       <CreateTaskButton />
     </View>
