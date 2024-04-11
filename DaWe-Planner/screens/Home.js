@@ -1,29 +1,25 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react'
-import { Modal, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Modal, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Card, Image } from '@rneui/themed';
 import hyi from '../assets/hyi.jpg'
 import database from "../components/database";
 import { useFocusEffect } from '@react-navigation/native';
-
+import { useRoute, useNavigation } from "@react-navigation/native";
 import * as FileSystem from 'expo-file-system';
-
-import { useRoute } from "@react-navigation/native";
-
 
 
 const bgColorLight = '#f9efdb'
 const cardColorLight = '#ffdac1'
 const navbarColorLight = '#ffb8b1'
 
-var moment = require('moment');
+var moment = require('moment')
 const db = database.db;
 function Home() {
-    const route = useRoute();
     const [tasks, setTasks] = useState([]);
-    const [openPhotos, setOpenPhotos] = useState([]);
-
-    const { correctDay } = route.params || moment();
+    const route = useRoute()
+    const navigation = useNavigation()
+    const { correctDay } = route.params || moment()
 
     const formattedDay = moment(correctDay).format('DD/MM/YYYY');
     
@@ -81,13 +77,8 @@ function Home() {
         });
     };
 
-    const handleOpenPhoto = (index) => {
-        setOpenPhotos(prevState => {
-            const newState = [...prevState];
-            newState[index] = true;
-            return newState;
-        });
-    };
+
+    const [OpenPhoto, setOpenPhoto] = useState(false);
 
     function OwnButton(props) {
         const { onPress, title = 'Save' } = props;
@@ -120,6 +111,11 @@ function Home() {
             </Modal>
         );
     }
+    //navigate to tasks info based on id
+    const navigateToTaskInfo = (id) => {
+        navigation.navigate('TaskInfo', { taskId: id });
+        console.log('navigate to task id:', id);
+    }
 
     return (
         <SafeAreaView style={styles.container}>
@@ -128,25 +124,34 @@ function Home() {
                 <Text style={styles.header}>Upcoming tasks</Text>
                 <Text style={styles.secondadryHeader}>{formattedDay}</Text>
                 <View style={styles.upcomingTaskView}>
-                    {tasks.map((t, i) => (
-                        <Card key={i} containerStyle={styles.upcomingTaskCard}>
-                            <Card.Title>{t.name}</Card.Title>
-                            <Card.Divider />
-                            <Text style={{ flex: 1, overflow: 'hidden', paddingLeft: 13 }}>starting at {t.startTime}</Text>
-                            <Text style={{ flex: 1, overflow: 'hidden', paddingLeft: 13 }}>ends at {t.endTime}</Text>
-                            <View style={{ flex: 1, flexDirection: 'row' }}>
-                                <Image 
-                                    source={{ uri: t.image }} 
-                                    style={{ width: 120, height: 120, borderRadius: 10 }} 
-                                    onPress={() => handleOpenPhoto(i)}
-                                />
-                                <Text style={{ flex: 1, overflow: 'hidden' }}>{t.description}</Text>
-                                <Text style={{ flex: 1, overflow: 'hidden' }}>{t.notification}</Text>
-                                <Text style={{ flex: 1, overflow: 'hidden' }}>{t.priority}</Text>
-                            </View>
-                            {openPhotos[i] && <PhotoModal ImageSource={{uri: t.image}} index={i} />}
-                        </Card>
-                    ))}
+                    {tasks.map((t, i) => {
+                        return (
+                            <TouchableOpacity key={i} onPress={() => navigateToTaskInfo(t.id)}>
+                                {/*mapping tasks to cards */}
+                                <Card containerStyle={styles.upcomingTaskCard}>
+                                    <Card.Title>{t.name}</Card.Title>
+                                    <Card.Divider />
+                                    {/* <Text style={{ paddingLeft: 13, paddingBottom: 5 }}>{t.date}</Text> */}
+                                    <Text style={{ flex: 1, overflow: 'hidden', paddingLeft: 13 }}>starting at {t.startTime}</Text>
+                                    <Text style={{ flex: 1, overflow: 'hidden', paddingLeft: 13 }}>ends at {t.endTime}</Text>
+                                    <View style={{ flex: 1, flexDirection: 'row' }}>
+                                        <Image
+                                            source={hyi}
+                                            style={styles.image}
+                                            onPress={handleOpenPhoto}
+                                        />
+                                        <Text style={{ flex: 1, overflow: 'hidden' }}>{t.description}</Text>
+                                        <Text style={{ flex: 1, overflow: 'hidden' }}>{t.notification}</Text>
+                                        <Text style={{ flex: 1, overflow: 'hidden' }}>{t.priority}</Text>
+                                    </View>
+                                    {/* if OpenPhoto is true or false show PhotoModal */}
+                                    {OpenPhoto ? <PhotoModal ImageSource={hyi} /> :
+                                        <View></View>
+                                    }
+                                </Card>
+                            </TouchableOpacity>
+                        )
+                    })}
                 </View>
             </ScrollView>
         </SafeAreaView>

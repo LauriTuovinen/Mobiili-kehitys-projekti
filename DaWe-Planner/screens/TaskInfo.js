@@ -4,13 +4,16 @@ import database from "../components/database";
 import { StyleSheet } from "react-native";
 import { Image } from "react-native";
 import * as FileSystem from 'expo-file-system';
+import { useRoute } from "@react-navigation/native";
 
 const db = database.db;
 
-  export const TaskInfo = ({ id }) => {
-    const taskId = id || 3;
+  export const TaskInfo = () => {
+    
     const [task, setTask] = useState(null);
-
+    const route = useRoute()
+    const { taskId } = route.params || {taskId: 1}
+    console.log(taskId);
     useEffect(() => {
         const fetchTask = async () => {
             try {
@@ -25,7 +28,7 @@ const db = database.db;
         };
 
         fetchTask();
-    }, [id]);
+    }, [taskId]);
 
     const copyImageToLocalDirectory = async (imageUri) => {
         try {
