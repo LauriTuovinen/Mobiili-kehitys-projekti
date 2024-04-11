@@ -20,12 +20,10 @@ const DayCard = ({ day, tasks = 0 }) => {
   }
   //onPress nagateToDay
   return (
-    // <View style={styles.cardContainer}>
       <TouchableOpacity  style={styles.cardContainer} onPress= {() => navigateToDay(day)}> 
       <Text style={[styles.cardText, { textAlign: 'right' }]}>{day.day}</Text>
       <Text style={{ textAlign: 'right' }}>{tasks} tasks</Text>
       </TouchableOpacity>
-    // </View>
   )
 }
 
