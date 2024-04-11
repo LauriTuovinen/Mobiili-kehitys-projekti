@@ -7,16 +7,6 @@ import * as FileSystem from 'expo-file-system';
 import { useRoute } from "@react-navigation/native";
 
 const db = database.db;
-const modifyUri = (uri) => {
-  
-    if (uri.startsWith('file://')) {
-      
-      return uri.replace('file://', 'asset://');
-    } else {
-      
-      return uri;
-    }
-  };
 
   export const TaskInfo = () => {
     
