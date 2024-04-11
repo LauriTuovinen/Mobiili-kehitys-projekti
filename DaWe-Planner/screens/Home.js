@@ -5,7 +5,12 @@ import { Card, Image } from '@rneui/themed';
 import hyi from '../assets/hyi.jpg'
 import database from "../components/database";
 import { useFocusEffect } from '@react-navigation/native';
+
 import * as FileSystem from 'expo-file-system';
+
+import { useRoute } from "@react-navigation/native";
+
+
 
 const bgColorLight = '#f9efdb'
 const cardColorLight = '#ffdac1'
@@ -13,10 +18,12 @@ const navbarColorLight = '#ffb8b1'
 
 var moment = require('moment');
 const db = database.db;
-
-function Home({ day }) {
+function Home() {
+    const route = useRoute()
     const [tasks, setTasks] = useState([]);
-    const correctDay = day ? moment(day) : moment()
+
+  const { correctDay } = route.params || moment() 
+
     const formattedDay = moment(correctDay).format('DD/MM/YYYY')
     const fetchData = async () => {
         // dropTaskTable(db)

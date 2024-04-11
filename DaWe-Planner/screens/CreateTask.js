@@ -172,20 +172,21 @@ export default function CreateTask() {
                         <View>
                             <Text style={styles.font}>Image:</Text>
                             <TouchableOpacity onPress={pickImage}>
-                                <Button title='Select Image' onPress={pickImage} />
+                                <Button color={'#ffb8b1'} title='Select Image' onPress={pickImage} />
                                 {image && <Image source={{ uri: image }} style={styles.image} />}
                             </TouchableOpacity>
                         </View>
                         <View>
                             <Text style={styles.font}>Do you want to get notified?</Text>
 
-                            <CheckBox
+                            <CheckBox marginBottom={8}
+                                marginTop={8}
                                 disabled={false}
                                 value={notification}
                                 onValueChange={(notification) => setNotification(notification)}
                             />
                         </View>
-                        <Button title="Save Task" onPress={handleSaveTask} />
+                        <Button color={'#ffb8b1'} title="Save Task" onPress={handleSaveTask} />
                     </Card>
                 </View>
             </ScrollView>
@@ -220,5 +221,8 @@ const styles = StyleSheet.create({
     image: {
         width: 200,
         height: 200,
+        margin: 16,
+        flex: 1,
+        alignSelf: 'center'
     },
 });
