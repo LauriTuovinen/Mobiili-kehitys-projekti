@@ -42,22 +42,22 @@ export default function Navigation() {
                         iconName = focused ? 'add-outline' : 'add-outline'
                     }
                     else if (rn === settingsScreen) {
-                        iconName = focused ? 'add-outline' : 'add-outline'
+                        iconName = focused ? 'settings' : 'settings-outline'
                     }
                     else if (rn === taskInfoScreen) {
-                        iconName = focused ? 'add-outline' : 'add-outline'
+                        iconName = focused ? 'alert-circle' : 'alert-circle-outline'
                     }
                     
-                    return <Ionicons backgroundColor={'#ffb8b1'}name={iconName} size={size} color={color}/>
+                    return <Ionicons name={iconName} size={size} color={color}/>
 
                 },
 
             })}
             
-            NavBarOptions={{
+            tabBarOptions={{
                 activeTintColor: 'black',
                 inactiveTintColor: 'grey',
-                labelStyle: { backgroundColor:'#ffb8b1', paddingBottom: 10, fontSize: 10 },
+                labelStyle: { paddingBottom: 10, fontSize: 10 },
               }}>
 
                 <Tab.Screen name = {homeScreen} component={Home}/>
