@@ -18,8 +18,9 @@ function Monthly() {
     const [monthName, setMonthName] = useState('');
     const [monthNumber, setMonthNumber] = useState(month);
     const [weekNumbers, setWeekNumbers] = useState([]);
-
-
+    const navigation = useNavigation();
+    
+    
     //get all tasks
     const getTasks = async (newWeekNumbers) => {
         // dropTaskTable(db)
@@ -121,7 +122,6 @@ function Monthly() {
         if (monthNumber < 12) { setMonthNumber((prevMonthNumber) => prevMonthNumber + 1) }
     }
 
-    const navigation = useNavigation();
     //When weekCard is pressed navigate to corresponding weeklyScreen
     const navigateToWeekly = (weeks) => {
         navigation.navigate('Weekly', {weekNumber: weeks});
