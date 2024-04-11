@@ -6,16 +6,6 @@ import { Image } from "react-native";
 import * as FileSystem from 'expo-file-system';
 
 const db = database.db;
-const modifyUri = (uri) => {
-  
-    if (uri.startsWith('file://')) {
-      
-      return uri.replace('file://', 'asset://');
-    } else {
-      
-      return uri;
-    }
-  };
 
   export const TaskInfo = ({ id }) => {
     const taskId = id || 3;

@@ -5,6 +5,7 @@ import { Card, Image } from '@rneui/themed';
 import hyi from '../assets/hyi.jpg'
 import database from "../components/database";
 import { useFocusEffect } from '@react-navigation/native';
+import * as FileSystem from 'expo-file-system';
 
 const bgColorLight = '#f9efdb'
 const cardColorLight = '#ffdac1'
@@ -26,19 +27,39 @@ function Home({ day }) {
             return taskDate.isSame(correctDay, 'day')
         })
 
-        setTasks(newTasks)
+        const tasksWithModifiedImages = await Promise.all(newTasks.map(async task => {
+            if (task.image) {
+                const localUri = await copyImageToLocalDirectory(task.image);
+                task.image = localUri;
+            }
+            return task;
+        }));
+
+        setTasks(tasksWithModifiedImages)
     }
-    
+
     useEffect(() => {
         fetchData()
-        
+
     }, [])
 
     useFocusEffect(
-        React.useCallback(()=>{
-          fetchData()
+        React.useCallback(() => {
+            fetchData()
         }, [])
-      )
+    )
+
+    const copyImageToLocalDirectory = async (imageUri) => {
+        try {
+            const fileName = imageUri.split('/').pop();
+            const localUri = `${FileSystem.documentDirectory}${fileName}`;
+            await FileSystem.copyAsync({ from: imageUri, to: localUri });
+            return localUri;
+        } catch (error) {
+            console.error('Error copying image:', error);
+            return null;
+        }
+    };
 
 
     const [OpenPhoto, setOpenPhoto] = useState(false);
@@ -101,17 +122,14 @@ function Home({ day }) {
                                 <Text style={{ flex: 1, overflow: 'hidden', paddingLeft: 13 }}>starting at {t.startTime}</Text>
                                 <Text style={{ flex: 1, overflow: 'hidden', paddingLeft: 13 }}>ends at {t.endTime}</Text>
                                 <View style={{ flex: 1, flexDirection: 'row' }}>
-                                    <Image
-                                        source={hyi}
-                                        style={styles.image}
-                                        onPress={handleOpenPhoto}
-                                    />
+                                <Image source={{ uri: t.image }} style={{ width: 120, height: 120, borderRadius: 10 }} />
+                                    
                                     <Text style={{ flex: 1, overflow: 'hidden' }}>{t.description}</Text>
                                     <Text style={{ flex: 1, overflow: 'hidden' }}>{t.notification}</Text>
                                     <Text style={{ flex: 1, overflow: 'hidden' }}>{t.priority}</Text>
                                 </View>
                                 {/* if OpenPhoto is true or false show PhotoModal */}
-                                {OpenPhoto ? <PhotoModal ImageSource={hyi} /> :
+                                {OpenPhoto ? <PhotoModal ImageSource={t.image} /> :
                                     <View></View>
                                 }
                             </Card>
