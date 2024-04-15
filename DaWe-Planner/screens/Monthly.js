@@ -1,26 +1,32 @@
 import { Card, Icon, Text } from "@rneui/themed";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Pressable, ScrollView, StatusBar, StyleSheet, Touchable, TouchableOpacity, View } from "react-native";
 import CreateTaskButton from "../components/CreateTaskButton";
 import 'moment/locale/en-gb'
 import { useNavigation } from "@react-navigation/native";
 import database from "../components/database";
+import {DarkModeContext, DarkModeProvider} from '../components/themeContext'
+
 
 const bgColorLight = '#f9efdb'
 const cardColorLight = '#ffdac1'
 const navbarColorLight = '#ffb8b1'
+const cardColorDark = '#979797'
+const navbarColorDark = '#b95970'
+const bgColorDark = '#757575'
 
 var moment = require('moment');
 const db = database.db;
 
 function Monthly() {
-    var month = new Date().getMonth() + 1
+    const { darkMode } = useContext(DarkModeContext)
+    var month = moment().month() + 1
     const [monthName, setMonthName] = useState('');
     const [monthNumber, setMonthNumber] = useState(month);
     const [weekNumbers, setWeekNumbers] = useState([]);
     const navigation = useNavigation();
-    
-    
+
+
     //get all tasks
     const getTasks = async (newWeekNumbers) => {
         // dropTaskTable(db)
@@ -124,53 +130,56 @@ function Monthly() {
 
     //When weekCard is pressed navigate to corresponding weeklyScreen
     const navigateToWeekly = (weeks) => {
-        navigation.navigate('Weekly', {weekNumber: weeks});
+        navigation.navigate('Weekly', { weekNumber: weeks });
         console.log('navigate to week number', weeks);
+        console.log(moment().month()+1);
     };
 
     return (
-        <View
-            style={styles.container}>
-            <ScrollView>
+            <View
+                style={darkMode ? styles.darkContainer : styles.container}>
+                <ScrollView>
 
-                <StatusBar style={{ backgroundColor: bgColorLight }} />
-                <Text style={{ marginTop: 5, marginLeft: 5 }}>2024</Text>
+                    <StatusBar style={{ backgroundColor: darkMode ? navbarColorDark : navbarColorLight }} />
+                    <Text style={{ marginTop: 5, marginLeft: 15, fontWeight: 'bold' }}>2024</Text>
 
-                <Text style={styles.header}>
-                    <Icon
-                        name='keyboard-arrow-left'
-                        size={40}
-                        color={navbarColorLight}
+                    <Text style={styles.header}>
+                        <Icon
+                            name='keyboard-arrow-left'
+                            size={40}
+                            color={darkMode ? navbarColorDark : navbarColorLight}
 
-                        onPress={decreaseMonth}
-                    />
-                    <Text style={{ fontWeight: 'bold', }}>{monthName}</Text>
+                            onPress={decreaseMonth}
+                        />
+                        <Text style={{ fontWeight: 'bold', }}>{monthName}</Text>
 
-                    <Icon
-                        name='keyboard-arrow-right'
-                        size={40}
-                        color={navbarColorLight}
+                        <Icon
+                            name='keyboard-arrow-right'
+                            size={40}
+                            color={darkMode ? navbarColorDark : navbarColorLight}
 
-                        onPress={increaseMonth}
-                    />
-                </Text>
+                            onPress={increaseMonth}
+                        />
+                    </Text>
 
-                {/* count total number of tasks per month */}
-                <Text>This month you have {weekNumbers.reduce((total, w) => total + w.numberOfTasks, 0)} tasks</Text>
-                {/* map through weekNumbers and display weeks of each month and the tasks in the month. Also each card has navigation to corresponding Weekly.js screen */}
-                {weekNumbers.map((w, i) => {
-                    return (
-                        <TouchableOpacity key={i} onPress={() => navigateToWeekly(w.weeks)}>
-                            <Card containerStyle={styles.weeksCards}>
-                                <Text style={{ fontSize: 45, fontWeight: 'bold', backgroundColor: 'transparent' }}>week {w.weeks}</Text>
-                                <Text>This week you have {w.numberOfTasks} tasks</Text>
-                            </Card>
-                        </TouchableOpacity>
-                    )
-                })}
-                <CreateTaskButton />
-            </ScrollView>
-        </View>
+                    {/* count total number of tasks per month */}
+                    <Text style={{marginLeft: 15, fontWeight: 'bold'}}>This month you have {weekNumbers.reduce((total, w) => total + w.numberOfTasks, 0)} tasks</Text>
+                    {/* map through weekNumbers and display weeks of each month and the tasks in the month. Also each card has navigation to corresponding Weekly.js screen */}
+                    {weekNumbers.map((w, i) => {
+                        return (
+                            <TouchableOpacity key={i} onPress={() => navigateToWeekly(w.weeks)}>
+                                <Card containerStyle={darkMode ? styles.darkWeeksCards : styles.weeksCards}>
+                                    <View style = {{flexDirection: 'row', justifyContent: "space-evenly", alignItems: 'center' }}>
+                                    <Text style={{ fontSize: 45, fontWeight: 'bold', backgroundColor: 'transparent' }}>week {w.weeks}</Text>
+                                    <Text style = {{fontWeight: 'bold'}}>{w.numberOfTasks} tasks this week</Text>
+                                    </View>
+                                </Card>
+                            </TouchableOpacity>
+                        )
+                    })}
+                    <CreateTaskButton />
+                </ScrollView>
+            </View>
     );
 }
 
@@ -178,6 +187,10 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: bgColorLight,
+    },
+    darkContainer: {
+        flex: 1,
+        backgroundColor: bgColorDark,
     },
     header: {
         alignSelf: 'flex-end',
@@ -189,6 +202,17 @@ const styles = StyleSheet.create({
     },
     weeksCards: {
         backgroundColor: cardColorLight,
+        borderWidth: 0,
+        shadowColor: 'black',
+        shadowOffset: { width: -2, height: 4 },
+        shadowOpacity: 1,
+        shadowRadius: 10,
+        elevation: 5,
+        marginBottom: 20,
+
+    },
+    darkWeeksCards: {
+        backgroundColor: cardColorDark,
         borderWidth: 0,
         shadowColor: 'black',
         shadowOffset: { width: -2, height: 4 },

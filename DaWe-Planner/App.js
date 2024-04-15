@@ -5,19 +5,20 @@ import { useState, useEffect } from 'react';
 import Navigation from './components/navigation';
 import WeeklyScreen from './screens/Weekly';
 import CreateTask from './screens/CreateTask';
-import moment from 'moment';
+import { DarkModeProvider } from './components/themeContext';
 
- //SQLite should always be used in app.js to avoid any errors
+//SQLite should always be used in app.js to avoid any errors
 export default function App() {
   const db = database.db;
+
   database.createDB(db);
-  const currentDate = moment().format('DD/MM/YYYY');
-  database.deleteTasksByDate(db, currentDate)
   return (
+      <DarkModeProvider>
     <View style={styles.container}>
       <StatusBar style="auto" />
-      <Navigation />
+        <Navigation />
     </View>
+      </DarkModeProvider>
   );
 }
 

@@ -85,7 +85,7 @@ export const getTaskAmount = (db, date) => {
                 "SELECT COUNT(*) AS taskCount FROM tasks WHERE date = ?",
                 [date],
                 (_, { rows: { _array } }) => {
-                    console.log("gettingForDate");
+                    // console.log("gettingForDate");
                     resolve(_array[0].taskCount);
                 },
                 (_, error) => {
