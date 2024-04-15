@@ -191,14 +191,13 @@ export default function CreateTask() {
                                     is24Hour={true}
                                     display="spinner"
                                     onChange={onChangeEndTime}
+                                    padding={16}
                                 />
                             )}
                         </View>
-                        <View>
-                            {/* 
-                            <Text style={styles.font}>Image:</Text>
+                        <View> {/*
                             <TouchableOpacity onPress={pickImage}>
-                                <Button color={'#ffb8b1'} title='Select Image' onPress={pickImage} />
+                                <Button  color={'#ffb8b1'} title='Select Image' onPress={pickImage} />
                                 {image && <Image source={{ uri: image }} style={styles.image} />}
                             </TouchableOpacity>
                             */}

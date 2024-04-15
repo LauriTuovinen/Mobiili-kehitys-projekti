@@ -7,6 +7,7 @@ import database from "../components/database";
 import { useFocusEffect } from '@react-navigation/native';
 import { useRoute, useNavigation } from "@react-navigation/native";
 import * as FileSystem from 'expo-file-system';
+import { Button } from '@rneui/themed';
 
 
 const bgColorLight = '#f9efdb'
@@ -123,6 +124,16 @@ function Home() {
         navigation.navigate('TaskInfo', { taskId: id });
         console.log('Navigate to task id:', id);
     };
+    const updateDone = async (id) => {
+        database.updateTaskDoneById(db, id);
+
+        fetchData();
+    }
+    const deleteTask = async (id) => {
+        database.deleteTaskbyId(db, id);
+
+        fetchData();
+    }
 
     return (
         <SafeAreaView style={styles.container}>
@@ -132,10 +143,11 @@ function Home() {
                 <Text style={styles.secondadryHeader}>{formattedDay}</Text>
                 <View style={styles.upcomingTaskView}>
                     {tasks.map((t, i) => {
+                        const cardStyles = t.done === 1 ? styles.dullCard : styles.upcomingTaskCard;
                         return (
                             <TouchableOpacity key={i} onPress={() => navigateToTaskInfo(t.id)}>
                                 {/* Mapping tasks to cards */}
-                                <Card containerStyle={styles.upcomingTaskCard}>
+                                <Card containerStyle={cardStyles}>
                                     <Card.Title>{t.name}</Card.Title>
                                     <Card.Divider />
                                     {/* <Text style={{ paddingLeft: 13, paddingBottom: 5 }}>{t.date}</Text> */}
@@ -150,6 +162,13 @@ function Home() {
                                         <Text style={{ flex: 1, overflow: 'hidden' }}>{t.description}</Text>
                                         <Text style={{ flex: 1, overflow: 'hidden' }}>{t.notification}</Text>
                                         <Text style={{ flex: 1, overflow: 'hidden' }}>{t.priority}</Text>
+                                        {t.done !== 1 && (
+                                            <Button
+                                                onPress={() => updateDone(t.id)}
+                                                title="done"
+                                            />
+                                        )}
+                                        <Button onPress={() => deleteTask(t.id)} title="delete"></Button>
                                     </View>
                                     {/* Conditionally render the PhotoModal */}
                                     {openPhotos[i] && <PhotoModal ImageSource={{ uri: t.image }} index={i} />}
@@ -172,9 +191,8 @@ const styles = StyleSheet.create({
         width: '100%',
     },
     header: {
-        alignSelf: 'flex-end',
-        marginRight: 25,
-        marginTop: 70,
+        alignSelf: 'center',
+        marginTop: 24,
         fontWeight: 'bold',
         fontSize: 40,
     },
@@ -198,6 +216,17 @@ const styles = StyleSheet.create({
         shadowOpacity: 1,
         shadowRadius: 5,
         elevation: 10,
+    },
+    dullCard: {
+        opacity: 0.5,
+        backgroundColor: cardColorLight,
+        borderWidth: 0,
+        shadowColor: 'black',
+        shadowOffset: { width: -2, height: 4 },
+        shadowOpacity: 1,
+        shadowRadius: 5,
+        elevation: 10,
+
     },
     image: {
         height: 100,
