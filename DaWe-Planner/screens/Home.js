@@ -124,12 +124,15 @@ function Home() {
         navigation.navigate('TaskInfo', { taskId: id });
         console.log('Navigate to task id:', id);
     };
-    const handlePress = (id) => { 
+    const updateDone = async (id) => { 
         database.updateTaskDoneById(db, id);
-        console.log("Tate of done change for id: ", {id})
+
+        fetchData();
     }
-    const deleteTask = (id) => {
+    const deleteTask = async (id) => {
         database.deleteTaskbyId(db, id);
+
+        fetchData();
     }
 
     return (
@@ -140,15 +143,17 @@ function Home() {
                 <Text style={styles.secondadryHeader}>{formattedDay}</Text>
                 <View style={styles.upcomingTaskView}>
                     {tasks.map((t, i) => {
+                        const cardStyles = t.done === 1 ? styles.dullCard : styles.upcomingTaskCard;
                         return (
                             <TouchableOpacity key={i} onPress={() => navigateToTaskInfo(t.id)}>
                                 {/* Mapping tasks to cards */}
-                                <Card containerStyle={styles.upcomingTaskCard}>
+                                <Card containerStyle={cardStyles}>
                                     <Card.Title>{t.name}</Card.Title>
                                     <Card.Divider />
                                     {/* <Text style={{ paddingLeft: 13, paddingBottom: 5 }}>{t.date}</Text> */}
                                     <Text style={{ flex: 1, overflow: 'hidden', paddingLeft: 13 }}>Starting at {t.startTime}</Text>
                                     <Text style={{ flex: 1, overflow: 'hidden', paddingLeft: 13 }}>Ends at {t.endTime}</Text>
+                                    <Text style={{ flex: 1, overflow: 'hidden' }}>DOne: {t.done}</Text>
                                     <View style={{ flex: 1, flexDirection: 'row' }}>
                                         <Image
                                             source={{ uri: t.image }} // Assuming t.image is the URI
@@ -158,7 +163,7 @@ function Home() {
                                         <Text style={{ flex: 1, overflow: 'hidden' }}>{t.description}</Text>
                                         <Text style={{ flex: 1, overflow: 'hidden' }}>{t.notification}</Text>
                                         <Text style={{ flex: 1, overflow: 'hidden' }}>{t.priority}</Text>
-                                        <Button onPress={() => handlePress(t.id)} title="done"></Button>
+                                        <Button onPress={() => updateDone(t.id)} title="done"></Button>
                                         <Button onPress={() => deleteTask(t.id)} title="delete"></Button>
                                     </View>
                                     {/* Conditionally render the PhotoModal */}
@@ -207,6 +212,17 @@ const styles = StyleSheet.create({
         shadowOpacity: 1,
         shadowRadius: 5,
         elevation: 10,
+    },
+    dullCard: {
+        opacity: 0.5,
+        backgroundColor: cardColorLight,
+        borderWidth: 0,
+        shadowColor: 'black',
+        shadowOffset: { width: -2, height: 4 },
+        shadowOpacity: 1,
+        shadowRadius: 5,
+        elevation: 10,
+        
     },
     image: {
         height: 100,
