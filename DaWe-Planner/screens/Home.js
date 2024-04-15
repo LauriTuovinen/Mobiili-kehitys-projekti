@@ -124,8 +124,12 @@ function Home() {
         navigation.navigate('TaskInfo', { taskId: id });
         console.log('Navigate to task id:', id);
     };
-    const handlePress = (id) =>{
+    const handlePress = (id) => { 
         database.updateTaskDoneById(db, id);
+        console.log("Tate of done change for id: ", {id})
+    }
+    const deleteTask = (id) => {
+        database.deleteTaskbyId(db, id);
     }
 
     return (
@@ -154,7 +158,8 @@ function Home() {
                                         <Text style={{ flex: 1, overflow: 'hidden' }}>{t.description}</Text>
                                         <Text style={{ flex: 1, overflow: 'hidden' }}>{t.notification}</Text>
                                         <Text style={{ flex: 1, overflow: 'hidden' }}>{t.priority}</Text>
-                                        <Button onPress={handlePress(t.id)} title= "done"></Button>
+                                        <Button onPress={() => handlePress(t.id)} title="done"></Button>
+                                        <Button onPress={() => deleteTask(t.id)} title="delete"></Button>
                                     </View>
                                     {/* Conditionally render the PhotoModal */}
                                     {openPhotos[i] && <PhotoModal ImageSource={{ uri: t.image }} index={i} />}
