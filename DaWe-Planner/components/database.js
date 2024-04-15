@@ -148,6 +148,27 @@ export const updateTaskDoneById = (db, id) => {
     });
 };
 
+
+export const deleteTaskbyId = (db, id) => {
+    return new Promise((resolve, reject) => {
+        db.transaction(tx => {
+            tx.executeSql(
+                "DELETE FROM tasks where id = ?", 
+                [id], 
+                (_, { rowsAffected }) => {
+                    if (rowsAffected > 0) {
+                        resolve(true); 
+                    } else {
+                        resolve(false); 
+                    }
+                }, 
+                (_, error) => {
+                    reject(error);
+                }
+            );
+        });
+    });
+};
 export default {
     db,
     createDB,
@@ -158,4 +179,5 @@ export default {
     getTaskAmount,
     getTaskbyId,
     updateTaskDoneById,
+    deleteTaskbyId,
   };
