@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Button, Text, TextInput, View, Image, Pressable, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { useState, useEffect, useRef } from 'react';
+import { Button, Text, TextInput, View, Image, Pressable, TouchableOpacity, StyleSheet, ScrollView, Platform } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
 import dayjs from 'dayjs';
@@ -7,10 +7,35 @@ import CheckBox from 'expo-checkbox';
 import database from '../components/database';
 import { Card } from '@rneui/themed';
 import { dropTaskTable } from '../components/database';
-import * as ImagePicker from 'expo-image-picker';
+import * as ImagePicker from 'expo-image-picker';  // import everything from the module
+import * as Notifications from 'expo-notifications';
+import Constants from 'expo-constants';
+import * as Device from 'expo-device';
+
 
 // {/* */}   comment format inside react native code
 
+// First, set the handler that will cause the notification
+// to show the alert
+
+Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: false,
+        shouldSetBadge: false,
+    }),
+});
+
+// Second, call the method
+/*
+Notifications.scheduleNotificationAsync({
+    content: {
+        title: 'Look at that notification',
+        body: "I'm so proud of myself!",
+    },
+    trigger: null,
+});
+*/
 export default function CreateTask() {
     const [taskName, setTaskName] = useState('');
     const [description, setDescription] = useState('');
@@ -25,9 +50,77 @@ export default function CreateTask() {
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [notification, setNotification] = useState(false);
     const [tasks, setTasks] = useState([]);
+    const [pushNotification, setPushNotification] = useState(false);
+    const [expoPushToken, setExpoPushToken] = useState('');
 
     const db = database.db;
+    const notificationListener = useRef();
+    const responseListener = useRef();
+/*
+    useEffect(() => {
+        registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
 
+        notificationListener.current = Notifications.addNotificationReceivedListener(pushNotification => {
+            setPushNotification(pushNotification);
+        });
+
+        responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+            console.log(response);
+        });
+
+        return () => {
+            Notifications.removeNotificationSubscription(notificationListener.current);
+            Notifications.removeNotificationSubscription(responseListener.current);
+        };
+    }, []);
+
+    async function registerForPushNotificationsAsync() {
+        let token;
+
+        if (Platform.OS === 'android') {
+            await Notifications.setNotificationChannelAsync('default', {
+                name: 'default',
+                importance: Notifications.AndroidImportance.MAX,
+                vibrationPattern: [0, 250, 250, 250],
+                lightColor: '#FF231F7C',
+            });
+        }
+
+        if (Device.isDevice) {
+            const { status: existingStatus } = await Notifications.getPermissionsAsync();
+            let finalStatus = existingStatus;
+            if (existingStatus !== 'granted') {
+                const { status } = await Notifications.requestPermissionsAsync();
+                finalStatus = status;
+            }
+            if (finalStatus !== 'granted') {
+                alert('Failed to get push token for push notification!');
+                return;
+            }
+            // Learn more about projectId:
+            // https://docs.expo.dev/push-notifications/push-notifications-setup/#configure-projectid
+            token = (await Notifications.getExpoPushTokenAsync({ projectId: 'your-project-id' })).data;
+            console.log(token);
+        } else {
+            alert('Must use physical device for Push Notifications');
+        }
+
+        return token;
+    }
+
+    const scheduleNotification = async (notificationTime, taskName) => {
+        await Notifications.scheduleNotificationAsync({
+            content: {
+                title: "Task Reminder",
+                body: `Your task "${taskName}" is starting soon!`,
+                data: { taskName },
+            },
+            trigger: { date: notificationTime }, // Schedule notification 10 minutes before task start time
+
+        });
+    }
+
+*/
     const pickImage = async () => {
         // No permissions request is necessary for launching the image library
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -57,10 +150,24 @@ export default function CreateTask() {
 
 
         const formattedDate = dayjs(date).format('DD/MM/YYYY');
+        const formattedStartTime = startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+        const formattedEndTime = endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
 
         await database.addTask(db, taskName, description, priority, formattedDate, startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }), endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }), image, notification);
         //getTasks();
 
+        /*
+        if (notification === true) {
+            const taskStartTime = dayjs(`${date} ${formattedStartTime}`).toDate();
+            console.log("taskStartTime:", taskStartTime.format('DD/MM/YYYY HH:mm'));
+            //const taskStartTime = dayjs(`${formattedDate} ${formattedStartTime}`).format('DD/MM/YYYY HH:mm');
+            //console.log("this is taskStartTime: ", taskStartTime);
+            console.log("this is formattedDate: ", formattedDate);
+            console.log("this is formattedStartTime: ", formattedStartTime);
+            const notificationTime = taskStartTime.subtract(10, 'minutes').toDate(); // Calculate notification time 10 minutes before task start
+            await scheduleNotification(notificationTime, taskName);
+        }
+*/
         //console.log("Date: ", date.toISOString());
         //for now we print the data from the created task
         /*
