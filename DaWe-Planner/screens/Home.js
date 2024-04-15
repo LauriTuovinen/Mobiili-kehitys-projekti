@@ -164,6 +164,17 @@ function Home() {
                         return (
                             <TouchableOpacity key={i} onPress={() => navigateToTaskInfo(t.id)}>
                                 {/* Mapping tasks to cards */}
+                                <Card containerStyle={styles.upcomingTaskCard}>
+                                    <Card.Title style={styles.font}>{t.name}</Card.Title>
+                                    <Card.Divider />
+                                    {/* <Text style={{ paddingLeft: 13, paddingBottom: 5 }}>{t.date}</Text> */}
+                                    <View style={{ flex: 1, flexDirection: 'row', }}>
+                                    <View style={{ flex: 1, flexDirection: 'column', }}>
+                                    <Text style={{ flex: 1, padding: 8, maxHeight: 118}}>{t.description}</Text>
+                                    <Text style={{ flex: 1, paddingLeft: 8, color: '#5c5c5c'  }}>{t.startTime} - {t.endTime}</Text>
+
+                                    </View>
+                                    <View style={{ flex: 1, flexDirection: 'row', }}>
                                 <Card containerStyle={cardStyles}>
                                     {t.date === formattedDay && (
                                         <Text style={{ position: 'absolute', top: 10, right: 10, backgroundColor: 'red', color: 'white', paddingHorizontal: 5, borderRadius: 5 }}>
@@ -179,6 +190,7 @@ function Home() {
                                             style={{ width: 120, height: 120, borderRadius: 10 }}
                                             onPress={() => handleOpenPhoto(i)} // Open modal on press
                                         />
+                                    </View>
                                         <Text style={{ flex: 1, overflow: 'hidden' }}>{t.description}</Text>
                                         <Text style={{ flex: 1, overflow: 'hidden' }}>{t.notification}</Text>
                                         <Text style={{ flex: 1, overflow: 'hidden' }}>{t.priority}</Text>
@@ -230,7 +242,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
     },
     upcomingTaskView: {
-        width: '85%',
+        width: '100%',
         alignSelf: 'center',
         marginTop: 20,
     },
@@ -242,6 +254,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 1,
         shadowRadius: 5,
         elevation: 10,
+        marginBottom: 16,
     },
     dullCard: {
         opacity: 0.5,
@@ -259,6 +272,8 @@ const styles = StyleSheet.create({
         width: 100,
         resizeMode: 'contain',
         marginTop: 5,
+        paddingLeft: 16,
+        alignSelf: 'stretch'
 
     },
     imageModal: {
@@ -282,6 +297,11 @@ const styles = StyleSheet.create({
         borderRadius: 4,
         elevation: 3,
         backgroundColor: navbarColorLight,
+    },
+    font: {
+        fontSize: 20,
+        fontWeight: "bold",
+        color: 'black'
     },
 });
 
