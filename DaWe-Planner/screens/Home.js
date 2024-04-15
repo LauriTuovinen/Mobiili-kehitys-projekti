@@ -177,9 +177,8 @@ const styles = StyleSheet.create({
         width: '100%',
     },
     header: {
-        alignSelf: 'flex-end',
-        marginRight: 25,
-        marginTop: 70,
+        alignSelf: 'center',
+        marginTop: 24,
         fontWeight: 'bold',
         fontSize: 40,
     },
