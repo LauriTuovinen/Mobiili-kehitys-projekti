@@ -5,17 +5,20 @@ import { useState, useEffect } from 'react';
 import Navigation from './components/navigation';
 import WeeklyScreen from './screens/Weekly';
 import CreateTask from './screens/CreateTask';
+import { DarkModeProvider } from './components/themeContext';
 
- //SQLite should always be used in app.js to avoid any errors
+//SQLite should always be used in app.js to avoid any errors
 export default function App() {
   const db = database.db;
-  database.createDB(db);
 
+  database.createDB(db);
   return (
+      <DarkModeProvider>
     <View style={styles.container}>
       <StatusBar style="auto" />
-      <Navigation />
+        <Navigation />
     </View>
+      </DarkModeProvider>
   );
 }
 

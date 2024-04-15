@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Button, Text, TextInput, View, Image, Pressable, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { useState, useEffect, useContext } from 'react';
+import { Button, Text, TextInput, View, Image, Pressable, TouchableOpacity, StyleSheet, ScrollView, Modal } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
 import dayjs from 'dayjs';
@@ -8,10 +8,19 @@ import database from '../components/database';
 import { Card } from '@rneui/themed';
 import { dropTaskTable } from '../components/database';
 import * as ImagePicker from 'expo-image-picker';
+import { DarkModeContext } from '../components/themeContext';
 
+const bgColorLight = '#f9efdb'
+const cardColorLight = '#ffdac1'
+const navbarColorLight = '#ffb8b1'
+const cardColorDark = '#979797'
+const navbarColorDark = '#b95970'
+const bgColorDark = '#757575'
 // {/* */}   comment format inside react native code
 
 export default function CreateTask() {
+    const { darkMode } = useContext(DarkModeContext)
+    
     const [taskName, setTaskName] = useState('');
     const [description, setDescription] = useState('');
     const [date, setDate] = useState(new Date());
@@ -25,18 +34,27 @@ export default function CreateTask() {
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [notification, setNotification] = useState(false);
     const [tasks, setTasks] = useState([]);
+    const [imageSourceModalVisible, setImageSourceModalVisible] = useState(false);
 
     const db = database.db;
 
-    const pickImage = async () => {
+    const pickImage = async (source) => {
         // No permissions request is necessary for launching the image library
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.All,
-            allowsEditing: true,
-            aspect: [4, 3],
-            quality: 1,
-        });
-
+        let result;
+        if (source === 'gallery') {
+            result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.All,
+                allowsEditing: true,
+                aspect: [4, 3],
+                quality: 1,
+            });
+        } else if(source === 'camera'){
+            result = await ImagePicker.launchCameraAsync({
+                allowsEditing: true,
+                aspect: [4, 3],
+                quality: 1,
+            });
+        }
         console.log(result);
 
         if (!result.canceled) {
@@ -44,6 +62,22 @@ export default function CreateTask() {
         }
     };
 
+    const toggleImageSourceModal = () => {
+        setImageSourceModalVisible(!imageSourceModalVisible);
+    };
+
+    const selectImageSource = (source) => {
+        toggleImageSourceModal();
+        if (source === 'camera') {
+            takePhoto();
+        } else if (source === 'gallery') {
+            pickImage('gallery');
+        }
+    };
+
+    const takePhoto = () => {
+        pickImage('camera');
+    };
 
     const getTasks = async () => {
         const taskData = await database.getAllTasks(db);
@@ -94,23 +128,23 @@ export default function CreateTask() {
     };
 
     return (
-        <View style={styles.container}>
+        <View style={darkMode ? styles.DarkContainer : styles.container}>
             <ScrollView>
                 <View>
-                    <Card containerStyle={styles.createTaskCard}>
+                    <Card containerStyle={darkMode ? styles.DarkCreateTaskCard : styles.createTaskCard}>
                         <Text style={styles.font}>Create a task:</Text>
                         <TextInput
                             placeholder='Enter task title'
                             value={taskName}
                             onChangeText={text => setTaskName(text)}
-                            style={styles.input}
+                            style={darkMode ? styles.DarkInput : styles.input}
                         />
                         <Text style={styles.font}>Info:</Text>
                         <TextInput
                             placeholder='Enter Description'
                             value={description}
                             onChangeText={text => setDescription(text)}
-                            style={styles.input}
+                            style={darkMode ? styles.DarkInput : styles.input}
                         />
                         <View>
                             <Picker selectedValue={priority} onValueChange={(itemValue, itemIndex) => setPriority(itemValue)}>
@@ -122,7 +156,7 @@ export default function CreateTask() {
 
                         <Text style={styles.font}>Set Date:</Text>
                         <TouchableOpacity onPress={() => setShowDatePicker(true)}>
-                            <Text>{dayjs(date).format('YYYY-MM-DD')}</Text>
+                            <Text>{dayjs(date).format('DD-MM-YYYY')}</Text>
                         </TouchableOpacity>
                         {showDatePicker && (
                             <DateTimePicker
@@ -171,10 +205,20 @@ export default function CreateTask() {
                             )}
                         </View>
                         <View>
+                            {/* 
+                            <Text style={styles.font}>Image:</Text>
                             <TouchableOpacity onPress={pickImage}>
-                                <Button  color={'#ffb8b1'} title='Select Image' onPress={pickImage} />
+                                <Button color={'#ffb8b1'} title='Select Image' onPress={pickImage} />
                                 {image && <Image source={{ uri: image }} style={styles.image} />}
                             </TouchableOpacity>
+                            */}
+                            
+                            <Text style={styles.font}>Image:</Text>
+                            <TouchableOpacity onPress={toggleImageSourceModal}>
+                                <Button color={darkMode ? navbarColorDark : navbarColorLight} title="Select Image Source" onPress={toggleImageSourceModal} />
+                            </TouchableOpacity>
+                            {image && <Image source={{ uri: image }} style={styles.image} />}
+                    
                         </View>
                         <View>
                             <Text style={styles.font}>Do you want to get notified?</Text>
@@ -186,9 +230,25 @@ export default function CreateTask() {
                                 onValueChange={(notification) => setNotification(notification)}
                             />
                         </View>
-                        <Button color={'#ffb8b1'} title="Save Task" onPress={handleSaveTask} />
+                        <Button color={darkMode ? navbarColorDark : navbarColorLight} title="Save Task" onPress={handleSaveTask} />
                     </Card>
                 </View>
+                
+                <Modal visible={imageSourceModalVisible} animationType="slide" transparent={true}>
+                    <View style={styles.modalContainer}>
+                        <View style={darkMode ? styles.DarkModalContent : styles.modalContent}>
+                            <TouchableOpacity style={styles.modalItem} onPress={() => selectImageSource('camera')}>
+                                <Text style={styles.modalText}>Take Photo</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.modalItem} onPress={() => selectImageSource('gallery')}>
+                                <Text style={styles.modalText}>Choose from Gallery</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.modalItem} onPress={toggleImageSourceModal}>
+                                <Text style={styles.modalText}>Cancel</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
             </ScrollView>
         </View>
     )
@@ -197,11 +257,26 @@ export default function CreateTask() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f9efdb',
+        backgroundColor: bgColorLight,
+        alignItems: 'center',
+    },
+    DarkContainer: {
+        flex: 1,
+        backgroundColor: bgColorDark,
         alignItems: 'center',
     },
     createTaskCard: {
-        backgroundColor: '#ffdac1',
+        backgroundColor: cardColorLight,
+        borderWidth: 0,
+        shadowColor: 'black',
+        shadowOffset: { width: -2, height: 4 },
+        shadowOpacity: 1,
+        shadowRadius: 5,
+        elevation: 10,
+        width: 300,
+    },
+    DarkCreateTaskCard: {
+        backgroundColor: cardColorDark,
         borderWidth: 0,
         shadowColor: 'black',
         shadowOffset: { width: -2, height: 4 },
@@ -218,11 +293,61 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         width: 200,
     },
+    DarkInput: {
+        backgroundColor: '#d1d1d1',
+        width: 200,
+    },
     image: {
         width: 200,
         height: 200,
         margin: 16,
         flex: 1,
         alignSelf: 'center'
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalContent: {
+        backgroundColor: navbarColorLight,
+        padding: 20,
+        borderRadius: 10,
+        elevation: 5,
+    },
+    DarkModalContent: {
+        backgroundColor: navbarColorDark,
+        padding: 20,
+        borderRadius: 10,
+        elevation: 5,
+    },
+    modalItem: {
+        paddingVertical: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: '#ccc',
+    },
+    modalText: {
+        fontSize: 18,
+    },
+    button: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        justifySelf: 'flex-start',
+        paddingVertical: 12,
+        paddingHorizontal: 32,
+        borderRadius: 4,
+        elevation: 3,
+        backgroundColor: navbarColorLight,
+    },
+     DarkButton: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        justifySelf: 'flex-start',
+        paddingVertical: 12,
+        paddingHorizontal: 32,
+        borderRadius: 4,
+        elevation: 3,
+        backgroundColor: navbarColorDark,
     },
 });
