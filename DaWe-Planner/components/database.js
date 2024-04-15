@@ -99,7 +99,7 @@ export const getTaskAmount = (db, date) => {
 export const getAllTasks = (db) => {
     return new Promise((resolve, reject) => {
         db.transaction(tx => {
-            tx.executeSql("SELECT id, name, description, priority, date, startTime, endTime, image, notification, tag FROM tasks", [], (_, { rows }) => {
+            tx.executeSql("SELECT id, name, description, priority, date, startTime, endTime, image, notification, tag, done FROM tasks", [], (_, { rows }) => {
                 resolve(rows);
             }, (_, error) => {
                 reject(error);
