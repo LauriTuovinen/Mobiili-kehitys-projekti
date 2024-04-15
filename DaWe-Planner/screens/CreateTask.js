@@ -195,9 +195,11 @@ export default function CreateTask() {
                                 />
                             )}
                         </View>
-                        <View> {/*
+                        <View>
+                            {/* 
+                            <Text style={styles.font}>Image:</Text>
                             <TouchableOpacity onPress={pickImage}>
-                                <Button  color={'#ffb8b1'} title='Select Image' onPress={pickImage} />
+                                <Button color={'#ffb8b1'} title='Select Image' onPress={pickImage} />
                                 {image && <Image source={{ uri: image }} style={styles.image} />}
                             </TouchableOpacity>
                             */}
