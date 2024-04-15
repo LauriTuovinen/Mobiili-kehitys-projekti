@@ -136,20 +136,22 @@ function Home() {
                             <TouchableOpacity key={i} onPress={() => navigateToTaskInfo(t.id)}>
                                 {/* Mapping tasks to cards */}
                                 <Card containerStyle={styles.upcomingTaskCard}>
-                                    <Card.Title>{t.name}</Card.Title>
+                                    <Card.Title style={styles.font}>{t.name}</Card.Title>
                                     <Card.Divider />
                                     {/* <Text style={{ paddingLeft: 13, paddingBottom: 5 }}>{t.date}</Text> */}
-                                    <Text style={{ flex: 1, overflow: 'hidden', paddingLeft: 13 }}>Starting at {t.startTime}</Text>
-                                    <Text style={{ flex: 1, overflow: 'hidden', paddingLeft: 13 }}>Ends at {t.endTime}</Text>
-                                    <View style={{ flex: 1, flexDirection: 'row' }}>
+                                    <View style={{ flex: 1, flexDirection: 'row', }}>
+                                    <View style={{ flex: 1, flexDirection: 'column', }}>
+                                    <Text style={{ flex: 1, padding: 8, maxHeight: 118}}>{t.description}</Text>
+                                    <Text style={{ flex: 1, paddingLeft: 8, color: '#5c5c5c'  }}>{t.startTime} - {t.endTime}</Text>
+
+                                    </View>
+                                    <View style={{ flex: 1, flexDirection: 'row', }}>
                                         <Image
                                             source={{ uri: t.image }} // Assuming t.image is the URI
                                             style={{ width: 120, height: 120, borderRadius: 10 }}
                                             onPress={() => handleOpenPhoto(i)} // Open modal on press
                                         />
-                                        <Text style={{ flex: 1, overflow: 'hidden' }}>{t.description}</Text>
-                                        <Text style={{ flex: 1, overflow: 'hidden' }}>{t.notification}</Text>
-                                        <Text style={{ flex: 1, overflow: 'hidden' }}>{t.priority}</Text>
+                                    </View>
                                     </View>
                                     {/* Conditionally render the PhotoModal */}
                                     {openPhotos[i] && <PhotoModal ImageSource={{ uri: t.image }} index={i} />}
@@ -185,7 +187,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
     },
     upcomingTaskView: {
-        width: '85%',
+        width: '100%',
         alignSelf: 'center',
         marginTop: 20,
     },
@@ -197,12 +199,15 @@ const styles = StyleSheet.create({
         shadowOpacity: 1,
         shadowRadius: 5,
         elevation: 10,
+        marginBottom: 16,
     },
     image: {
         height: 100,
         width: 100,
         resizeMode: 'contain',
         marginTop: 5,
+        paddingLeft: 16,
+        alignSelf: 'stretch'
 
     },
     imageModal: {
@@ -226,6 +231,11 @@ const styles = StyleSheet.create({
         borderRadius: 4,
         elevation: 3,
         backgroundColor: navbarColorLight,
+    },
+    font: {
+        fontSize: 20,
+        fontWeight: "bold",
+        color: 'black'
     },
 });
 
