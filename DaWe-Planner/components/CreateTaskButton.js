@@ -2,10 +2,17 @@ import { View, Button } from "react-native";
 import { StyleSheet } from "react-native";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { SafeAreaView } from 'react-native-safe-area-context'; // Import SafeAreaView
+import { useNavigation } from "@react-navigation/native";
+import { useContext } from "react";
+import { DarkModeContext } from "./themeContext";
+
 
 export default function CreateTaskButton() {
+  const { darkMode } = useContext(DarkModeContext)
+  const navigation = useNavigation()
   const pressHandler = () => {
-    console.log("button pressed");
+      navigation.navigate('Create')
+      console.log('navigate to Create task')
   };
 
   return (
@@ -15,7 +22,7 @@ export default function CreateTaskButton() {
           name="add-outline"
           size={32}
           onPress={pressHandler}
-          style={styles.button}
+          style={darkMode ? styles.darkButton : styles.button}
         />
       </View>
     </SafeAreaView>
@@ -36,6 +43,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: '#ccc'
+  },
+  darkButton: {
+    
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: '#b95970'
   }
 });
     

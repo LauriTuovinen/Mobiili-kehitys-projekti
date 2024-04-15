@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Modal, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Card, Image } from '@rneui/themed';
 import hyi from '../assets/hyi.jpg'
@@ -8,15 +8,22 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useRoute, useNavigation } from "@react-navigation/native";
 import * as FileSystem from 'expo-file-system';
 import { Button } from '@rneui/themed';
+import CreateTaskButton from '../components/CreateTaskButton';
+import { DarkModeContext } from '../components/themeContext';
 
 
 const bgColorLight = '#f9efdb'
 const cardColorLight = '#ffdac1'
 const navbarColorLight = '#ffb8b1'
+const cardColorDark = '#979797'
+const navbarColorDark = '#b95970'
+const bgColorDark = '#757575'
 
 var moment = require('moment')
 const db = database.db;
+
 function Home() {
+    const { darkMode } = useContext(DarkModeContext)
     const [tasks, setTasks] = useState([]);
     const [openPhotos, setOpenPhotos] = useState(Array(tasks.length).fill(false)); // State to track modal open status
     const route = useRoute();
@@ -165,12 +172,10 @@ function Home() {
                                     )}
                                     <Card.Title>{t.name}</Card.Title>
                                     <Card.Divider />
-                                    {/* <Text style={{ paddingLeft: 13, paddingBottom: 5 }}>{t.date}</Text> */}
-                                    <Text style={{ flex: 1, overflow: 'hidden', paddingLeft: 13 }}>Starting at {t.startTime}</Text>
-                                    <Text style={{ flex: 1, overflow: 'hidden', paddingLeft: 13 }}>Ends at {t.endTime}</Text>
+                                    <Text style={{ flex: 1, overflow: 'hidden', paddingLeft: 5, paddingBottom: 10 }}>{t.startTime} - {t.endTime}</Text>
                                     <View style={{ flex: 1, flexDirection: 'row' }}>
                                         <Image
-                                            source={{ uri: t.image }} // Assuming t.image is the URI
+                                            source={{ uri: t.image }} // t.image is the URI
                                             style={{ width: 120, height: 120, borderRadius: 10 }}
                                             onPress={() => handleOpenPhoto(i)} // Open modal on press
                                         />
@@ -193,6 +198,7 @@ function Home() {
                     })}
                 </View>
             </ScrollView>
+            <CreateTaskButton/>
         </SafeAreaView>
     );
 }
@@ -203,6 +209,11 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: bgColorLight,
+        width: '100%',
+    },
+    DarkContainer: {
+        flex: 1,
+        backgroundColor: bgColorDark,
         width: '100%',
     },
     header: {

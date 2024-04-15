@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Home from '../screens/Home'
 import Monthly from '../screens/Monthly'
-import Weekly from '../screens/Weekly' 
+import Weekly from '../screens/Weekly'
 import CreateTask from '../screens/CreateTask';
 import Settings from '../screens/Settings';
 import { TaskInfo } from '../screens/TaskInfo';
