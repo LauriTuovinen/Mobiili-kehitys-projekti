@@ -124,7 +124,7 @@ function Home() {
         navigation.navigate('TaskInfo', { taskId: id });
         console.log('Navigate to task id:', id);
     };
-    const updateDone = async (id) => { 
+    const updateDone = async (id) => {
         database.updateTaskDoneById(db, id);
 
         fetchData();
@@ -153,7 +153,6 @@ function Home() {
                                     {/* <Text style={{ paddingLeft: 13, paddingBottom: 5 }}>{t.date}</Text> */}
                                     <Text style={{ flex: 1, overflow: 'hidden', paddingLeft: 13 }}>Starting at {t.startTime}</Text>
                                     <Text style={{ flex: 1, overflow: 'hidden', paddingLeft: 13 }}>Ends at {t.endTime}</Text>
-                                    <Text style={{ flex: 1, overflow: 'hidden' }}>DOne: {t.done}</Text>
                                     <View style={{ flex: 1, flexDirection: 'row' }}>
                                         <Image
                                             source={{ uri: t.image }} // Assuming t.image is the URI
@@ -163,7 +162,12 @@ function Home() {
                                         <Text style={{ flex: 1, overflow: 'hidden' }}>{t.description}</Text>
                                         <Text style={{ flex: 1, overflow: 'hidden' }}>{t.notification}</Text>
                                         <Text style={{ flex: 1, overflow: 'hidden' }}>{t.priority}</Text>
-                                        <Button onPress={() => updateDone(t.id)} title="done"></Button>
+                                        {t.done !== 1 && (
+                                            <Button
+                                                onPress={() => updateDone(t.id)}
+                                                title="done"
+                                            />
+                                        )}
                                         <Button onPress={() => deleteTask(t.id)} title="delete"></Button>
                                     </View>
                                     {/* Conditionally render the PhotoModal */}
@@ -223,7 +227,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 1,
         shadowRadius: 5,
         elevation: 10,
-        
+
     },
     image: {
         height: 100,
