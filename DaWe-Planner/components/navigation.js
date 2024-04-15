@@ -13,10 +13,8 @@ import { useFocusEffect } from '@react-navigation/native';
 const homeScreen = 'Home';
 const weeklyScreen = 'Weekly';
 const monthlyScreen = 'Monthly';
-
 const createTaskScreen = 'Create';
 const settingsScreen = 'Settings'
-const taskInfoScreen = 'TaskInfo'
 
 
 const Tab = createBottomTabNavigator();
@@ -26,7 +24,6 @@ export default function Navigation() {
         <NavigationContainer>
             <Tab.Navigator 
             initialRouteName={homeScreen}
-            // initialRouteName={monthlyScreen}
             screenOptions={({route}) => ({
                 tabBarIcon: ({focused, color, size}) => {
                     let iconName;
@@ -40,12 +37,8 @@ export default function Navigation() {
                         iconName = focused ? 'calendar' : 'calendar-outline'
                     } else if (rn === createTaskScreen) {
                         iconName = focused ? 'add-outline' : 'add-outline'
-                    }
-                    else if (rn === settingsScreen) {
+                    } else if (rn === settingsScreen) {
                         iconName = focused ? 'settings' : 'settings-outline'
-                    }
-                    else if (rn === taskInfoScreen) {
-                        iconName = focused ? 'alert-circle' : 'alert-circle-outline'
                     }
                     
                     return <Ionicons name={iconName} size={size} color={color}/>
@@ -65,7 +58,6 @@ export default function Navigation() {
                 <Tab.Screen name = {monthlyScreen} component={Monthly}/>
                 <Tab.Screen name = {createTaskScreen} component={CreateTask}/>
                 <Tab.Screen name = {settingsScreen} component={Settings}/>
-                <Tab.Screen name = {taskInfoScreen} component={TaskInfo}/>
 
 
             </Tab.Navigator>
