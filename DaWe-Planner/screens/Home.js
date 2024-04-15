@@ -7,6 +7,7 @@ import database from "../components/database";
 import { useFocusEffect } from '@react-navigation/native';
 import { useRoute, useNavigation } from "@react-navigation/native";
 import * as FileSystem from 'expo-file-system';
+import { Button } from '@rneui/themed';
 
 
 const bgColorLight = '#f9efdb'
@@ -123,6 +124,9 @@ function Home() {
         navigation.navigate('TaskInfo', { taskId: id });
         console.log('Navigate to task id:', id);
     };
+    const handlePress = (id) =>{
+        database.updateTaskDoneById(db, id);
+    }
 
     return (
         <SafeAreaView style={styles.container}>
@@ -150,6 +154,7 @@ function Home() {
                                         <Text style={{ flex: 1, overflow: 'hidden' }}>{t.description}</Text>
                                         <Text style={{ flex: 1, overflow: 'hidden' }}>{t.notification}</Text>
                                         <Text style={{ flex: 1, overflow: 'hidden' }}>{t.priority}</Text>
+                                        <Button onPress={handlePress(t.id)} title= "done"></Button>
                                     </View>
                                     {/* Conditionally render the PhotoModal */}
                                     {openPhotos[i] && <PhotoModal ImageSource={{ uri: t.image }} index={i} />}
