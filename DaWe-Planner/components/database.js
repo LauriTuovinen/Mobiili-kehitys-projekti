@@ -169,6 +169,31 @@ export const deleteTaskbyId = (db, id) => {
         });
     });
 };
+
+export const deleteTasksByDate = (db, date) => {
+    console.log("delete by date")
+    return new Promise((resolve, reject) => {
+        db.transaction(tx => {
+            tx.executeSql(
+                "DELETE FROM tasks WHERE date < ? AND done = 1", 
+                [date], 
+                (_, { rowsAffected }) => {
+                    if (rowsAffected > 0) { 
+                        console.log("old tasks deleted")
+                        resolve(true); 
+                    } else {
+                        console.log("no old tasks")
+                        resolve(false); 
+                    }
+                }, 
+                (_, error) => {
+                    reject(error);
+                }
+            );
+        });
+    });
+};
+
 export default {
     db,
     createDB,
@@ -180,4 +205,5 @@ export default {
     getTaskbyId,
     updateTaskDoneById,
     deleteTaskbyId,
+    deleteTasksByDate,
   };

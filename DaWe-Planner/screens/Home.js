@@ -22,16 +22,25 @@ function Home() {
     const route = useRoute();
     const navigation = useNavigation();
     const { correctDay } = route.params || moment();
-
+    const currentDay = moment().format('DD/MM/YYYY');
     const formattedDay = moment(correctDay).format('DD/MM/YYYY');
+
+    console.log(currentDay);
 
     const fetchData = async () => {
         try {
+            //await database.deleteTasksByDate(db, currentDay);
             const taskData = await database.getAllTasks(db);
 
             const newTasks = taskData._array.filter(task => {
                 const taskDate = moment(task.date, 'DD/MM/YYYY');
-                return taskDate.isSame(correctDay, 'day');
+                if (formattedDay === currentDay){
+                    return taskDate.isSameOrBefore(correctDay, 'day');
+                }
+                else{
+                    return taskDate.isSame(correctDay, 'day');
+                }
+                
             });
 
             const tasksWithModifiedImages = await Promise.all(newTasks.map(async task => {
@@ -48,6 +57,7 @@ function Home() {
             console.error('Error fetching data:', error);
         }
     };
+
 
     useEffect(() => {
         fetchData();

@@ -9,6 +9,7 @@ import { Card } from '@rneui/themed';
 import { dropTaskTable } from '../components/database';
 import * as ImagePicker from 'expo-image-picker';
 
+
 // {/* */}   comment format inside react native code
 
 export default function CreateTask() {
