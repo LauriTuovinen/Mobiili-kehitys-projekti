@@ -34,13 +34,13 @@ function Home() {
 
             const newTasks = taskData._array.filter(task => {
                 const taskDate = moment(task.date, 'DD/MM/YYYY');
-                if (formattedDay === currentDay){
+                if (formattedDay === currentDay) {
                     return taskDate.isSameOrBefore(correctDay, 'day');
                 }
-                else{
+                else {
                     return taskDate.isSame(correctDay, 'day');
                 }
-                
+
             });
 
             const tasksWithModifiedImages = await Promise.all(newTasks.map(async task => {
@@ -158,6 +158,11 @@ function Home() {
                             <TouchableOpacity key={i} onPress={() => navigateToTaskInfo(t.id)}>
                                 {/* Mapping tasks to cards */}
                                 <Card containerStyle={cardStyles}>
+                                    {t.date === formattedDay && (
+                                        <Text style={{ position: 'absolute', top: 10, right: 10, backgroundColor: 'red', color: 'white', paddingHorizontal: 5, borderRadius: 5 }}>
+                                            Old Task
+                                        </Text>
+                                    )}
                                     <Card.Title>{t.name}</Card.Title>
                                     <Card.Divider />
                                     {/* <Text style={{ paddingLeft: 13, paddingBottom: 5 }}>{t.date}</Text> */}
