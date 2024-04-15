@@ -169,48 +169,48 @@ function Home() {
                                     <Card.Divider />
                                     {/* <Text style={{ paddingLeft: 13, paddingBottom: 5 }}>{t.date}</Text> */}
                                     <View style={{ flex: 1, flexDirection: 'row', }}>
-                                    <View style={{ flex: 1, flexDirection: 'column', }}>
-                                    <Text style={{ flex: 1, padding: 8, maxHeight: 118}}>{t.description}</Text>
-                                    <Text style={{ flex: 1, paddingLeft: 8, color: '#5c5c5c'  }}>{t.startTime} - {t.endTime}</Text>
-
-                                    </View>
-                                    <View style={{ flex: 1, flexDirection: 'row', }}>
-                                <Card containerStyle={cardStyles}>
-                                    {t.date === formattedDay && (
-                                        <Text style={{ position: 'absolute', top: 10, right: 10, backgroundColor: 'red', color: 'white', paddingHorizontal: 5, borderRadius: 5 }}>
-                                            Old Task
-                                        </Text>
-                                    )}
-                                    <Card.Title>{t.name}</Card.Title>
-                                    <Card.Divider />
-                                    <Text style={{ flex: 1, overflow: 'hidden', paddingLeft: 5, paddingBottom: 10 }}>{t.startTime} - {t.endTime}</Text>
-                                    <View style={{ flex: 1, flexDirection: 'row' }}>
-                                        <Image
-                                            source={{ uri: t.image }} // t.image is the URI
-                                            style={{ width: 120, height: 120, borderRadius: 10 }}
-                                            onPress={() => handleOpenPhoto(i)} // Open modal on press
-                                        />
-                                    </View>
-                                        <Text style={{ flex: 1, overflow: 'hidden' }}>{t.description}</Text>
-                                        <Text style={{ flex: 1, overflow: 'hidden' }}>{t.notification}</Text>
-                                        <Text style={{ flex: 1, overflow: 'hidden' }}>{t.priority}</Text>
-                                        {t.done !== 1 && (
-                                            <Button
-                                                onPress={() => updateDone(t.id)}
-                                                title="done"
-                                            />
-                                        )}
-                                        <Button onPress={() => deleteTask(t.id)} title="delete"></Button>
-                                    </View>
-                                    {/* Conditionally render the PhotoModal */}
-                                    {openPhotos[i] && <PhotoModal ImageSource={{ uri: t.image }} index={i} />}
+                                        <View style={{ flex: 1, flexDirection: 'column', }}>
+                                            <Text style={{ flex: 1, padding: 8, maxHeight: 118 }}>{t.description}</Text>
+                                            <Text style={{ flex: 1, paddingLeft: 8, color: '#5c5c5c' }}>{t.startTime} - {t.endTime}</Text>
+                                        </View>
+                                        <View style={{ flex: 1, flexDirection: 'row', }}>
+                                            <Card containerStyle={cardStyles} />
+                                                {t.date === formattedDay && (
+                                                    <Text style={{ position: 'absolute', top: 10, right: 10, backgroundColor: 'red', color: 'white', paddingHorizontal: 5, borderRadius: 5 }}>
+                                                        Old Task
+                                                    </Text>
+                                                )}
+                                                <Card.Title>{t.name}</Card.Title>
+                                                <Card.Divider />
+                                                <Text style={{ flex: 1, overflow: 'hidden', paddingLeft: 5, paddingBottom: 10 }}>{t.startTime} - {t.endTime}</Text>
+                                                <View style={{ flex: 1, flexDirection: 'row' }}>
+                                                    <Image
+                                                        source={{ uri: t.image }} // t.image is the URI
+                                                        style={{ width: 120, height: 120, borderRadius: 10 }}
+                                                        onPress={() => handleOpenPhoto(i)} // Open modal on press
+                                                    />
+                                                </View>
+                                                <Text style={{ flex: 1, overflow: 'hidden' }}>{t.description}</Text>
+                                                <Text style={{ flex: 1, overflow: 'hidden' }}>{t.notification}</Text>
+                                                <Text style={{ flex: 1, overflow: 'hidden' }}>{t.priority}</Text>
+                                                {t.done !== 1 && (
+                                                    <Button
+                                                        onPress={() => updateDone(t.id)}
+                                                        title="done"
+                                                    />
+                                                )}
+                                                <Button onPress={() => deleteTask(t.id)} title="delete"></Button>
+                                        </View>
+                                        </View>
+                                        {/* Conditionally render the PhotoModal */}
+                                        {openPhotos[i] && <PhotoModal ImageSource={{ uri: t.image }} index={i} />}
                                 </Card>
                             </TouchableOpacity>
                         );
                     })}
                 </View>
             </ScrollView>
-            <CreateTaskButton/>
+            <CreateTaskButton />
         </SafeAreaView>
     );
 }
