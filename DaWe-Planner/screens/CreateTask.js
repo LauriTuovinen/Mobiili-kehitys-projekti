@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Button, Text, TextInput, View, Image, Pressable, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { Button, Text, TextInput, View, Image, Pressable, TouchableOpacity, StyleSheet, ScrollView, Modal } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
 import dayjs from 'dayjs';
@@ -25,18 +25,27 @@ export default function CreateTask() {
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [notification, setNotification] = useState(false);
     const [tasks, setTasks] = useState([]);
+    const [imageSourceModalVisible, setImageSourceModalVisible] = useState(false);
 
     const db = database.db;
 
-    const pickImage = async () => {
+    const pickImage = async (source) => {
         // No permissions request is necessary for launching the image library
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.All,
-            allowsEditing: true,
-            aspect: [4, 3],
-            quality: 1,
-        });
-
+        let result;
+        if (source === 'gallery') {
+            result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.All,
+                allowsEditing: true,
+                aspect: [4, 3],
+                quality: 1,
+            });
+        } else if(source === 'camera'){
+            result = await ImagePicker.launchCameraAsync({
+                allowsEditing: true,
+                aspect: [4, 3],
+                quality: 1,
+            });
+        }
         console.log(result);
 
         if (!result.canceled) {
@@ -44,6 +53,22 @@ export default function CreateTask() {
         }
     };
 
+    const toggleImageSourceModal = () => {
+        setImageSourceModalVisible(!imageSourceModalVisible);
+    };
+
+    const selectImageSource = (source) => {
+        toggleImageSourceModal();
+        if (source === 'camera') {
+            takePhoto();
+        } else if (source === 'gallery') {
+            pickImage('gallery');
+        }
+    };
+
+    const takePhoto = () => {
+        pickImage('camera');
+    };
 
     const getTasks = async () => {
         const taskData = await database.getAllTasks(db);
@@ -122,7 +147,7 @@ export default function CreateTask() {
 
                         <Text style={styles.font}>Set Date:</Text>
                         <TouchableOpacity onPress={() => setShowDatePicker(true)}>
-                            <Text>{dayjs(date).format('YYYY-MM-DD')}</Text>
+                            <Text>{dayjs(date).format('DD-MM-YYYY')}</Text>
                         </TouchableOpacity>
                         {showDatePicker && (
                             <DateTimePicker
@@ -170,11 +195,20 @@ export default function CreateTask() {
                             )}
                         </View>
                         <View>
+                            {/* 
                             <Text style={styles.font}>Image:</Text>
                             <TouchableOpacity onPress={pickImage}>
                                 <Button color={'#ffb8b1'} title='Select Image' onPress={pickImage} />
                                 {image && <Image source={{ uri: image }} style={styles.image} />}
                             </TouchableOpacity>
+                            */}
+                            
+                            <Text style={styles.font}>Image:</Text>
+                            <TouchableOpacity onPress={toggleImageSourceModal}>
+                                <Button color={'#ffb8b1'} title="Select Image Source" onPress={toggleImageSourceModal} />
+                            </TouchableOpacity>
+                            {image && <Image source={{ uri: image }} style={styles.image} />}
+                    
                         </View>
                         <View>
                             <Text style={styles.font}>Do you want to get notified?</Text>
@@ -189,6 +223,22 @@ export default function CreateTask() {
                         <Button color={'#ffb8b1'} title="Save Task" onPress={handleSaveTask} />
                     </Card>
                 </View>
+                
+                <Modal visible={imageSourceModalVisible} animationType="slide" transparent={true}>
+                    <View style={styles.modalContainer}>
+                        <View style={styles.modalContent}>
+                            <TouchableOpacity style={styles.modalItem} onPress={() => selectImageSource('camera')}>
+                                <Text style={styles.modalText}>Take Photo</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.modalItem} onPress={() => selectImageSource('gallery')}>
+                                <Text style={styles.modalText}>Choose from Gallery</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.modalItem} onPress={toggleImageSourceModal}>
+                                <Text style={styles.modalText}>Cancel</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
             </ScrollView>
         </View>
     )
@@ -224,5 +274,25 @@ const styles = StyleSheet.create({
         margin: 16,
         flex: 1,
         alignSelf: 'center'
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalContent: {
+        backgroundColor: 'white',
+        padding: 20,
+        borderRadius: 10,
+        elevation: 5,
+    },
+    modalItem: {
+        paddingVertical: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: '#ccc',
+    },
+    modalText: {
+        fontSize: 18,
     },
 });
