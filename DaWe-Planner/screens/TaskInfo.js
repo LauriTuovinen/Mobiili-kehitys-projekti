@@ -64,6 +64,7 @@ const db = database.db;
                         <Text style={styles.value}>{task.date}</Text>
                         <Text style={styles.label}>Priority:</Text>
                         <Text style={styles.value}>{task.priority}</Text>
+                        <Text>Done: {task.done}</Text>
                         {task.image && (
                             <Image source={{ uri: task.image }} style={{ width: 120, height: 120, borderRadius: 10 }} />
                         )}
