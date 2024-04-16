@@ -129,7 +129,7 @@ function Home() {
                             source={ImageSource}
                             style={{ height: '100%', width: '100%', resizeMode: 'contain' }}
                         />
-                        <OwnButton title="close" onPress={() => handleClosePhoto(index)} color={navbarColorLight} />
+                        <OwnButton title="close" onPress={() => handleClosePhoto(index)} color={darkMode ? navbarColorDark : navbarColorLight} />
                     </View>
                 </View>
             </Modal>
@@ -153,18 +153,19 @@ function Home() {
     }
 
     return (
-        <SafeAreaView style={styles.container}>
-            <StatusBar style={{ backgroundColor: bgColorLight }} />
+        <SafeAreaView style={darkMode ? styles.DarkContainer : styles.container}>
+            <StatusBar style={{ backgroundColor: darkMode ? bgColorDark : bgColorLight }} />
             <ScrollView>
                 <Text style={styles.header}>Upcoming tasks</Text>
                 <Text style={styles.secondadryHeader}>{formattedDay}</Text>
                 <View style={styles.upcomingTaskView}>
                     {tasks.map((t, i) => {
-                        const cardStyles = t.done === 1 ? styles.dullCard : styles.upcomingTaskCard;
+                        //check condition for done and then check condition for DarkMode
+                        const cardStyles = t.done === 1 ? darkMode ? styles.DarkDullCard : styles.dullCard : darkMode ? styles.DarkUpcomingTaskCard : styles.upcomingTaskCard; 
                         return (
                             <TouchableOpacity key={i} onPress={() => navigateToTaskInfo(t.id)}>
                                 {/* Mapping tasks to cards */}
-                                <Card containerStyle={styles.upcomingTaskCard}>
+                                <Card containerStyle={darkMode ? styles.DarkUpcomingTaskCard : styles.upcomingTaskCard}>
                                     <Card.Title style={styles.font}>{t.name}</Card.Title>
                                     <Card.Divider />
                                     {/* <Text style={{ paddingLeft: 13, paddingBottom: 5 }}>{t.date}</Text> */}
@@ -239,6 +240,16 @@ const styles = StyleSheet.create({
         elevation: 10,
         marginBottom: 16,
     },
+    DarkUpcomingTaskCard: {
+        backgroundColor: cardColorDark,
+        borderWidth: 0,
+        shadowColor: 'black',
+        shadowOffset: { width: -2, height: 4 },
+        shadowOpacity: 1,
+        shadowRadius: 5,
+        elevation: 10,
+        marginBottom: 16,
+    },
     dullCard: {
         opacity: 0.5,
         backgroundColor: cardColorLight,
@@ -248,7 +259,16 @@ const styles = StyleSheet.create({
         shadowOpacity: 1,
         shadowRadius: 5,
         elevation: 10,
-
+    },
+    DarkDullCard: {
+        opacity: 0.5,
+        backgroundColor: cardColorDark,
+        borderWidth: 0,
+        shadowColor: 'black',
+        shadowOffset: { width: -2, height: 4 },
+        shadowOpacity: 1,
+        shadowRadius: 5,
+        elevation: 10,
     },
     image: {
         height: 100,
@@ -280,6 +300,16 @@ const styles = StyleSheet.create({
         borderRadius: 4,
         elevation: 3,
         backgroundColor: navbarColorLight,
+    },
+    button: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        justifySelf: 'flex-start',
+        paddingVertical: 12,
+        paddingHorizontal: 32,
+        borderRadius: 4,
+        elevation: 3,
+        backgroundColor: navbarColorDark,
     },
     font: {
         fontSize: 20,
