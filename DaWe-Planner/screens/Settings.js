@@ -42,7 +42,7 @@ function DarkModeSwitch() {
     }
     return (<View>
         <SwitchSelector
-            initial={1}
+            initial={2}
             onPress={(value) => setTheme(value)}
             textColor={darkMode ? navbarColorLight : navbarColorDark}
             selectedColor={darkMode ? navbarColorLight : navbarColorDark}
@@ -77,7 +77,7 @@ export default function Settings() {
                 <Button color={darkMode ? navbarColorDark : navbarColorLight} title="Get by id" onPress={getTaskByID}></Button>
             </View>
                 <Text style={{ alignSelf: 'center',fontSize: 20, fontWeight: 'bold', marginTop: 40, marginBottom: 15}}>Select Theme</Text>
-            <DarkModeSwitch style={{}} />
+            <DarkModeSwitch />
         </View>
     )
 }

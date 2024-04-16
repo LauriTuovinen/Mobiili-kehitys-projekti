@@ -1,5 +1,5 @@
-import { useState, useEffect, useContext } from 'react';
-import { Button, Text, TextInput, View, Image, Pressable, TouchableOpacity, StyleSheet, ScrollView, Modal } from 'react-native';
+import { useState, useEffect, useContext, useRef } from 'react';
+import { Button, Text, TextInput, View, Image, Pressable, TouchableOpacity, StyleSheet, ScrollView, Modal, Platform } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
 import dayjs from 'dayjs';
@@ -9,6 +9,26 @@ import { Card } from '@rneui/themed';
 import { dropTaskTable } from '../components/database';
 import * as ImagePicker from 'expo-image-picker';
 import { DarkModeContext } from '../components/themeContext';
+import * as Notifications from 'expo-notifications';
+import Constants from 'expo-constants';
+import * as Device from 'expo-device';
+
+Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: false,
+        shouldSetBadge: false,
+    }),
+});
+Notifications.scheduleNotificationAsync({
+    content: {
+        title: 'Look at that notification',
+        body: "I'm so proud of myself!",
+    },
+    trigger: {
+        seconds: 10
+    },
+});
 
 const bgColorLight = '#f9efdb'
 const cardColorLight = '#ffdac1'
@@ -16,11 +36,13 @@ const navbarColorLight = '#ffb8b1'
 const cardColorDark = '#979797'
 const navbarColorDark = '#b95970'
 const bgColorDark = '#757575'
-// {/* */}   comment format inside react native code
+
+var moment = require('moment');
+// {/* */}   comment format inside react native jsx code
 
 export default function CreateTask() {
     const { darkMode } = useContext(DarkModeContext)
-    
+
     const [taskName, setTaskName] = useState('');
     const [description, setDescription] = useState('');
     const [date, setDate] = useState(new Date());
@@ -35,11 +57,90 @@ export default function CreateTask() {
     const [notification, setNotification] = useState(false);
     const [tasks, setTasks] = useState([]);
     const [imageSourceModalVisible, setImageSourceModalVisible] = useState(false);
+    const [pushNotification, setPushNotification] = useState(false);
+    const [expoPushToken, setExpoPushToken] = useState('');
 
     const db = database.db;
+    const notificationListener = useRef();
+    const responseListener = useRef();
 
-    const pickImage = async (source) => {
-        // No permissions request is necessary for launching the image library
+    
+        useEffect(() => {
+            registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+    
+            notificationListener.current = Notifications.addNotificationReceivedListener(pushNotification => {
+                setPushNotification(pushNotification);
+            });
+    
+            responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+                console.log(response);
+            });
+    
+            return () => {
+                Notifications.removeNotificationSubscription(notificationListener.current);
+                Notifications.removeNotificationSubscription(responseListener.current);
+            };
+        }, []);
+    
+        async function registerForPushNotificationsAsync() {
+            let token;
+    
+            if (Platform.OS === 'android') {
+                await Notifications.setNotificationChannelAsync('default', {
+                    name: 'default',
+                    importance: Notifications.AndroidImportance.MAX,
+                    vibrationPattern: [0, 250, 250, 250],
+                    lightColor: '#FF231F7C',
+                });
+            }
+    
+            if (Device.isDevice) {
+                const { status: existingStatus } = await Notifications.getPermissionsAsync();
+                let finalStatus = existingStatus;
+                if (existingStatus !== 'granted') {
+                    const { status } = await Notifications.requestPermissionsAsync();
+                    finalStatus = status;
+                }
+                if (finalStatus !== 'granted') {
+                    alert('Failed to get push token for push notification!');
+                    return;
+                }
+                // Learn more about projectId:
+                // https://docs.expo.dev/push-notifications/push-notifications-setup/#configure-projectid
+                // token = (await Notifications.getExpoPushTokenAsync({ projectId: 'your-project-id' })).data;
+                console.log(token);
+            } else {
+                alert('Must use physical device for Push Notifications');
+            }
+    
+            return token;
+        }
+    
+        const scheduleNotification = async (notificationTime, taskName) => {
+            const currentTime = Date.now() + (3*60*60*1000)
+            const notificationTimeMilliseconds= notificationTime.getTime()
+            const scheduledTime = Math.round((notificationTimeMilliseconds - currentTime) / 1000 )
+            console.log(scheduledTime);
+            // const scheduledTime = currentTime 
+            await Notifications.scheduleNotificationAsync({
+                content: {
+                    title: "Task Reminder",
+                    body: `Your task "${taskName}" is starting soon!`,
+                    data: { taskName },
+                },
+                trigger: { 
+                    seconds: scheduledTime
+                 }, // Schedule notification 10 minutes before task start time
+    
+            });
+        }
+    
+    
+
+         
+        
+        const pickImage = async (source) => {
+            // No permissions request is necessary for launching the image library
         let result;
         if (source === 'gallery') {
             result = await ImagePicker.launchImageLibraryAsync({
@@ -48,7 +149,7 @@ export default function CreateTask() {
                 aspect: [4, 3],
                 quality: 1,
             });
-        } else if(source === 'camera'){
+        } else if (source === 'camera') {
             result = await ImagePicker.launchCameraAsync({
                 allowsEditing: true,
                 aspect: [4, 3],
@@ -78,37 +179,50 @@ export default function CreateTask() {
     const takePhoto = () => {
         pickImage('camera');
     };
-
+    
     const getTasks = async () => {
         const taskData = await database.getAllTasks(db);
         setTasks(taskData);
         console.log(tasks);
     };
-
-
-
+    
+    
+    
     const handleSaveTask = async () => {
 
-
+        
         const formattedDate = dayjs(date).format('DD/MM/YYYY');
-
+        const formattedStartTime = startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+        const formattedEndTime = endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+        
         await database.addTask(db, taskName, description, priority, formattedDate, startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }), endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }), image, notification);
-        //getTasks();
-
+        
+        if (notification === true) {
+            const taskStartTime = moment(`${formattedDate} ${formattedStartTime}`, 'DD/MM/YYYY HH:mm').toDate();
+            const taskStartTimeTimeZone = moment(taskStartTime).add(3, 'hours')
+            console.log('taskStartTimeTimeZone:', taskStartTimeTimeZone);
+            console.log("this is formattedDate: ", formattedDate);
+            console.log("this is formattedStartTime: ", formattedStartTime);
+            const notificationTime = moment(taskStartTimeTimeZone).subtract(10, 'minutes').toDate(); // Calculate notification time 10 minutes before task start
+            console.log('notificationtime: ',notificationTime);
+            await scheduleNotification(notificationTime, taskName);
+        }
+    
         //console.log("Date: ", date.toISOString());
         //for now we print the data from the created task
-        /*
-        console.log("Task Name: ", taskName);
-        console.log("Descriptsion: ", description);
-        console.log("Priority", priority);
-        console.log("Date: ", date.toLocaleDateString());
-        console.log("Start Time: ", startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }));
-        console.log("End Time: ", endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }));
-        console.log("Notification: ", notification);
-        */
-
+        
+        // console.log("Task Name: ", taskName);
+        // console.log("Descriptsion: ", description);
+        // console.log("Priority", priority);
+        // console.log("Date: ", date.toLocaleDateString());
+        // console.log("Start Time: ", startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }));
+        // console.log("End Time: ", endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }));
+        // console.log("Notification: ", notification);
+        
     }
-
+    
+    
+    
     const onChangeStartTime = (event, selectedTime) => {
         const currentDate = selectedTime || startTime;
         setShowStartTimePicker(false);
@@ -212,13 +326,13 @@ export default function CreateTask() {
                                 {image && <Image source={{ uri: image }} style={styles.image} />}
                             </TouchableOpacity>
                             */}
-                            
+
                             <Text style={styles.font}>Image:</Text>
                             <TouchableOpacity onPress={toggleImageSourceModal}>
                                 <Button color={darkMode ? navbarColorDark : navbarColorLight} title="Select Image Source" onPress={toggleImageSourceModal} />
                             </TouchableOpacity>
                             {image && <Image source={{ uri: image }} style={styles.image} />}
-                    
+
                         </View>
                         <View>
                             <Text style={styles.font}>Do you want to get notified?</Text>
@@ -233,7 +347,7 @@ export default function CreateTask() {
                         <Button color={darkMode ? navbarColorDark : navbarColorLight} title="Save Task" onPress={handleSaveTask} />
                     </Card>
                 </View>
-                
+
                 <Modal visible={imageSourceModalVisible} animationType="slide" transparent={true}>
                     <View style={styles.modalContainer}>
                         <View style={darkMode ? styles.DarkModalContent : styles.modalContent}>
@@ -340,7 +454,7 @@ const styles = StyleSheet.create({
         elevation: 3,
         backgroundColor: navbarColorLight,
     },
-     DarkButton: {
+    DarkButton: {
         alignItems: 'center',
         justifyContent: 'center',
         justifySelf: 'flex-start',
