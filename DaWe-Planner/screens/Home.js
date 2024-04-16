@@ -37,14 +37,15 @@ const DropdownMenu = () => {
       // Close the dropdown after selecting an option
       setIsOpen(false);
     };
-  
+    const { darkMode } = useContext(DarkModeContext)
+
     return (
       <View style={styles.container}>
-        <TouchableOpacity onPress={toggleDropdown} style={styles.dropdownButton}>
-        <Ionicons name="ellipsis-vertical" size={24} color="white" />
+        <TouchableOpacity onPress={toggleDropdown} style={darkMode ? styles.darkDropdownButton : styles.dropdownButton}>
+        <Ionicons name="ellipsis-vertical" size={32} color="white" />
         </TouchableOpacity>
         {isOpen && (
-          <View style={[styles.dropdownContent, styles.dropdownOnTop]}>
+          <View style={darkMode ? styles.darkDropdownContent : styles.dropdownContent}>
             <TouchableOpacity onPress={() => handleOptionPress('Option 1')} style={styles.optionButton}>
               <Text style={styles.buttonText}>Done</Text>
             </TouchableOpacity>
@@ -358,7 +359,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 0,
         right: 0,
-        zIndex: 999, // Ensure dropdown is on top of everything
+        zIndex: 999,
         alignItems: 'flex-end',
       },
     dropdownButton: {
@@ -390,6 +391,25 @@ const styles = StyleSheet.create({
         color: 'black',
         textAlign: 'center',
         fontWeight: "bold",
+      },
+
+      darkDropdownButton: {
+        backgroundColor: cardColorDark,
+      },
+      darkDropdownContent: {
+        position: 'absolute',
+        top: 40,
+        right: 8,
+        backgroundColor: navbarColorDark,
+        borderRadius: 5,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+          },
+          shadowOpacity: 0.25,
+          shadowRadius: 3.84,
+        elevation: 5,
       },
 });
 
