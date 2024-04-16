@@ -200,13 +200,14 @@ function Home() {
                         const cardStyles = t.done === 1 ? darkMode ? styles.DarkDullCard : styles.dullCard : darkMode ? styles.DarkUpcomingTaskCard : styles.upcomingTaskCard; 
                         return (
                             <TouchableOpacity key={i} onPress={() => navigateToTaskInfo(t.id)}>
-                                {/* Mapping tasks to cards */}
+                                {/* Mapping tasks to cards */} 
+                                <Card containerStyle={darkMode ? styles.DarkUpcomingTaskCard : styles.upcomingTaskCard}>
+                                    <Card.Title style={styles.font}>{t.name}
                                     <View style={styles.dropdownContainer}>
                                         <DropdownMenu/>
                                     </View>
                                     </Card.Title>
-                                <Card containerStyle={darkMode ? styles.DarkUpcomingTaskCard : styles.upcomingTaskCard}>
-                                    <Card.Title style={styles.font}>{t.name}</Card.Title>
+                                    
                                     <Card.Divider />
                                     {/* <Text style={{ paddingLeft: 13, paddingBottom: 5 }}>{t.date}</Text> */}
                                     <View style={{ flex: 1, flexDirection: 'row', }}>
