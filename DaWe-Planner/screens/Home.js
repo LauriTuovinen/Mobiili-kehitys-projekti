@@ -10,6 +10,7 @@ import * as FileSystem from 'expo-file-system';
 import { Button } from '@rneui/themed';
 import CreateTaskButton from '../components/CreateTaskButton';
 import { DarkModeContext } from '../components/themeContext';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 
 const bgColorLight = '#f9efdb'
@@ -21,6 +22,41 @@ const bgColorDark = '#757575'
 
 var moment = require('moment')
 const db = database.db;
+
+
+const DropdownMenu = () => {
+    const [isOpen, setIsOpen] = useState(false);
+  
+    const toggleDropdown = () => {
+      setIsOpen(!isOpen);
+    };
+  
+    const handleOptionPress = (option) => {
+      // Do something with the selected option
+      console.log('Selected option:', option);
+      // Close the dropdown after selecting an option
+      setIsOpen(false);
+    };
+  
+    return (
+      <View style={styles.container}>
+        <TouchableOpacity onPress={toggleDropdown} style={styles.dropdownButton}>
+        <Ionicons name="ellipsis-vertical" size={24} color="white" />
+        </TouchableOpacity>
+        {isOpen && (
+          <View style={[styles.dropdownContent, styles.dropdownOnTop]}>
+            <TouchableOpacity onPress={() => handleOptionPress('Option 1')} style={styles.optionButton}>
+              <Text style={styles.buttonText}>Done</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => handleOptionPress('Option 2')} style={styles.optionButton}>
+              <Text style={styles.buttonText}>Delete</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      </View>
+    );
+  };
+
 
 function Home() {
     const { darkMode } = useContext(DarkModeContext)
@@ -165,6 +201,10 @@ function Home() {
                         return (
                             <TouchableOpacity key={i} onPress={() => navigateToTaskInfo(t.id)}>
                                 {/* Mapping tasks to cards */}
+                                    <View style={styles.dropdownContainer}>
+                                        <DropdownMenu/>
+                                    </View>
+                                    </Card.Title>
                                 <Card containerStyle={darkMode ? styles.DarkUpcomingTaskCard : styles.upcomingTaskCard}>
                                     <Card.Title style={styles.font}>{t.name}</Card.Title>
                                     <Card.Divider />
@@ -174,21 +214,16 @@ function Home() {
                                             <Text style={{ flex: 1, padding: 8, maxHeight: 118 }}>{t.description}</Text>
                                             <Text style={{ flex: 1, paddingLeft: 8, color: '#5c5c5c' }}>{t.startTime} - {t.endTime}</Text>
                                         </View>
-                                        <View style={{ flex: 1, flexDirection: 'row', }}>
-                                                
-                                                <Card.Divider />
-                                                <View style={{ flex: 1, flexDirection: 'row' }}>
-                                                    <Image
-                                                        source={{ uri: t.image }} // t.image is the URI
-                                                        style={{ width: 120, height: 120, borderRadius: 10 }}
-                                                        onPress={() => handleOpenPhoto(i)} // Open modal on press
-                                                    />
-                                                </View>                                                
-                                        </View>
+                                                <Image
+                                                    source={{ uri: t.image }} // t.image is the URI
+                                                    style={{ width: 120, height: 120, borderRadius: 10, }}
+                                                    onPress={() => handleOpenPhoto(i)} // Open modal on press
+                                                />
                                         </View>
                                         {/* Conditionally render the PhotoModal */}
                                         {openPhotos[i] && <PhotoModal ImageSource={{ uri: t.image }} index={i} />}
-                                </Card>
+                                
+                                    </Card>
                             </TouchableOpacity>
                         );
                     })}
@@ -276,7 +311,6 @@ const styles = StyleSheet.create({
         resizeMode: 'contain',
         marginTop: 5,
         paddingLeft: 16,
-        alignSelf: 'stretch'
 
     },
     imageModal: {
@@ -316,9 +350,40 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         color: 'black'
     },
+    dropdownContainer: {
+        position: 'absolute',
+        bottom: 0,
+        right: 0,
+        zIndex: 999, // Ensure dropdown is on top of everything
+        alignItems: 'flex-end',
+      },
+    dropdownButton: {
+        backgroundColor: '#ffdac1',
+      },
+      dropdownContent: {
+        position: 'absolute',
+        top: 40,
+        left: 0,
+        backgroundColor: '#ffb8b1',
+        borderRadius: 5,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+          },
+          shadowOpacity: 0.25,
+          shadowRadius: 3.84,
+        elevation: 5,
+      },
+      optionButton: {
+        padding: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: '#ccc',
+      },
+      buttonText: {
+        color: 'black',
+        textAlign: 'center',
+      },
 });
-
-
-
 
 export default Home;
