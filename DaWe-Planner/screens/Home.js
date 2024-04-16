@@ -202,12 +202,15 @@ function Home() {
                             <TouchableOpacity key={i} onPress={() => navigateToTaskInfo(t.id)}>
                                 {/* Mapping tasks to cards */} 
                                 <Card containerStyle={darkMode ? styles.DarkUpcomingTaskCard : styles.upcomingTaskCard}>
-                                    <Card.Title style={styles.font}>{t.name}
+                                    
+                                    <View style={{flex: 1, flexDirection: 'row'}}>
+                                    <Card.Title style={styles.font}>{t.name}</Card.Title>
+                                    </View>
+
                                     <View style={styles.dropdownContainer}>
                                         <DropdownMenu/>
                                     </View>
-                                    </Card.Title>
-                                    
+
                                     <Card.Divider />
                                     {/* <Text style={{ paddingLeft: 13, paddingBottom: 5 }}>{t.date}</Text> */}
                                     <View style={{ flex: 1, flexDirection: 'row', }}>
@@ -353,7 +356,7 @@ const styles = StyleSheet.create({
     },
     dropdownContainer: {
         position: 'absolute',
-        bottom: 0,
+        top: 0,
         right: 0,
         zIndex: 999, // Ensure dropdown is on top of everything
         alignItems: 'flex-end',
@@ -364,7 +367,7 @@ const styles = StyleSheet.create({
       dropdownContent: {
         position: 'absolute',
         top: 40,
-        left: 0,
+        right: 8,
         backgroundColor: '#ffb8b1',
         borderRadius: 5,
         shadowColor: '#000',
@@ -377,13 +380,16 @@ const styles = StyleSheet.create({
         elevation: 5,
       },
       optionButton: {
-        padding: 10,
+        width: 100,
+        padding: 8,
         borderBottomWidth: 1,
         borderBottomColor: '#ccc',
       },
       buttonText: {
+        fontSize: 16,
         color: 'black',
         textAlign: 'center',
+        fontWeight: "bold",
       },
 });
 
