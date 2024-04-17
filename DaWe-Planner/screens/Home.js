@@ -11,7 +11,7 @@ import { Button } from '@rneui/themed';
 import CreateTaskButton from '../components/CreateTaskButton';
 import { DarkModeContext } from '../components/themeContext';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const bgColorLight = '#f9efdb'
 const cardColorLight = '#ffdac1'
@@ -23,40 +23,39 @@ const bgColorDark = '#757575'
 var moment = require('moment')
 const db = database.db;
 
-
 const DropdownMenu = () => {
     const [isOpen, setIsOpen] = useState(false);
-  
+
     const toggleDropdown = () => {
-      setIsOpen(!isOpen);
+        setIsOpen(!isOpen);
     };
-  
+
     const handleOptionPress = (option) => {
-      // Do something with the selected option
-      console.log('Selected option:', option);
-      // Close the dropdown after selecting an option
-      setIsOpen(false);
+        // Do something with the selected option
+        console.log('Selected option:', option);
+        // Close the dropdown after selecting an option
+        setIsOpen(false);
     };
     const { darkMode } = useContext(DarkModeContext)
 
     return (
-      <View style={styles.container}>
-        <TouchableOpacity onPress={toggleDropdown} style={darkMode ? styles.darkDropdownButton : styles.dropdownButton}>
-        <Ionicons name="ellipsis-vertical" size={32} color="white" />
-        </TouchableOpacity>
-        {isOpen && (
-          <View style={darkMode ? styles.darkDropdownContent : styles.dropdownContent}>
-            <TouchableOpacity onPress={() => handleOptionPress('Option 1')} style={styles.optionButton}>
-              <Text style={styles.buttonText}>Done</Text>
+        <View style={styles.container}>
+            <TouchableOpacity onPress={toggleDropdown} style={darkMode ? styles.darkDropdownButton : styles.dropdownButton}>
+                <Ionicons name="ellipsis-vertical" size={32} color="white" />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => handleOptionPress('Option 2')} style={styles.optionButton}>
-              <Text style={styles.buttonText}>Delete</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-      </View>
+            {isOpen && (
+                <View style={darkMode ? styles.darkDropdownContent : styles.dropdownContent}>
+                    <TouchableOpacity onPress={() => handleOptionPress('Option 1')} style={styles.optionButton}>
+                        <Text style={styles.buttonText}>Done</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => handleOptionPress('Option 2')} style={styles.optionButton}>
+                        <Text style={styles.buttonText}>Delete</Text>
+                    </TouchableOpacity>
+                </View>
+            )}
+        </View>
     );
-  };
+};
 
 
 function Home() {
@@ -71,9 +70,23 @@ function Home() {
 
     console.log(currentDay);
 
+
+    const { toggleDarkMode } = useContext(DarkModeContext)
+    useEffect(() => {
+        const getTheme = async () => {
+            try {
+                const theme = await AsyncStorage.getItem('theme')
+                console.log('theme:', theme);
+                toggleDarkMode(theme)
+            } catch (e) {
+                console.log('error changnin or getting theme');
+            }
+        }
+        getTheme()
+    }, []);
+
     const fetchData = async () => {
         try {
-            //await database.deleteTasksByDate(db, currentDay);
             const taskData = await database.getAllTasks(db);
 
             const newTasks = taskData._array.filter(task => {
@@ -144,7 +157,7 @@ function Home() {
     function OwnButton(props) {
         const { onPress, title = 'Save' } = props;
         return (
-            <Pressable style={styles.button} onPress={onPress}>
+            <Pressable style={darkMode ? styles.DarkButton : styles.button} onPress={onPress}>
                 <Text style={styles.text}>{title}</Text>
             </Pressable>
         );
@@ -198,18 +211,18 @@ function Home() {
                 <View style={styles.upcomingTaskView}>
                     {tasks.map((t, i) => {
                         //check condition for done and then check condition for DarkMode
-                        const cardStyles = t.done === 1 ? darkMode ? styles.DarkDullCard : styles.dullCard : darkMode ? styles.DarkUpcomingTaskCard : styles.upcomingTaskCard; 
+                        const cardStyles = t.done === 1 ? darkMode ? styles.DarkDullCard : styles.dullCard : darkMode ? styles.DarkUpcomingTaskCard : styles.upcomingTaskCard;
                         return (
                             <TouchableOpacity key={i} onPress={() => navigateToTaskInfo(t.id)}>
-                                {/* Mapping tasks to cards */} 
+                                {/* Mapping tasks to cards */}
                                 <Card containerStyle={darkMode ? styles.DarkUpcomingTaskCard : styles.upcomingTaskCard}>
-                                    
-                                    <View style={{flex: 1, flexDirection: 'row'}}>
-                                    <Card.Title style={styles.font}>{t.name}</Card.Title>
+
+                                    <View style={{ flex: 1, flexDirection: 'row' }}>
+                                        <Card.Title style={styles.font}>{t.name}</Card.Title>
                                     </View>
 
                                     <View style={styles.dropdownContainer}>
-                                        <DropdownMenu/>
+                                        <DropdownMenu />
                                     </View>
 
                                     <Card.Divider />
@@ -219,16 +232,16 @@ function Home() {
                                             <Text style={{ flex: 1, padding: 8, maxHeight: 118 }}>{t.description}</Text>
                                             <Text style={{ flex: 1, paddingLeft: 8, color: '#5c5c5c' }}>{t.startTime} - {t.endTime}</Text>
                                         </View>
-                                                <Image
-                                                    source={{ uri: t.image }} // t.image is the URI
-                                                    style={{ width: 120, height: 120, borderRadius: 10, }}
-                                                    onPress={() => handleOpenPhoto(i)} // Open modal on press
-                                                />
-                                        </View>
-                                        {/* Conditionally render the PhotoModal */}
-                                        {openPhotos[i] && <PhotoModal ImageSource={{ uri: t.image }} index={i} />}
-                                
-                                    </Card>
+                                        <Image
+                                            source={{ uri: t.image }} // t.image is the URI
+                                            style={{ width: 120, height: 120, borderRadius: 10, }}
+                                            onPress={() => handleOpenPhoto(i)} // Open modal on press
+                                        />
+                                    </View>
+                                    {/* Conditionally render the PhotoModal */}
+                                    {openPhotos[i] && <PhotoModal ImageSource={{ uri: t.image }} index={i} />}
+
+                                </Card>
                             </TouchableOpacity>
                         );
                     })}
@@ -340,7 +353,7 @@ const styles = StyleSheet.create({
         elevation: 3,
         backgroundColor: navbarColorLight,
     },
-    button: {
+    DarkButton: {
         alignItems: 'center',
         justifyContent: 'center',
         justifySelf: 'flex-start',
@@ -361,11 +374,11 @@ const styles = StyleSheet.create({
         right: 0,
         zIndex: 999,
         alignItems: 'flex-end',
-      },
+    },
     dropdownButton: {
         backgroundColor: '#ffdac1',
-      },
-      dropdownContent: {
+    },
+    dropdownContent: {
         position: 'absolute',
         top: 40,
         right: 8,
@@ -375,28 +388,28 @@ const styles = StyleSheet.create({
         shadowOffset: {
             width: 0,
             height: 2,
-          },
-          shadowOpacity: 0.25,
-          shadowRadius: 3.84,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
         elevation: 5,
-      },
-      optionButton: {
+    },
+    optionButton: {
         width: 100,
         padding: 8,
         borderBottomWidth: 1,
         borderBottomColor: '#ccc',
-      },
-      buttonText: {
+    },
+    buttonText: {
         fontSize: 16,
         color: 'black',
         textAlign: 'center',
         fontWeight: "bold",
-      },
+    },
 
-      darkDropdownButton: {
+    darkDropdownButton: {
         backgroundColor: cardColorDark,
-      },
-      darkDropdownContent: {
+    },
+    darkDropdownContent: {
         position: 'absolute',
         top: 40,
         right: 8,
@@ -406,11 +419,11 @@ const styles = StyleSheet.create({
         shadowOffset: {
             width: 0,
             height: 2,
-          },
-          shadowOpacity: 0.25,
-          shadowRadius: 3.84,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
         elevation: 5,
-      },
+    },
 });
 
 export default Home;

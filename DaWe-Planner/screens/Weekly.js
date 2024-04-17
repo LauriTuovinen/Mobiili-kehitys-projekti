@@ -23,16 +23,16 @@ const DayCard = ({ day, tasks = 0 }) => {
   const { darkMode } = useContext(DarkModeContext)
   const navigation = useNavigation()
   //Navigate to home.js to correct day
-  const navigateToDay = (day) =>{
-    navigation.navigate('Home', {correctDay: day})
+  const navigateToDay = (day) => {
+    navigation.navigate('Home', { correctDay: day })
     console.log('navigate to day:', day);
   }
   //onPress nagateToDay
   return (
-      <TouchableOpacity  style={darkMode ? styles.DarkCardContainer : styles.cardContainer} onPress= {() => navigateToDay(day)}> 
+    <TouchableOpacity style={darkMode ? styles.DarkCardContainer : styles.cardContainer} onPress={() => navigateToDay(day)}>
       <Text style={[styles.cardText, { textAlign: 'right' }]}>{day.day}</Text>
       <Text style={{ textAlign: 'right' }}>{tasks} tasks</Text>
-      </TouchableOpacity>
+    </TouchableOpacity>
   )
 }
 
@@ -84,15 +84,15 @@ export const WeeklyScreen = () => {
     <View style={darkMode ? styles.DarkContainer : styles.container}>
       <Text style={[styles.cardText, { fontSize: 22 }, { paddingTop: 10 }]}> Week {weekNumber ? weekNumber : moment().week()}</Text>
       <FlatList
-      data={days}
-      renderItem={({ item }) => {
-        const matchingTaskData = tasks.find(dayData => dayData.day === item.day);
-        // console.log('Matching data for', item.day, ':', matchingTaskData);
-        const taskCount = matchingTaskData?.tasks || 0;
-        return <DayCard day={item} tasks={taskCount} />;
-      }}
-      keyExtractor={(item) => item.day}
-      showsVerticalScrollIndicator={false}
+        data={days}
+        renderItem={({ item }) => {
+          const matchingTaskData = tasks.find(dayData => dayData.day === item.day);
+          // console.log('Matching data for', item.day, ':', matchingTaskData);
+          const taskCount = matchingTaskData?.tasks || 0;
+          return <DayCard day={item} tasks={taskCount} />;
+        }}
+        keyExtractor={(item) => item.day}
+        showsVerticalScrollIndicator={false}
       />
       <CreateTaskButton />
     </View>
