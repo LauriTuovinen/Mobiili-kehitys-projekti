@@ -171,8 +171,8 @@ function Home() {
     function OwnButton(props) {
         const { onPress, title = 'Save' } = props;
         return (
-            <Pressable style={darkMode ? styles.DarkButton : styles.button} onPress={onPress}>
-                <Text style={styles.text}>{title}</Text>
+            <Pressable style={darkMode ? styles.DarkButton : styles.closeButton} onPress={onPress}>
+                <Text style={styles.font}>{title}</Text>
             </Pressable>
         );
     }
@@ -191,7 +191,7 @@ function Home() {
                     <View style={styles.viewModal}>
                         <Image
                             source={ImageSource}
-                            style={{ height: '100%', width: '100%', resizeMode: 'contain' }}
+                            style={darkMode ? styles.darkPhotoModal :styles.photoModal}
                         />
                         <OwnButton title="close" onPress={() => handleClosePhoto(index)} color={darkMode ? navbarColorDark : navbarColorLight} />
                     </View>
@@ -240,7 +240,7 @@ function Home() {
                                         </View>
                                         <Image
                                             source={{ uri: t.image }} // t.image is the URI
-                                            style={{ width: 120, height: 120, borderRadius: 10, }}
+                                            style={darkMode ? styles.darkImagePreview : styles.imagePreview}
                                             onPress={() => handleOpenPhoto(i)} // Open modal on press
                                         />
                                     </View>
@@ -344,30 +344,12 @@ const styles = StyleSheet.create({
         width: '100%',
         alignItems: 'center',
         justifyContent: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
     viewModal: {
-        width: '70%',
-        height: '70%',
-    },
-    button: {
-        alignItems: 'center',
-        justifyContent: 'center',
-        justifySelf: 'flex-start',
-        paddingVertical: 12,
-        paddingHorizontal: 32,
-        borderRadius: 4,
-        elevation: 3,
-        backgroundColor: navbarColorLight,
-    },
-    DarkButton: {
-        alignItems: 'center',
-        justifyContent: 'center',
-        justifySelf: 'flex-start',
-        paddingVertical: 12,
-        paddingHorizontal: 32,
-        borderRadius: 4,
-        elevation: 3,
-        backgroundColor: navbarColorDark,
+        width: '90%',
+        height: '34%',
+        
     },
     font: {
         fontSize: 20,
@@ -429,6 +411,50 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
         elevation: 5,
+    },
+    photoModal: {
+        height: '100%', 
+        width: '100%', 
+        resizeMode: 'contain',
+        borderColor: navbarColorLight,
+        borderWidth: 4,
+        borderRadius: 10
+        
+    },
+    darkPhotoModal: {
+        height: '100%', 
+        width: '100%', 
+        resizeMode: 'contain',
+        borderColor: navbarColorDark,
+        borderWidth: 4,
+        borderRadius: 10
+        
+    },
+    closeButton: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 12,
+        paddingHorizontal: 12,
+        borderRadius: 10,
+        elevation: 3,
+        backgroundColor: navbarColorLight,
+        margin: 16,
+    },    
+    DarkButton: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 12,
+        paddingHorizontal: 12,
+        borderRadius: 10,
+        elevation: 3,
+        backgroundColor: navbarColorDark,
+        margin: 16,
+    },
+    imagePreview: {
+        width: 120, height: 120, borderRadius: 10, borderWidth: 2, borderColor: navbarColorLight 
+    },
+    darkImagePreview: {
+        width: 120, height: 120, borderRadius: 10, borderWidth: 2, borderColor: navbarColorDark 
     },
 });
 

@@ -1,4 +1,4 @@
-import { View, Text, Button } from "react-native";
+import { View, Text, Button, ScrollView } from "react-native";
 import React, { useState, useEffect, useContext } from 'react';
 import database from "../components/database";
 import { StyleSheet } from "react-native";
@@ -60,21 +60,22 @@ export const TaskInfo = () => {
 
     // Render the component
     return (
+        <ScrollView>
         <View style={darkMode ? styles.DarkContainer : styles.container}>
             {task ? (
                 <View>
                     <Text style={styles.taskName}>{task.name}</Text>
                     <View style={darkMode ? styles.DarkTaskContainer : styles.taskContainer}>
                         <Text style={styles.label}>Info:</Text>
-                        <Text style={styles.value}>{task.description}</Text>
+                        <Text style={darkMode ? styles.darkValue : styles.value}>{task.description}</Text>
                         <Text style={styles.label}>Time:</Text>
-                        <Text style={styles.value}>{task.startTime} - {task.endTime}</Text>
+                        <Text style={darkMode ? styles.darkValue : styles.value}>{task.startTime} - {task.endTime}</Text>
                         <Text style={styles.label}>Date:</Text>
-                        <Text style={styles.value}>{task.date}</Text>
+                        <Text style={darkMode ? styles.darkValue : styles.value}>{task.date}</Text>
                         <Text style={styles.label}>Priority:</Text>
-                        <Text style={styles.value}>{task.priority}</Text>
+                        <Text style={darkMode ? styles.darkValue : styles.value}>{task.priority}</Text>
                         <Text style={styles.label}>Tag:</Text>
-                        <Text style={styles.value}>{task.tag}</Text>
+                        <Text style={darkMode ? styles.darkValue : styles.value}>{task.tag}</Text>
                         {task.image && (
                             <Image source={{ uri: task.image }} style={{ alignSelf: 'center', width: 150, height: 150, borderRadius: 10 }} />
                         )}
@@ -86,6 +87,7 @@ export const TaskInfo = () => {
                 <Text>Loading...</Text>
             )}
         </View>
+        </ScrollView>
     );
 };
 
@@ -141,5 +143,19 @@ const styles = StyleSheet.create({
     },
     value: {
         marginBottom: 10,
+        borderColor: navbarColorLight,
+        borderWidth: 1,
+        borderRadius: 10,
+        padding: 8,
+        backgroundColor: navbarColorLight,
+    },
+
+    darkValue: {
+        marginBottom: 10,
+        borderColor: navbarColorDark,
+        borderWidth: 1,
+        borderRadius: 10,
+        padding: 8,
+        backgroundColor: navbarColorDark,
     },
 });
