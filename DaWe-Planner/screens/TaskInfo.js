@@ -73,10 +73,13 @@ const bgColorDark = '#757575'
                         <Text style={styles.value}>{task.date}</Text>
                         <Text style={styles.label}>Priority:</Text>
                         <Text style={styles.value}>{task.priority}</Text>
-                        <Text>Done: {task.done}</Text>
+                        <Text style={styles.label}>Tag:</Text>
+                        <Text>{task.tag}</Text>
                         {task.image && (
-                            <Image source={{ uri: task.image }} style={{ width: 120, height: 120, borderRadius: 10 }} />
+                            <Image source={{ uri: task.image }} style={{ alignSelf: 'center', width: 150, height: 150, borderRadius: 10 }} />
                         )}
+                        
+
                     </View>
                     {/* <CreateTaskButton/> */}
                 </View>
@@ -91,7 +94,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        justifyContent: 'center',
         backgroundColor: bgColorLight
     },
     DarkContainer: {
@@ -104,6 +106,8 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 30,
         marginBottom: 20,
+        marginTop: 10,
+
     },
     taskContainer: {
         backgroundColor: cardColorLight,
