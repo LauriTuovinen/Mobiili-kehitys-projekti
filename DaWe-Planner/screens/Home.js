@@ -23,14 +23,15 @@ const bgColorDark = '#757575'
 var moment = require('moment')
 const db = database.db;
 
-
-const DropdownMenu = () => {
 const updateDone = async (id) => {
     database.updateTaskDoneById(db, id);
 }
 const deleteTask = async (id) => {
     database.deleteTaskbyId(db, id);
 }
+
+
+const DropdownMenu = ({ id, fetchData }) => {
     const [isOpen, setIsOpen] = useState(false);
 
     const toggleDropdown = () => {
@@ -38,7 +39,6 @@ const deleteTask = async (id) => {
     };
 
     const handleOptionPress = (option) => {
-
         if (option === 'Option 1') {
             updateDone(id)
         }
@@ -84,7 +84,6 @@ function Home() {
     const formattedDay = moment(correctDay).format('DD/MM/YYYY');
 
     console.log(currentDay);
-
 
     const { toggleDarkMode } = useContext(DarkModeContext)
     useEffect(() => {
@@ -206,7 +205,6 @@ function Home() {
         navigation.navigate('TaskInfo', { taskId: id });
         console.log('Navigate to task id:', id);
     };
-
 
     return (
         <SafeAreaView style={darkMode ? styles.DarkContainer : styles.container}>
