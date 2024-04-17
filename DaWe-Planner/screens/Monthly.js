@@ -177,8 +177,8 @@ function Monthly() {
                         </TouchableOpacity>
                     )
                 })}
-                <CreateTaskButton />
             </ScrollView>
+            <CreateTaskButton />
         </View>
     );
 }
