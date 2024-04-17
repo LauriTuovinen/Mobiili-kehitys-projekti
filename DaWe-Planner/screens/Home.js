@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { Modal, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Card, Image } from '@rneui/themed';
 import hyi from '../assets/hyi.jpg'
-import database from "../components/database";
+import database, { deleteTaskbyId } from "../components/database";
 import { useFocusEffect } from '@react-navigation/native';
 import { useRoute, useNavigation } from "@react-navigation/native";
 import * as FileSystem from 'expo-file-system';
@@ -23,40 +23,54 @@ const bgColorDark = '#757575'
 var moment = require('moment')
 const db = database.db;
 
+const updateDone = async (id) => {
+    database.updateTaskDoneById(db, id);
+}
+const deleteTask = async (id) => {
+    database.deleteTaskbyId(db, id);
+}
 
-const DropdownMenu = () => {
+
+const DropdownMenu = ({ id, fetchData }) => {
     const [isOpen, setIsOpen] = useState(false);
-  
+
     const toggleDropdown = () => {
-      setIsOpen(!isOpen);
+        setIsOpen(!isOpen);
     };
-  
+
     const handleOptionPress = (option) => {
-      // Do something with the selected option
-      console.log('Selected option:', option);
-      // Close the dropdown after selecting an option
-      setIsOpen(false);
+        if (option === 'Option 1') {
+            updateDone(id)
+        }
+        else if (option === 'Option 2') {
+            deleteTask(id);
+        }
+        console.log('Selected option:', option);
+        // Close the dropdown after selecting an option
+        setIsOpen(false);
+
+        fetchData();
     };
     const { darkMode } = useContext(DarkModeContext)
 
     return (
-      <View style={styles.container}>
-        <TouchableOpacity onPress={toggleDropdown} style={darkMode ? styles.darkDropdownButton : styles.dropdownButton}>
-        <Ionicons name="ellipsis-vertical" size={32} color="white" />
-        </TouchableOpacity>
-        {isOpen && (
-          <View style={darkMode ? styles.darkDropdownContent : styles.dropdownContent}>
-            <TouchableOpacity onPress={() => handleOptionPress('Option 1')} style={styles.optionButton}>
-              <Text style={styles.buttonText}>Done</Text>
+        <View style={styles.container}>
+            <TouchableOpacity onPress={toggleDropdown} style={darkMode ? styles.darkDropdownButton : styles.dropdownButton}>
+                <Ionicons name="ellipsis-vertical" size={32} color="white" />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => handleOptionPress('Option 2')} style={styles.optionButton}>
-              <Text style={styles.buttonText}>Delete</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-      </View>
+            {isOpen && (
+                <View style={darkMode ? styles.darkDropdownContent : styles.dropdownContent}>
+                    <TouchableOpacity onPress={() => handleOptionPress('Option 1')} style={styles.optionButton}>
+                        <Text style={styles.buttonText}>Done</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => handleOptionPress('Option 2')} style={styles.optionButton}>
+                        <Text style={styles.buttonText}>Delete</Text>
+                    </TouchableOpacity>
+                </View>
+            )}
+        </View>
     );
-  };
+};
 
 
 function Home() {
@@ -178,16 +192,7 @@ function Home() {
         navigation.navigate('TaskInfo', { taskId: id });
         console.log('Navigate to task id:', id);
     };
-    const updateDone = async (id) => {
-        database.updateTaskDoneById(db, id);
 
-        fetchData();
-    }
-    const deleteTask = async (id) => {
-        database.deleteTaskbyId(db, id);
-
-        fetchData();
-    }
 
     return (
         <SafeAreaView style={darkMode ? styles.DarkContainer : styles.container}>
@@ -198,20 +203,20 @@ function Home() {
                 <View style={styles.upcomingTaskView}>
                     {tasks.map((t, i) => {
                         //check condition for done and then check condition for DarkMode
-                        const cardStyles = t.done === 1 ? darkMode ? styles.DarkDullCard : styles.dullCard : darkMode ? styles.DarkUpcomingTaskCard : styles.upcomingTaskCard; 
+                        const cardStyles = t.done === 1 ? darkMode ? styles.DarkDullCard : styles.dullCard : darkMode ? styles.DarkUpcomingTaskCard : styles.upcomingTaskCard;
                         return (
                             <TouchableOpacity key={i} onPress={() => navigateToTaskInfo(t.id)}>
-                                {/* Mapping tasks to cards */} 
-                                <Card containerStyle={darkMode ? styles.DarkUpcomingTaskCard : styles.upcomingTaskCard}>
-                                    
-                                    <View style={{flex: 1, flexDirection: 'row'}}>
-                                    <Card.Title style={styles.font}>{t.name}</Card.Title>
-                                    </View>
+                                {/* Mapping tasks to cards */}
+                                <Card containerStyle={cardStyles}>
 
-                                    <View style={styles.dropdownContainer}>
-                                        <DropdownMenu/>
+                                    <View style={{ flex: 1, flexDirection: 'row' }}>
+                                        <Card.Title style={styles.font}>{t.name}</Card.Title>
                                     </View>
-
+                                        {t.done === 0 && ( 
+                                            <View style={styles.dropdownContainer}>
+                                                <DropdownMenu id={t.id} fetchData={fetchData} />
+                                            </View>
+                                        )}
                                     <Card.Divider />
                                     {/* <Text style={{ paddingLeft: 13, paddingBottom: 5 }}>{t.date}</Text> */}
                                     <View style={{ flex: 1, flexDirection: 'row', }}>
@@ -219,16 +224,16 @@ function Home() {
                                             <Text style={{ flex: 1, padding: 8, maxHeight: 118 }}>{t.description}</Text>
                                             <Text style={{ flex: 1, paddingLeft: 8, color: '#5c5c5c' }}>{t.startTime} - {t.endTime}</Text>
                                         </View>
-                                                <Image
-                                                    source={{ uri: t.image }} // t.image is the URI
-                                                    style={{ width: 120, height: 120, borderRadius: 10, }}
-                                                    onPress={() => handleOpenPhoto(i)} // Open modal on press
-                                                />
-                                        </View>
-                                        {/* Conditionally render the PhotoModal */}
-                                        {openPhotos[i] && <PhotoModal ImageSource={{ uri: t.image }} index={i} />}
-                                
-                                    </Card>
+                                        <Image
+                                            source={{ uri: t.image }} // t.image is the URI
+                                            style={{ width: 120, height: 120, borderRadius: 10, }}
+                                            onPress={() => handleOpenPhoto(i)} // Open modal on press
+                                        />
+                                    </View>
+                                    {/* Conditionally render the PhotoModal */}
+                                    {openPhotos[i] && <PhotoModal ImageSource={{ uri: t.image }} index={i} />}
+
+                                </Card>
                             </TouchableOpacity>
                         );
                     })}
@@ -361,11 +366,11 @@ const styles = StyleSheet.create({
         right: 0,
         zIndex: 999,
         alignItems: 'flex-end',
-      },
+    },
     dropdownButton: {
         backgroundColor: '#ffdac1',
-      },
-      dropdownContent: {
+    },
+    dropdownContent: {
         position: 'absolute',
         top: 40,
         right: 8,
@@ -375,28 +380,28 @@ const styles = StyleSheet.create({
         shadowOffset: {
             width: 0,
             height: 2,
-          },
-          shadowOpacity: 0.25,
-          shadowRadius: 3.84,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
         elevation: 5,
-      },
-      optionButton: {
+    },
+    optionButton: {
         width: 100,
         padding: 8,
         borderBottomWidth: 1,
         borderBottomColor: '#ccc',
-      },
-      buttonText: {
+    },
+    buttonText: {
         fontSize: 16,
         color: 'black',
         textAlign: 'center',
         fontWeight: "bold",
-      },
+    },
 
-      darkDropdownButton: {
+    darkDropdownButton: {
         backgroundColor: cardColorDark,
-      },
-      darkDropdownContent: {
+    },
+    darkDropdownContent: {
         position: 'absolute',
         top: 40,
         right: 8,
@@ -406,11 +411,11 @@ const styles = StyleSheet.create({
         shadowOffset: {
             width: 0,
             height: 2,
-          },
-          shadowOpacity: 0.25,
-          shadowRadius: 3.84,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
         elevation: 5,
-      },
+    },
 });
 
 export default Home;
