@@ -70,7 +70,7 @@ export default function CreateTask() {
 
         return (
             <View style={darkMode? styles.DarkAlertStyle : styles.alertStyle}>
-                <Text style={{ color: 'white', fontSize: 20 }}>Message saved sucesfully</Text>
+                <Text style={{ color: 'white', fontSize: 20 }}>Task saved sucesfully</Text>
             </View>
         )
     }
@@ -207,6 +207,7 @@ export default function CreateTask() {
 
         await database.addTask(db, taskName, description, priority, formattedDate, startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }), endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }), image, notification);
         setShowAlert(true)
+
         //send notification is notification === true
         if (notification === true) {
             const taskStartTime = moment(`${formattedDate} ${formattedStartTime}`, 'DD/MM/YYYY HH:mm').toDate();
@@ -373,20 +374,22 @@ export default function CreateTask() {
                     <View style={styles.modalContainer}>
                         <View style={darkMode ? styles.DarkModalContent : styles.modalContent}>
                             <View style={styles.list}>
-                                <FlatList style={styles.list}
-                                    data={tags}
-                                    renderItem={({ item }) => (
-                                        <TouchableOpacity
-                                            style={[darkMode ? styles.darkTagButton : styles.tagButton, selectedTag === item && styles.selectedTagButton]}
-                                            onPress={() => {
-                                                setSelectedTag(item);
-                                                setTagModalVisible(false);
-                                            }}>
-                                            <Text style={styles.tagText}>{item}</Text>
-                                        </TouchableOpacity>
-                                    )}
-                                    keyExtractor={(item) => item}
-                                /></View>
+
+                            <FlatList style={styles.list}
+                                data={tags}
+                                renderItem={({ item }) => (
+                                    <TouchableOpacity
+                                        style={[darkMode ? styles. darkTagButton : styles.tagButton, selectedTag === item && styles.selectedTagButton]}
+                                        onPress={() => {
+                                            setSelectedTag(item);
+                                            setTagModalVisible(false);
+                                            console.log(selectedTag)
+                                        }}>
+                                        <Text style={styles.tagText}>{item}</Text>
+                                    </TouchableOpacity>
+                                )}
+                                keyExtractor={(item) => item}
+                            /></View>
                         </View>
                     </View>
                 </Modal>

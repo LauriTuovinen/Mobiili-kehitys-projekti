@@ -44,7 +44,7 @@ export const addTask = (db, taskName, description, priority, date, startTime, en
         db.transaction(tx => {
             tx.executeSql(
                 "INSERT INTO tasks (name, description, priority, date, startTime, endTime, image, notification, tag, done) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                [taskName, description, priority, date, startTime, endTime, image, notification, '', 0],
+                [taskName, description, priority, date, startTime, endTime, image, notification, tag, 0],
                 (_, { rowsAffected }) => {
                     if (rowsAffected > 0) {
                         console.log("Task added!");
