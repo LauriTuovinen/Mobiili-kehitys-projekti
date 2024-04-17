@@ -74,12 +74,11 @@ const bgColorDark = '#757575'
                         <Text style={styles.label}>Priority:</Text>
                         <Text style={styles.value}>{task.priority}</Text>
                         <Text style={styles.label}>Tag:</Text>
-                        <Text>{task.tag}</Text>
+                        <Text style={styles.value}>{task.tag}</Text>
                         {task.image && (
                             <Image source={{ uri: task.image }} style={{ alignSelf: 'center', width: 150, height: 150, borderRadius: 10 }} />
                         )}
                         
-
                     </View>
                     {/* <CreateTaskButton/> */}
                 </View>

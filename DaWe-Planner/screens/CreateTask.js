@@ -198,7 +198,7 @@ export default function CreateTask() {
         const formattedStartTime = startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
         const formattedEndTime = endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
 
-        await database.addTask(db, taskName, description, priority, formattedDate, startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }), endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }), image, notification);
+        await database.addTask(db, taskName, description, priority, formattedDate, startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }), endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }), image, notification, selectedTag);
 
         if (notification === true) {
             const taskStartTime = moment(`${formattedDate} ${formattedStartTime}`, 'DD/MM/YYYY HH:mm').toDate();
@@ -376,6 +376,7 @@ export default function CreateTask() {
                                         onPress={() => {
                                             setSelectedTag(item);
                                             setTagModalVisible(false);
+                                            console.log(selectedTag)
                                         }}>
                                         <Text style={styles.tagText}>{item}</Text>
                                     </TouchableOpacity>
