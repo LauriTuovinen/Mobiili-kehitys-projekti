@@ -24,8 +24,8 @@ Notifications.setNotificationHandler({
 const bgColorLight = '#f9efdb'
 const cardColorLight = '#ffdac1'
 const navbarColorLight = '#ffb8b1'
-const cardColorDark = '#979797'
 const navbarColorDark = '#b95970'
+const cardColorDark = '#979797'
 const bgColorDark = '#757575'
 
 var moment = require('moment');

@@ -9,6 +9,7 @@ import Settings from '../screens/Settings';
 import { TaskInfo } from '../screens/TaskInfo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { DarkModeContext } from './themeContext';
 
 
 const homeScreen = 'Home';
@@ -18,11 +19,15 @@ const createTaskScreen = 'Create';
 const settingsScreen = 'Settings'
 const taskInfoScreen = 'TaskInfo'
 
+const navbarColorLight = '#ffb8b1'
+const navbarColorDark = '#b95970'
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 export function OGnavigaatio() {
+    const { darkMode } = React.useContext(DarkModeContext)
+
     return (
         <Tab.Navigator
             initialRouteName={homeScreen}
@@ -46,15 +51,15 @@ export function OGnavigaatio() {
 
                     return <Ionicons name={iconName} size={size} color={color} />
                 },
+                tabBarActiveTintColor: 'black',
+                tabBarInactiveTintColor: '#545454',
+                labelStyle: { paddingBottom: 4,fontSize: 10 },
+                tabBarStyle: { backgroundColor: darkMode ? navbarColorDark : navbarColorLight },
+                headerStyle: { backgroundColor: darkMode ? navbarColorDark : navbarColorLight },
             })}
+        >
 
-            tabBarOptions={{
-                activeTintColor: 'black',
-                inactiveTintColor: 'grey',
-                labelStyle: { paddingBottom: 10, fontSize: 10 },
-            }}>
-
-            <Tab.Screen name={homeScreen} component={Home} />
+            <Tab.Screen name={homeScreen} component={Home} goBack='history' />
             <Tab.Screen name={weeklyScreen} component={Weekly} />
             <Tab.Screen name={monthlyScreen} component={Monthly} />
             <Tab.Screen name={createTaskScreen} component={CreateTask} />
