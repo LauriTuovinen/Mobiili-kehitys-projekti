@@ -367,20 +367,21 @@ export default function CreateTask() {
                     onRequestClose={() => setTagModalVisible(false)}>
                     <View style={styles.modalContainer}>
                         <View style={darkMode ? styles.DarkModalContent : styles.modalContent}>
-                            <FlatList
+                            <View style={styles.list}>
+                            <FlatList style={styles.list}
                                 data={tags}
                                 renderItem={({ item }) => (
                                     <TouchableOpacity
-                                        style={[styles.tagButton, selectedTag === item && styles.selectedTagButton]}
+                                        style={[darkMode ? styles. darkTagButton : styles.tagButton, selectedTag === item && styles.selectedTagButton]}
                                         onPress={() => {
                                             setSelectedTag(item);
                                             setTagModalVisible(false);
                                         }}>
-                                        <Text>{item}</Text>
+                                        <Text style={styles.tagText}>{item}</Text>
                                     </TouchableOpacity>
                                 )}
                                 keyExtractor={(item) => item}
-                            />
+                            /></View>
                         </View>
                     </View>
                 </Modal>
@@ -467,13 +468,13 @@ const styles = StyleSheet.create({
         
     },
     modalContent: {
-        backgroundColor: navbarColorLight,
+        backgroundColor: cardColorLight,
         padding: 20,
         borderRadius: 10,
         elevation: 5,
     },
     DarkModalContent: {
-        backgroundColor: navbarColorDark,
+        backgroundColor: cardColorDark,
         padding: 20,
         borderRadius: 10,
         elevation: 5,
@@ -485,6 +486,7 @@ const styles = StyleSheet.create({
     },
     modalText: {
         fontSize: 18,
+        fontWeight: "bold"
     },
     button: {
         alignItems: 'center',
@@ -507,22 +509,33 @@ const styles = StyleSheet.create({
         backgroundColor: navbarColorDark,
     },
     tagButton: {
-        paddingVertical: 10,
-        paddingHorizontal: 20,
+        paddingVertical: 12,
+        paddingHorizontal: 32,
         marginVertical: 5,
         borderRadius: 5,
         borderWidth: 1,
         borderColor: 'gray',
+        backgroundColor: '#ffb8b1',
+        alignItems: 'center'
     },
     tagText: {
-        fontSize: 16,
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        borderWidth: 1,
-        borderColor: 'gray',
+        fontSize: 20,
         borderRadius: 5,
     },
     selectedTagButton: {
         backgroundColor: 'lightblue',
+    },
+    list: {
+        height: 380,
+    },
+    darkTagButton: {
+        paddingVertical: 12,
+        paddingHorizontal: 32,
+        marginVertical: 5,
+        borderRadius: 5,
+        borderWidth: 1,
+        borderColor: 'gray',
+        backgroundColor: navbarColorDark,
+        alignItems: 'center'
     },
 });

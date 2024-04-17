@@ -386,8 +386,8 @@ const styles = StyleSheet.create({
         elevation: 5,
     },
     optionButton: {
-        width: 100,
-        padding: 8,
+        width: 120,
+        padding: 10,
         borderBottomWidth: 1,
         borderBottomColor: '#ccc',
     },
