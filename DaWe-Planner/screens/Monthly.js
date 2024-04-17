@@ -5,7 +5,7 @@ import CreateTaskButton from "../components/CreateTaskButton";
 import 'moment/locale/en-gb'
 import { useNavigation } from "@react-navigation/native";
 import database from "../components/database";
-import {DarkModeContext, DarkModeProvider} from '../components/themeContext'
+import { DarkModeContext, DarkModeProvider } from '../components/themeContext'
 
 
 const bgColorLight = '#f9efdb'
@@ -132,54 +132,54 @@ function Monthly() {
     const navigateToWeekly = (weeks) => {
         navigation.navigate('Weekly', { weekNumber: weeks });
         console.log('navigate to week number', weeks);
-        console.log(moment().month()+1);
+        console.log(moment().month() + 1);
     };
 
     return (
-            <View
-                style={darkMode ? styles.darkContainer : styles.container}>
-                <ScrollView>
+        <View
+            style={darkMode ? styles.darkContainer : styles.container}>
+            <ScrollView>
 
-                    <StatusBar style={{ backgroundColor: darkMode ? navbarColorDark : navbarColorLight }} />
-                    <Text style={{ marginTop: 5, marginLeft: 15, fontWeight: 'bold' }}>2024</Text>
+                <StatusBar style={{ backgroundColor: darkMode ? navbarColorDark : navbarColorLight }} />
+                <Text style={{ marginTop: 5, marginLeft: 15, fontWeight: 'bold' }}>2024</Text>
 
-                    <Text style={styles.header}>
-                        <Icon
-                            name='keyboard-arrow-left'
-                            size={40}
-                            color={darkMode ? navbarColorDark : navbarColorLight}
+                <Text style={styles.header}>
+                    <Icon
+                        name='keyboard-arrow-left'
+                        size={40}
+                        color={darkMode ? navbarColorDark : navbarColorLight}
 
-                            onPress={decreaseMonth}
-                        />
-                        <Text style={{ fontWeight: 'bold', }}>{monthName}</Text>
+                        onPress={decreaseMonth}
+                    />
+                    <Text style={{ fontWeight: 'bold', }}>{monthName}</Text>
 
-                        <Icon
-                            name='keyboard-arrow-right'
-                            size={40}
-                            color={darkMode ? navbarColorDark : navbarColorLight}
+                    <Icon
+                        name='keyboard-arrow-right'
+                        size={40}
+                        color={darkMode ? navbarColorDark : navbarColorLight}
 
-                            onPress={increaseMonth}
-                        />
-                    </Text>
+                        onPress={increaseMonth}
+                    />
+                </Text>
 
-                    {/* count total number of tasks per month */}
-                    <Text style={{marginLeft: 15, fontWeight: 'bold'}}>This month you have {weekNumbers.reduce((total, w) => total + w.numberOfTasks, 0)} tasks</Text>
-                    {/* map through weekNumbers and display weeks of each month and the tasks in the month. Also each card has navigation to corresponding Weekly.js screen */}
-                    {weekNumbers.map((w, i) => {
-                        return (
-                            <TouchableOpacity key={i} onPress={() => navigateToWeekly(w.weeks)}>
-                                <Card containerStyle={darkMode ? styles.darkWeeksCards : styles.weeksCards}>
-                                    <View style = {{flexDirection: 'row', justifyContent: "space-evenly", alignItems: 'center' }}>
+                {/* count total number of tasks per month */}
+                <Text style={{ marginLeft: 15, fontWeight: 'bold' }}>This month you have {weekNumbers.reduce((total, w) => total + w.numberOfTasks, 0)} tasks</Text>
+                {/* map through weekNumbers and display weeks of each month and the tasks in the month. Also each card has navigation to corresponding Weekly.js screen */}
+                {weekNumbers.map((w, i) => {
+                    return (
+                        <TouchableOpacity key={i} onPress={() => navigateToWeekly(w.weeks)}>
+                            <Card containerStyle={darkMode ? styles.darkWeeksCards : styles.weeksCards}>
+                                <View style={{ flexDirection: 'row', justifyContent: "space-evenly", alignItems: 'center' }}>
                                     <Text style={{ fontSize: 45, fontWeight: 'bold', backgroundColor: 'transparent' }}>week {w.weeks}</Text>
-                                    <Text style = {{fontWeight: 'bold'}}>{w.numberOfTasks} tasks this week</Text>
-                                    </View>
-                                </Card>
-                            </TouchableOpacity>
-                        )
-                    })}
-                    <CreateTaskButton />
-                </ScrollView>
-            </View>
+                                    <Text style={{ fontWeight: 'bold' }}>{w.numberOfTasks} tasks this week</Text>
+                                </View>
+                            </Card>
+                        </TouchableOpacity>
+                    )
+                })}
+                <CreateTaskButton />
+            </ScrollView>
+        </View>
     );
 }
 

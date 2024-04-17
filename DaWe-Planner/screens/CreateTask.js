@@ -16,18 +16,9 @@ import * as Device from 'expo-device';
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
         shouldShowAlert: true,
-        shouldPlaySound: false,
+        shouldPlaySound: true,
         shouldSetBadge: false,
     }),
-});
-Notifications.scheduleNotificationAsync({
-    content: {
-        title: 'Look at that notification',
-        body: "I'm so proud of myself!",
-    },
-    trigger: {
-        seconds: 10
-    },
 });
 
 const bgColorLight = '#f9efdb'
@@ -70,53 +61,77 @@ export default function CreateTask() {
     const notificationListener = useRef();
     const responseListener = useRef();
 
-
-    useEffect(() => {
-        registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
-
-        notificationListener.current = Notifications.addNotificationReceivedListener(pushNotification => {
-            setPushNotification(pushNotification);
-        });
-
-        responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-            console.log(response);
-        });
-
-        return () => {
-            Notifications.removeNotificationSubscription(notificationListener.current);
-            Notifications.removeNotificationSubscription(responseListener.current);
-        };
-    }, []);
-
-    async function registerForPushNotificationsAsync() {
-        let token;
-
-        if (Platform.OS === 'android') {
-            await Notifications.setNotificationChannelAsync('default', {
-                name: 'default',
-                importance: Notifications.AndroidImportance.MAX,
-                vibrationPattern: [0, 250, 250, 250],
-                lightColor: '#FF231F7C',
+        //from expo docs
+        useEffect(() => {
+            registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+    
+            notificationListener.current = Notifications.addNotificationReceivedListener(pushNotification => {
+                setPushNotification(pushNotification);
             });
+    
+            responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+                console.log(response);
+            });
+    
+            return () => {
+                Notifications.removeNotificationSubscription(notificationListener.current);
+                Notifications.removeNotificationSubscription(responseListener.current);
+            };
+        }, []);
+    
+        async function registerForPushNotificationsAsync() {
+            let token;
+    
+            if (Platform.OS === 'android') {
+                await Notifications.setNotificationChannelAsync('default', {
+                    name: 'default',
+                    importance: Notifications.AndroidImportance.MAX,
+                    vibrationPattern: [1000, 1000, 1000, 1000],
+                    lightColor: darkMode ? navbarColorDark : navbarColorLight,
+                });
+            }
+    
+            if (Device.isDevice) {
+                const { status: existingStatus } = await Notifications.getPermissionsAsync();
+                let finalStatus = existingStatus;
+                if (existingStatus !== 'granted') {
+                    const { status } = await Notifications.requestPermissionsAsync();
+                    finalStatus = status;
+                }
+                if (finalStatus !== 'granted') {
+                    alert('Failed to get push token for push notification!');
+                    return;
+                }
+                console.log(token);
+            } else {
+                alert('Must use physical device for Push Notifications');
+            }
+    
+            return token;
         }
+    
+        const scheduleNotification = async (notificationTime, taskName) => {
+            //scheduledTime is CurrentTime in millizeconds plus 3 hour timezone minus notificationTimeMilliseconds  
+            const currentTime = Date.now() + (3*60*60*1000)
+            const notificationTimeMilliseconds= notificationTime.getTime()
+            let scheduledTime = Math.round((notificationTimeMilliseconds - currentTime) / 1000 ) // divided by 1000 to get seconds and round them
+            console.log('Time left untill notification:', scheduledTime);
+            if (scheduledTime < 0){ // If task has already gone when created, set scheduled time to 1 second to make the notification straight away.
+                scheduledTime = 1
+            }
+            // // Schedule notification 10 minutes before task start time
+            await Notifications.scheduleNotificationAsync({
+                content: {
+                    title: "Task Reminder",
+                    body: `Your task "${taskName}" is starting soon!`,
+                    data: { taskName },
+                },
+                trigger: { 
+                    seconds: scheduledTime
+                 }, 
+    
+            });
 
-        if (Device.isDevice) {
-            const { status: existingStatus } = await Notifications.getPermissionsAsync();
-            let finalStatus = existingStatus;
-            if (existingStatus !== 'granted') {
-                const { status } = await Notifications.requestPermissionsAsync();
-                finalStatus = status;
-            }
-            if (finalStatus !== 'granted') {
-                alert('Failed to get push token for push notification!');
-                return;
-            }
-            // Learn more about projectId:
-            // https://docs.expo.dev/push-notifications/push-notifications-setup/#configure-projectid
-            // token = (await Notifications.getExpoPushTokenAsync({ projectId: 'your-project-id' })).data;
-            console.log(token);
-        } else {
-            alert('Must use physical device for Push Notifications');
         }
 
         return token;
@@ -199,13 +214,11 @@ export default function CreateTask() {
         const formattedEndTime = endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
 
         await database.addTask(db, taskName, description, priority, formattedDate, startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }), endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }), image, notification);
-
+       
+        //send notification is notification === true
         if (notification === true) {
-            const taskStartTime = moment(`${formattedDate} ${formattedStartTime}`, 'DD/MM/YYYY HH:mm').toDate();
-            const taskStartTimeTimeZone = moment(taskStartTime).add(3, 'hours')
-            console.log('taskStartTimeTimeZone:', taskStartTimeTimeZone);
-            console.log("this is formattedDate: ", formattedDate);
-            console.log("this is formattedStartTime: ", formattedStartTime);
+            const taskStartTime = moment(`${formattedDate} ${formattedStartTime}`, 'DD/MM/YYYY HH:mm').toDate(); 
+            const taskStartTimeTimeZone = moment(taskStartTime).add(3, 'hours') //add 3 hours because of timezone, haxs
             const notificationTime = moment(taskStartTimeTimeZone).subtract(10, 'minutes').toDate(); // Calculate notification time 10 minutes before task start
             console.log('notificationtime: ', notificationTime);
             await scheduleNotification(notificationTime, taskName);
