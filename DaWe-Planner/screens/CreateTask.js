@@ -111,11 +111,11 @@ export default function CreateTask() {
         }
     
         const scheduleNotification = async (notificationTime, taskName) => {
-            //scheduledTime is CurrentTime in millizeconds plus 3 hour timezone minus notificationTimeMilliseconds  
+            //ScheduledTime is CurrentTime in millizeconds plus 3 hour timezone minus notificationTimeMilliseconds.
             const currentTime = Date.now() + (3*60*60*1000)
             const notificationTimeMilliseconds= notificationTime.getTime()
             let scheduledTime = Math.round((notificationTimeMilliseconds - currentTime) / 1000 ) // divided by 1000 to get seconds and round them
-            console.log('Time left untill notification:', scheduledTime);
+            console.log('Time left untill notification:', scheduledTime, 'seconds');
             if (scheduledTime < 0){ // If task has already gone when created, set scheduled time to 1 second to make the notification straight away.
                 scheduledTime = 1
             }
@@ -129,32 +129,9 @@ export default function CreateTask() {
                 trigger: { 
                     seconds: scheduledTime
                  }, 
-    
+
             });
-
         }
-
-        return token;
-    }
-
-    const scheduleNotification = async (notificationTime, taskName) => {
-        const currentTime = Date.now() + (3 * 60 * 60 * 1000)
-        const notificationTimeMilliseconds = notificationTime.getTime()
-        const scheduledTime = Math.round((notificationTimeMilliseconds - currentTime) / 1000)
-        console.log(scheduledTime);
-        // const scheduledTime = currentTime 
-        await Notifications.scheduleNotificationAsync({
-            content: {
-                title: "Task Reminder",
-                body: `Your task "${taskName}" is starting soon!`,
-                data: { taskName },
-            },
-            trigger: {
-                seconds: scheduledTime
-            }, // Schedule notification 10 minutes before task start time
-
-        });
-    }
 
     const pickImage = async (source) => {
         // No permissions request is necessary for launching the image library
