@@ -220,7 +220,7 @@ function Home() {
                             <TouchableOpacity key={i} onPress={() => navigateToTaskInfo(t.id)}>
                                 {/* Mapping tasks to cards */}
 
-                                <Card containerStyle={darkMode ? styles.DarkUpcomingTaskCard : styles.upcomingTaskCard}>
+                                <Card containerStyle={cardStyles}>
 
                                     <View style={{ flex: 1, flexDirection: 'row' }}>
                                         <Card.Title style={styles.font}>{t.name}</Card.Title>
