@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext, useRef } from 'react';
-import { Button, Text, TextInput, View, Image, Pressable, TouchableOpacity, StyleSheet, ScrollView, Modal, Platform } from 'react-native';
+import { Button, Text, TextInput, View, Image, Pressable, TouchableOpacity, StyleSheet, ScrollView, Modal, Platform, FlatList } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
 import dayjs from 'dayjs';
@@ -29,11 +29,15 @@ const navbarColorDark = '#b95970'
 const bgColorDark = '#757575'
 
 var moment = require('moment');
+const tags = ['Hobby', 'Work', 'Exercise', 'Study', 'Food', 'Chores'];
 // {/* */}   comment format inside react native jsx code
 
+
 export default function CreateTask() {
+    
     const { darkMode } = useContext(DarkModeContext)
 
+ 
     const [taskName, setTaskName] = useState('');
     const [description, setDescription] = useState('');
     const [date, setDate] = useState(new Date());
@@ -47,9 +51,11 @@ export default function CreateTask() {
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [notification, setNotification] = useState(false);
     const [tasks, setTasks] = useState([]);
+    const [selectedTag, setSelectedTag] = useState(null);
     const [imageSourceModalVisible, setImageSourceModalVisible] = useState(false);
     const [pushNotification, setPushNotification] = useState(false);
     const [expoPushToken, setExpoPushToken] = useState('');
+    const [tagModalVisible, setTagModalVisible] = useState(false);
 
     const db = database.db;
     const notificationListener = useRef();
@@ -125,14 +131,33 @@ export default function CreateTask() {
                  }, 
     
             });
-        }
-    
-    
 
-         
-        
-        const pickImage = async (source) => {
-            // No permissions request is necessary for launching the image library
+        }
+
+        return token;
+    }
+
+    const scheduleNotification = async (notificationTime, taskName) => {
+        const currentTime = Date.now() + (3 * 60 * 60 * 1000)
+        const notificationTimeMilliseconds = notificationTime.getTime()
+        const scheduledTime = Math.round((notificationTimeMilliseconds - currentTime) / 1000)
+        console.log(scheduledTime);
+        // const scheduledTime = currentTime 
+        await Notifications.scheduleNotificationAsync({
+            content: {
+                title: "Task Reminder",
+                body: `Your task "${taskName}" is starting soon!`,
+                data: { taskName },
+            },
+            trigger: {
+                seconds: scheduledTime
+            }, // Schedule notification 10 minutes before task start time
+
+        });
+    }
+
+    const pickImage = async (source) => {
+        // No permissions request is necessary for launching the image library
         let result;
         if (source === 'gallery') {
             result = await ImagePicker.launchImageLibraryAsync({
@@ -153,6 +178,10 @@ export default function CreateTask() {
         if (!result.canceled) {
             setImage(result.assets[0].uri);
         }
+    };
+
+    const toggleTagModal = () => {
+        setTagModalVisible(!tagModalVisible);
     };
 
     const toggleImageSourceModal = () => {
@@ -178,29 +207,26 @@ export default function CreateTask() {
         console.log(tasks);
     };
     
-    
-    
     const handleSaveTask = async () => {
-
-        
+ 
         const formattedDate = dayjs(date).format('DD/MM/YYYY');
         const formattedStartTime = startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
         const formattedEndTime = endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
-        
+
         await database.addTask(db, taskName, description, priority, formattedDate, startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }), endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }), image, notification);
-        
+       
         //send notification is notification === true
         if (notification === true) {
             const taskStartTime = moment(`${formattedDate} ${formattedStartTime}`, 'DD/MM/YYYY HH:mm').toDate(); 
             const taskStartTimeTimeZone = moment(taskStartTime).add(3, 'hours') //add 3 hours because of timezone, haxs
             const notificationTime = moment(taskStartTimeTimeZone).subtract(10, 'minutes').toDate(); // Calculate notification time 10 minutes before task start
-            console.log('notificationtime: ',notificationTime);
+            console.log('notificationtime: ', notificationTime);
             await scheduleNotification(notificationTime, taskName);
         }
-    
+
         //console.log("Date: ", date.toISOString());
         //for now we print the data from the created task
-        
+
         // console.log("Task Name: ", taskName);
         // console.log("Descriptsion: ", description);
         // console.log("Priority", priority);
@@ -208,11 +234,11 @@ export default function CreateTask() {
         // console.log("Start Time: ", startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }));
         // console.log("End Time: ", endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }));
         // console.log("Notification: ", notification);
-        
+
     }
-    
-    
-    
+
+
+
     const onChangeStartTime = (event, selectedTime) => {
         const currentDate = selectedTime || startTime;
         setShowStartTimePicker(false);
@@ -324,6 +350,14 @@ export default function CreateTask() {
                             {image && <Image source={{ uri: image }} style={styles.image} />}
 
                         </View>
+                        <View style={styles.tagContainer}>
+                                <Text style={styles.font}>
+                                    {selectedTag ? selectedTag : 'Give Your Task a Tag'}
+                                </Text>
+                            <TouchableOpacity onPress={toggleTagModal}>
+                                <Button color={darkMode ? navbarColorDark : navbarColorLight} title="Select Tag" onPress={toggleTagModal} />
+                            </TouchableOpacity>
+                        </View>
                         <View>
                             <Text style={styles.font}>Do you want to get notified?</Text>
 
@@ -337,6 +371,33 @@ export default function CreateTask() {
                         <Button color={darkMode ? navbarColorDark : navbarColorLight} title="Save Task" onPress={handleSaveTask} />
                     </Card>
                 </View>
+
+
+                <Modal
+                    visible={tagModalVisible}
+                    animationType="slide"
+                    transparent={true}
+                    onRequestClose={() => setTagModalVisible(false)}>
+                    <View style={styles.modalContainer}>
+                        <View style={darkMode ? styles.DarkModalContent : styles.modalContent}>
+                            <View style={styles.list}>
+                            <FlatList style={styles.list}
+                                data={tags}
+                                renderItem={({ item }) => (
+                                    <TouchableOpacity
+                                        style={[darkMode ? styles. darkTagButton : styles.tagButton, selectedTag === item && styles.selectedTagButton]}
+                                        onPress={() => {
+                                            setSelectedTag(item);
+                                            setTagModalVisible(false);
+                                        }}>
+                                        <Text style={styles.tagText}>{item}</Text>
+                                    </TouchableOpacity>
+                                )}
+                                keyExtractor={(item) => item}
+                            /></View>
+                        </View>
+                    </View>
+                </Modal>
 
                 <Modal visible={imageSourceModalVisible} animationType="slide" transparent={true}>
                     <View style={styles.modalContainer}>
@@ -414,14 +475,19 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
+    tagContainer: {
+        marginTop: 10,
+        marginBottom: 10,
+        
+    },
     modalContent: {
-        backgroundColor: navbarColorLight,
+        backgroundColor: cardColorLight,
         padding: 20,
         borderRadius: 10,
         elevation: 5,
     },
     DarkModalContent: {
-        backgroundColor: navbarColorDark,
+        backgroundColor: cardColorDark,
         padding: 20,
         borderRadius: 10,
         elevation: 5,
@@ -433,6 +499,7 @@ const styles = StyleSheet.create({
     },
     modalText: {
         fontSize: 18,
+        fontWeight: "bold"
     },
     button: {
         alignItems: 'center',
@@ -453,5 +520,35 @@ const styles = StyleSheet.create({
         borderRadius: 4,
         elevation: 3,
         backgroundColor: navbarColorDark,
+    },
+    tagButton: {
+        paddingVertical: 12,
+        paddingHorizontal: 32,
+        marginVertical: 5,
+        borderRadius: 5,
+        borderWidth: 1,
+        borderColor: 'gray',
+        backgroundColor: '#ffb8b1',
+        alignItems: 'center'
+    },
+    tagText: {
+        fontSize: 20,
+        borderRadius: 5,
+    },
+    selectedTagButton: {
+        backgroundColor: 'lightblue',
+    },
+    list: {
+        height: 380,
+    },
+    darkTagButton: {
+        paddingVertical: 12,
+        paddingHorizontal: 32,
+        marginVertical: 5,
+        borderRadius: 5,
+        borderWidth: 1,
+        borderColor: 'gray',
+        backgroundColor: navbarColorDark,
+        alignItems: 'center'
     },
 });

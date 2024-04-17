@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { Modal, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Card, Image } from '@rneui/themed';
 import hyi from '../assets/hyi.jpg'
-import database from "../components/database";
+import database, { deleteTaskbyId } from "../components/database";
 import { useFocusEffect } from '@react-navigation/native';
 import { useRoute, useNavigation } from "@react-navigation/native";
 import * as FileSystem from 'expo-file-system';
@@ -23,7 +23,14 @@ const bgColorDark = '#757575'
 var moment = require('moment')
 const db = database.db;
 
+
 const DropdownMenu = () => {
+const updateDone = async (id) => {
+    database.updateTaskDoneById(db, id);
+}
+const deleteTask = async (id) => {
+    database.deleteTaskbyId(db, id);
+}
     const [isOpen, setIsOpen] = useState(false);
 
     const toggleDropdown = () => {
@@ -31,10 +38,18 @@ const DropdownMenu = () => {
     };
 
     const handleOptionPress = (option) => {
-        // Do something with the selected option
+
+        if (option === 'Option 1') {
+            updateDone(id)
+        }
+        else if (option === 'Option 2') {
+            deleteTask(id);
+        }
         console.log('Selected option:', option);
         // Close the dropdown after selecting an option
         setIsOpen(false);
+
+        fetchData();
     };
     const { darkMode } = useContext(DarkModeContext)
 
@@ -191,16 +206,7 @@ function Home() {
         navigation.navigate('TaskInfo', { taskId: id });
         console.log('Navigate to task id:', id);
     };
-    const updateDone = async (id) => {
-        database.updateTaskDoneById(db, id);
 
-        fetchData();
-    }
-    const deleteTask = async (id) => {
-        database.deleteTaskbyId(db, id);
-
-        fetchData();
-    }
 
     return (
         <SafeAreaView style={darkMode ? styles.DarkContainer : styles.container}>
@@ -215,16 +221,18 @@ function Home() {
                         return (
                             <TouchableOpacity key={i} onPress={() => navigateToTaskInfo(t.id)}>
                                 {/* Mapping tasks to cards */}
+
                                 <Card containerStyle={darkMode ? styles.DarkUpcomingTaskCard : styles.upcomingTaskCard}>
 
                                     <View style={{ flex: 1, flexDirection: 'row' }}>
                                         <Card.Title style={styles.font}>{t.name}</Card.Title>
-                                    </View>
 
-                                    <View style={styles.dropdownContainer}>
-                                        <DropdownMenu />
                                     </View>
-
+                                        {t.done === 0 && ( 
+                                            <View style={styles.dropdownContainer}>
+                                                <DropdownMenu id={t.id} fetchData={fetchData} />
+                                            </View>
+                                        )}
                                     <Card.Divider />
                                     {/* <Text style={{ paddingLeft: 13, paddingBottom: 5 }}>{t.date}</Text> */}
                                     <View style={{ flex: 1, flexDirection: 'row', }}>
@@ -394,8 +402,8 @@ const styles = StyleSheet.create({
         elevation: 5,
     },
     optionButton: {
-        width: 100,
-        padding: 8,
+        width: 120,
+        padding: 10,
         borderBottomWidth: 1,
         borderBottomColor: '#ccc',
     },
