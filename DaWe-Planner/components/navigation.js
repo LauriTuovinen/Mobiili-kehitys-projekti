@@ -23,16 +23,15 @@ const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 export function OGnavigaatio() {
-    return(
-            <Tab.Navigator 
+    return (
+        <Tab.Navigator
             initialRouteName={homeScreen}
-            // initialRouteName={monthlyScreen}
-            screenOptions={({route}) => ({
-                tabBarIcon: ({focused, color, size}) => {
+            screenOptions={({ route }) => ({
+                tabBarIcon: ({ focused, color, size }) => {
                     let iconName;
                     let rn = route.name;
 
-                    if (rn === homeScreen){
+                    if (rn === homeScreen) {
                         iconName = focused ? 'home' : 'home-outline'
                     } else if (rn === weeklyScreen) {
                         iconName = focused ? 'calendar-clear' : 'calendar-clear-outline'
@@ -44,36 +43,36 @@ export function OGnavigaatio() {
                     else if (rn === settingsScreen) {
                         iconName = focused ? 'settings' : 'settings-outline'
                     }
-                    
-                    return <Ionicons name={iconName} size={size} color={color}/>
+
+                    return <Ionicons name={iconName} size={size} color={color} />
                 },
             })}
-            
+
             tabBarOptions={{
                 activeTintColor: 'black',
                 inactiveTintColor: 'grey',
                 labelStyle: { paddingBottom: 10, fontSize: 10 },
-              }}>
+            }}>
 
-                <Tab.Screen name = {homeScreen} component={Home}/>
-                <Tab.Screen name = {weeklyScreen} component={Weekly}/>
-                <Tab.Screen name = {monthlyScreen} component={Monthly}/>
-                <Tab.Screen name = {createTaskScreen} component={CreateTask}/>
-                <Tab.Screen name = {settingsScreen} component={Settings}/>
-            </Tab.Navigator>
+            <Tab.Screen name={homeScreen} component={Home} />
+            <Tab.Screen name={weeklyScreen} component={Weekly} />
+            <Tab.Screen name={monthlyScreen} component={Monthly} />
+            <Tab.Screen name={createTaskScreen} component={CreateTask} />
+            <Tab.Screen name={settingsScreen} component={Settings} />
+        </Tab.Navigator>
     )
 }
 
 export default function Navigation() {
-    return(
+    return (
         <NavigationContainer>
-            <Stack.Navigator> 
+            <Stack.Navigator>
                 <Stack.Screen
                     name="OGnavigaatio"
                     component={OGnavigaatio}
                     options={{ headerShown: false }}
                 />
-                <Stack.Screen name = {taskInfoScreen} component={TaskInfo}/>
+                <Stack.Screen name={taskInfoScreen} component={TaskInfo} />
             </Stack.Navigator>
         </NavigationContainer>
     )

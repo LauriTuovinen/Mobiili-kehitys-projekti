@@ -11,7 +11,7 @@ import { Button } from '@rneui/themed';
 import CreateTaskButton from '../components/CreateTaskButton';
 import { DarkModeContext } from '../components/themeContext';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const bgColorLight = '#f9efdb'
 const cardColorLight = '#ffdac1'
@@ -85,9 +85,22 @@ function Home() {
 
     console.log(currentDay);
 
+    const { toggleDarkMode } = useContext(DarkModeContext)
+    useEffect(() => {
+        const getTheme = async () => {
+            try {
+                const theme = await AsyncStorage.getItem('theme')
+                console.log('theme:', theme);
+                toggleDarkMode(theme)
+            } catch (e) {
+                console.log('error changnin or getting theme');
+            }
+        }
+        getTheme()
+    }, []);
+
     const fetchData = async () => {
         try {
-            //await database.deleteTasksByDate(db, currentDay);
             const taskData = await database.getAllTasks(db);
 
             const newTasks = taskData._array.filter(task => {
@@ -158,7 +171,7 @@ function Home() {
     function OwnButton(props) {
         const { onPress, title = 'Save' } = props;
         return (
-            <Pressable style={styles.button} onPress={onPress}>
+            <Pressable style={darkMode ? styles.DarkButton : styles.button} onPress={onPress}>
                 <Text style={styles.text}>{title}</Text>
             </Pressable>
         );
@@ -193,7 +206,6 @@ function Home() {
         console.log('Navigate to task id:', id);
     };
 
-
     return (
         <SafeAreaView style={darkMode ? styles.DarkContainer : styles.container}>
             <StatusBar style={{ backgroundColor: darkMode ? bgColorDark : bgColorLight }} />
@@ -207,10 +219,12 @@ function Home() {
                         return (
                             <TouchableOpacity key={i} onPress={() => navigateToTaskInfo(t.id)}>
                                 {/* Mapping tasks to cards */}
-                                <Card containerStyle={cardStyles}>
+
+                                <Card containerStyle={darkMode ? styles.DarkUpcomingTaskCard : styles.upcomingTaskCard}>
 
                                     <View style={{ flex: 1, flexDirection: 'row' }}>
                                         <Card.Title style={styles.font}>{t.name}</Card.Title>
+
                                     </View>
                                         {t.done === 0 && ( 
                                             <View style={styles.dropdownContainer}>
@@ -345,7 +359,7 @@ const styles = StyleSheet.create({
         elevation: 3,
         backgroundColor: navbarColorLight,
     },
-    button: {
+    DarkButton: {
         alignItems: 'center',
         justifyContent: 'center',
         justifySelf: 'flex-start',

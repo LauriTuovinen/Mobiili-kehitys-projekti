@@ -64,7 +64,7 @@ export const addTask = (db, taskName, description, priority, date, startTime, en
 export const deleteTask = (db, id) => {
     db.transaction(tx => {
         tx.executeSql("DELETE FROM tasks WHERE id = ?", [id],
-            
+
         );
         console.log("Task deleted");
     });
@@ -131,15 +131,15 @@ export const updateTaskDoneById = (db, id) => {
     return new Promise((resolve, reject) => {
         db.transaction(tx => {
             tx.executeSql(
-                "UPDATE tasks SET done = 1 WHERE id = ?", 
-                [id], 
+                "UPDATE tasks SET done = 1 WHERE id = ?",
+                [id],
                 (_, { rowsAffected }) => {
                     if (rowsAffected > 0) {
-                        resolve(true); 
+                        resolve(true);
                     } else {
-                        resolve(false); 
+                        resolve(false);
                     }
-                }, 
+                },
                 (_, error) => {
                     reject(error);
                 }
@@ -153,15 +153,15 @@ export const deleteTaskbyId = (db, id) => {
     return new Promise((resolve, reject) => {
         db.transaction(tx => {
             tx.executeSql(
-                "DELETE FROM tasks where id = ?", 
-                [id], 
+                "DELETE FROM tasks where id = ?",
+                [id],
                 (_, { rowsAffected }) => {
                     if (rowsAffected > 0) {
-                        resolve(true); 
+                        resolve(true);
                     } else {
-                        resolve(false); 
+                        resolve(false);
                     }
-                }, 
+                },
                 (_, error) => {
                     reject(error);
                 }
@@ -175,17 +175,17 @@ export const deleteTasksByDate = (db, date) => {
     return new Promise((resolve, reject) => {
         db.transaction(tx => {
             tx.executeSql(
-                "DELETE FROM tasks WHERE date < ? AND done = 1", 
-                [date], 
+                "DELETE FROM tasks WHERE date < ? AND done = 1",
+                [date],
                 (_, { rowsAffected }) => {
-                    if (rowsAffected > 0) { 
+                    if (rowsAffected > 0) {
                         console.log("old tasks deleted")
-                        resolve(true); 
+                        resolve(true);
                     } else {
                         console.log("no old tasks")
-                        resolve(false); 
+                        resolve(false);
                     }
-                }, 
+                },
                 (_, error) => {
                     reject(error);
                 }
@@ -206,4 +206,4 @@ export default {
     updateTaskDoneById,
     deleteTaskbyId,
     deleteTasksByDate,
-  };
+};

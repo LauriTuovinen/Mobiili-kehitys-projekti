@@ -16,12 +16,12 @@ const cardColorDark = '#979797'
 const navbarColorDark = '#b95970'
 const bgColorDark = '#757575'
 
-  export const TaskInfo = () => {
+export const TaskInfo = () => {
 
     const { darkMode } = useContext(DarkModeContext)
     const [task, setTask] = useState(null);
     const route = useRoute()
-    const { taskId } = route.params || {taskId: 1}
+    const { taskId } = route.params || { taskId: 1 }
     console.log(taskId);
     useEffect(() => {
         const fetchTask = async () => {
@@ -46,7 +46,7 @@ const bgColorDark = '#757575'
             await FileSystem.copyAsync({ from: imageUri, to: localUri });
             setTask((prevTask) => ({
                 ...prevTask,
-                image: localUri, 
+                image: localUri,
             }));
         } catch (error) {
             console.error('Error copying image:', error);
