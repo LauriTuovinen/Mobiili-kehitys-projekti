@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext, useRef } from 'react';
-import { Button, Text, TextInput, View, Image, Pressable, TouchableOpacity, StyleSheet, ScrollView, Modal, Platform, FlatList } from 'react-native';
+import { Button, Text, TextInput, View, Image, Pressable, TouchableOpacity, StyleSheet, ScrollView, Modal, Platform, FlatList, Alert } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
 import dayjs from 'dayjs';
@@ -34,10 +34,10 @@ const tags = ['Hobby', 'Work', 'Exercise', 'Study', 'Food', 'Chores'];
 
 
 export default function CreateTask() {
-    
+
     const { darkMode } = useContext(DarkModeContext)
 
- 
+
     const [taskName, setTaskName] = useState('');
     const [description, setDescription] = useState('');
     const [date, setDate] = useState(new Date());
@@ -56,82 +56,97 @@ export default function CreateTask() {
     const [pushNotification, setPushNotification] = useState(false);
     const [expoPushToken, setExpoPushToken] = useState('');
     const [tagModalVisible, setTagModalVisible] = useState(false);
+    const [showAlert, setShowAlert] = useState(false);
 
     const db = database.db;
     const notificationListener = useRef();
     const responseListener = useRef();
 
-        //from expo docs
-        useEffect(() => {
-            registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
-    
-            notificationListener.current = Notifications.addNotificationReceivedListener(pushNotification => {
-                setPushNotification(pushNotification);
-            });
-    
-            responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-                console.log(response);
-            });
-    
-            return () => {
-                Notifications.removeNotificationSubscription(notificationListener.current);
-                Notifications.removeNotificationSubscription(responseListener.current);
-            };
-        }, []);
-    
-        async function registerForPushNotificationsAsync() {
-            let token;
-    
-            if (Platform.OS === 'android') {
-                await Notifications.setNotificationChannelAsync('default', {
-                    name: 'default',
-                    importance: Notifications.AndroidImportance.MAX,
-                    vibrationPattern: [1000, 1000, 1000, 1000],
-                    lightColor: darkMode ? navbarColorDark : navbarColorLight,
-                });
-            }
-    
-            if (Device.isDevice) {
-                const { status: existingStatus } = await Notifications.getPermissionsAsync();
-                let finalStatus = existingStatus;
-                if (existingStatus !== 'granted') {
-                    const { status } = await Notifications.requestPermissionsAsync();
-                    finalStatus = status;
-                }
-                if (finalStatus !== 'granted') {
-                    alert('Failed to get push token for push notification!');
-                    return;
-                }
-                console.log(token);
-            } else {
-                alert('Must use physical device for Push Notifications');
-            }
-    
-            return token;
-        }
-    
-        const scheduleNotification = async (notificationTime, taskName) => {
-            //ScheduledTime is CurrentTime in millizeconds plus 3 hour timezone minus notificationTimeMilliseconds.
-            const currentTime = Date.now() + (3*60*60*1000)
-            const notificationTimeMilliseconds= notificationTime.getTime()
-            let scheduledTime = Math.round((notificationTimeMilliseconds - currentTime) / 1000 ) // divided by 1000 to get seconds and round them
-            console.log('Time left untill notification:', scheduledTime, 'seconds');
-            if (scheduledTime < 0){ // If task has already gone when created, set scheduled time to 1 second to make the notification straight away.
-                scheduledTime = 1
-            }
-            // // Schedule notification 10 minutes before task start time
-            await Notifications.scheduleNotificationAsync({
-                content: {
-                    title: "Task Reminder",
-                    body: `Your task "${taskName}" is starting soon!`,
-                    data: { taskName },
-                },
-                trigger: { 
-                    seconds: scheduledTime
-                 }, 
+    function NotificationAlert() {
+        // Hide the message after 3 seconds
+        setTimeout(() => {
+            setShowAlert(false);
+        }, 2000);
 
+        return (
+            <View style={darkMode? styles.DarkAlertStyle : styles.alertStyle}>
+                <Text style={{ color: 'white', fontSize: 20 }}>Message saved sucesfully</Text>
+            </View>
+        )
+    }
+
+    //from expo docs
+    useEffect(() => {
+        registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+
+        notificationListener.current = Notifications.addNotificationReceivedListener(pushNotification => {
+            setPushNotification(pushNotification);
+        });
+
+        responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+            console.log(response);
+        });
+
+        return () => {
+            Notifications.removeNotificationSubscription(notificationListener.current);
+            Notifications.removeNotificationSubscription(responseListener.current);
+        };
+    }, []);
+
+    async function registerForPushNotificationsAsync() {
+        let token;
+
+        if (Platform.OS === 'android') {
+            await Notifications.setNotificationChannelAsync('default', {
+                name: 'default',
+                importance: Notifications.AndroidImportance.MAX,
+                vibrationPattern: [1000, 1000, 1000, 1000],
+                lightColor: darkMode ? navbarColorDark : navbarColorLight,
             });
         }
+
+        if (Device.isDevice) {
+            const { status: existingStatus } = await Notifications.getPermissionsAsync();
+            let finalStatus = existingStatus;
+            if (existingStatus !== 'granted') {
+                const { status } = await Notifications.requestPermissionsAsync();
+                finalStatus = status;
+            }
+            if (finalStatus !== 'granted') {
+                alert('Failed to get push token for push notification!');
+                return;
+            }
+            console.log(token);
+        } else {
+            alert('Must use physical device for Push Notifications');
+        }
+
+        return token;
+    }
+    //end of expo doc
+    
+    const scheduleNotification = async (notificationTime, taskName) => {
+        //ScheduledTime is CurrentTime in millizeconds plus 3 hour timezone minus notificationTimeMilliseconds.
+        const currentTime = Date.now() + (3 * 60 * 60 * 1000)
+        const notificationTimeMilliseconds = notificationTime.getTime()
+        let scheduledTime = Math.round((notificationTimeMilliseconds - currentTime) / 1000) // divided by 1000 to get seconds and round them
+        console.log('Time left untill notification:', scheduledTime, 'seconds');
+        if (scheduledTime < 0) { // If task has already gone when created, set scheduled time to 1 second to make the notification straight away.
+            scheduledTime = 1
+        }
+        // // Schedule notification 10 minutes before task start time
+        await Notifications.scheduleNotificationAsync({
+            content: {
+                title: "Task Reminder",
+                body: `Your task "${taskName}" is starting soon!`,
+                data: { taskName },
+            },
+            trigger: {
+                seconds: scheduledTime
+            },
+
+        });
+    }
 
     const pickImage = async (source) => {
         // No permissions request is necessary for launching the image library
@@ -177,24 +192,24 @@ export default function CreateTask() {
     const takePhoto = () => {
         pickImage('camera');
     };
-    
+
     const getTasks = async () => {
         const taskData = await database.getAllTasks(db);
         setTasks(taskData);
         console.log(tasks);
     };
-    
+
     const handleSaveTask = async () => {
- 
+
         const formattedDate = dayjs(date).format('DD/MM/YYYY');
         const formattedStartTime = startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
         const formattedEndTime = endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
 
         await database.addTask(db, taskName, description, priority, formattedDate, startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }), endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }), image, notification);
-       
+        setShowAlert(true)
         //send notification is notification === true
         if (notification === true) {
-            const taskStartTime = moment(`${formattedDate} ${formattedStartTime}`, 'DD/MM/YYYY HH:mm').toDate(); 
+            const taskStartTime = moment(`${formattedDate} ${formattedStartTime}`, 'DD/MM/YYYY HH:mm').toDate();
             const taskStartTimeTimeZone = moment(taskStartTime).add(3, 'hours') //add 3 hours because of timezone, haxs
             const notificationTime = moment(taskStartTimeTimeZone).subtract(10, 'minutes').toDate(); // Calculate notification time 10 minutes before task start
             console.log('notificationtime: ', notificationTime);
@@ -328,9 +343,9 @@ export default function CreateTask() {
 
                         </View>
                         <View style={styles.tagContainer}>
-                                <Text style={styles.font}>
-                                    {selectedTag ? selectedTag : 'Give Your Task a Tag'}
-                                </Text>
+                            <Text style={styles.font}>
+                                {selectedTag ? selectedTag : 'Give Your Task a Tag'}
+                            </Text>
                             <TouchableOpacity onPress={toggleTagModal}>
                                 <Button color={darkMode ? navbarColorDark : navbarColorLight} title="Select Tag" onPress={toggleTagModal} />
                             </TouchableOpacity>
@@ -358,20 +373,20 @@ export default function CreateTask() {
                     <View style={styles.modalContainer}>
                         <View style={darkMode ? styles.DarkModalContent : styles.modalContent}>
                             <View style={styles.list}>
-                            <FlatList style={styles.list}
-                                data={tags}
-                                renderItem={({ item }) => (
-                                    <TouchableOpacity
-                                        style={[darkMode ? styles. darkTagButton : styles.tagButton, selectedTag === item && styles.selectedTagButton]}
-                                        onPress={() => {
-                                            setSelectedTag(item);
-                                            setTagModalVisible(false);
-                                        }}>
-                                        <Text style={styles.tagText}>{item}</Text>
-                                    </TouchableOpacity>
-                                )}
-                                keyExtractor={(item) => item}
-                            /></View>
+                                <FlatList style={styles.list}
+                                    data={tags}
+                                    renderItem={({ item }) => (
+                                        <TouchableOpacity
+                                            style={[darkMode ? styles.darkTagButton : styles.tagButton, selectedTag === item && styles.selectedTagButton]}
+                                            onPress={() => {
+                                                setSelectedTag(item);
+                                                setTagModalVisible(false);
+                                            }}>
+                                            <Text style={styles.tagText}>{item}</Text>
+                                        </TouchableOpacity>
+                                    )}
+                                    keyExtractor={(item) => item}
+                                /></View>
                         </View>
                     </View>
                 </Modal>
@@ -392,6 +407,9 @@ export default function CreateTask() {
                     </View>
                 </Modal>
             </ScrollView>
+            {showAlert === true &&
+                <NotificationAlert />
+            }
         </View>
     )
 }
@@ -455,7 +473,7 @@ const styles = StyleSheet.create({
     tagContainer: {
         marginTop: 10,
         marginBottom: 10,
-        
+
     },
     modalContent: {
         backgroundColor: cardColorLight,
@@ -527,5 +545,33 @@ const styles = StyleSheet.create({
         borderColor: 'gray',
         backgroundColor: navbarColorDark,
         alignItems: 'center'
+    },
+    alertStyle: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        alignSelf:'center',
+        backgroundColor: 'rgba(255, 184, 177, 0.9)',
+        height: 40,
+        width: 250,
+        position: 'absolute',
+        top: 0,
+        borderRadius:5,
+        marginTop:20,
+        pointerEvents: 'none',
+    },
+    DarkAlertStyle: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        alignSelf:'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+        height: 40,
+        width: 250,
+        position: 'absolute',
+        top: 0,
+        borderRadius:5,
+        marginTop:20,
+        pointerEvents: 'none',
     },
 });
