@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Button, Pressable } from "react-native";
+import { View, Text, StyleSheet, Button, Pressable, Modal, TouchableOpacity } from "react-native";
 import database from "../components/database";
 import { dropTaskTable, dropTable, createDB } from "../components/database";
 import { DarkModeContext } from "../components/themeContext";
@@ -106,18 +106,45 @@ function DarkModeSwitch() {
 
 export default function Settings() {
     const { darkMode, toggleDarkMode } = useContext(DarkModeContext)
+    const [openDelete, setOpenDelete] = useState(false);
+
+    const toggleDeleteModal = () => {
+        setOpenDelete(!openDelete);
+    };
+
+    const deleteAndClose = () => {
+        setOpenDelete(!openDelete);
+        deleteTable();
+    }
+
     return (
         <View style={darkMode ? styles.DarkContainer : styles.container}>
             <View style={styles.buttonContainer}>
 
                 <Button color={darkMode ? navbarColorDark : navbarColorLight} title="Clear user info" onPress={deleteDatabase}></Button>
 
-                <Button color={darkMode ? navbarColorDark : navbarColorLight} title="Clear all tasks" onPress={deleteTable}></Button>
+                <Button color={darkMode ? navbarColorDark : navbarColorLight} title="Clear all tasks" onPress={toggleDeleteModal}></Button>
 
                 {/* <Button color={darkMode ? navbarColorDark : navbarColorLight} title="Get by id" onPress={getTaskByID}></Button> */}
             </View>
             <Text style={{ alignSelf: 'center', fontSize: 20, fontWeight: 'bold', marginTop: 40, marginBottom: 15 }}>Select Theme</Text>
             <DarkModeSwitch />
+
+            <Modal visible={openDelete} animationType="slide" transparent={true}>
+                    <View style={styles.modalContainer}>
+                        <View style={darkMode ? styles.DarkdeleteModal : styles.deleteModal}>
+                            <Text style={styles.font}> Are you sure you want to delete all tasks?</Text>
+                            <View style={{ flexDirection: 'row', alignSelf: 'center'}}>
+                            <TouchableOpacity style={darkMode ? styles.Darkbutton : styles.button} onPress={toggleDeleteModal}>
+                                <Text style={styles.buttonText}>Cancel</Text>
+                            </TouchableOpacity>                            
+                            <TouchableOpacity style={ darkMode ? styles.Darkbutton : styles.button} onPress={deleteAndClose}>
+                                <Text style={styles.buttonText}>delete</Text>
+                            </TouchableOpacity>                                
+                            </View>
+                        </View>
+                    </View>
+                </Modal>
         </View>
     )
 }
@@ -138,5 +165,51 @@ const styles = StyleSheet.create({
     buttonContainer: {
         flexDirection: 'row',
         justifyContent: 'space-evenly'
+    },
+    deleteModal: {
+        height: '20%',
+        backgroundColor: cardColorLight
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    button: {
+        width: 100,
+        borderWidth: 1,
+        borderRadius: 10,
+        backgroundColor: navbarColorLight,
+        paddingTop: 16,
+        paddingBottom: 16,
+        margin: 8,
+        alignItems: 'center',
+    },
+    font: {
+        fontSize: 16,
+        fontWeight: "bold",
+        color: 'black',
+        margin: 8,
+    },
+    buttonText: {
+        fontSize: 16,
+        fontWeight: "bold",
+        color: 'black',
+    },
+
+    DarkdeleteModal: {
+        height: '20%',
+        backgroundColor: cardColorDark
+    },
+    Darkbutton: {
+        width: 100,
+        borderWidth: 1,
+        borderRadius: 10,
+        backgroundColor: navbarColorDark,
+        paddingTop: 16,
+        paddingBottom: 16,
+        margin: 8,
+        alignItems: 'center',
     },
 })
