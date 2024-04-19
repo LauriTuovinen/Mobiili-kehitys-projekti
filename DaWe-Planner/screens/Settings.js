@@ -100,13 +100,10 @@ function DarkModeSwitch() {
     )
 }
 
-
-
-
-
 export default function Settings() {
     const { darkMode, toggleDarkMode } = useContext(DarkModeContext)
     const [openDelete, setOpenDelete] = useState(false);
+    const [openuserDelete, setOpenUserDelete] = useState(false)
 
     const toggleDeleteModal = () => {
         setOpenDelete(!openDelete);
@@ -115,13 +112,22 @@ export default function Settings() {
     const deleteAndClose = () => {
         setOpenDelete(!openDelete);
         deleteTable();
+    }    
+    
+    const toggleDeleteUserInfoModal = () => {
+        setOpenUserDelete(!openuserDelete);
+    };
+
+    const deleteAndCloseUser = () => {
+        setOpenUserDelete(!openuserDelete);
+        deleteDatabase();
     }
 
     return (
         <View style={darkMode ? styles.DarkContainer : styles.container}>
             <View style={styles.buttonContainer}>
 
-                <Button color={darkMode ? navbarColorDark : navbarColorLight} title="Clear user info" onPress={deleteDatabase}></Button>
+                <Button color={darkMode ? navbarColorDark : navbarColorLight} title="Clear user info" onPress={toggleDeleteUserInfoModal}></Button>
 
                 <Button color={darkMode ? navbarColorDark : navbarColorLight} title="Clear all tasks" onPress={toggleDeleteModal}></Button>
 
@@ -144,7 +150,23 @@ export default function Settings() {
                             </View>
                         </View>
                     </View>
-                </Modal>
+            </Modal>
+
+            <Modal visible={openuserDelete} animationType="slide" transparent={true}>
+                    <View style={styles.modalContainer}>
+                        <View style={darkMode ? styles.DarkdeleteModal : styles.deleteModal}>
+                            <Text style={styles.font}> Are you sure you want to delete all user information?</Text>
+                            <View style={{ flexDirection: 'row', alignSelf: 'center'}}>
+                            <TouchableOpacity style={darkMode ? styles.Darkbutton : styles.button} onPress={toggleDeleteUserInfoModal}>
+                                <Text style={styles.buttonText}>Cancel</Text>
+                            </TouchableOpacity>                            
+                            <TouchableOpacity style={ darkMode ? styles.Darkbutton : styles.button} onPress={deleteAndCloseUser}>
+                                <Text style={styles.buttonText}>delete</Text>
+                            </TouchableOpacity>                                
+                            </View>
+                        </View>
+                    </View>
+            </Modal>
         </View>
     )
 }
