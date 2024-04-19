@@ -69,9 +69,19 @@ export function OGnavigaatio() {
 }
 
 export default function Navigation() {
+    const { darkMode } = React.useContext(DarkModeContext)
+
     return (
         <NavigationContainer>
-            <Stack.Navigator>
+            <Stack.Navigator 
+            screenOptions={() => ({
+                tabBarActiveTintColor: 'black',
+                tabBarInactiveTintColor: '#545454',
+                labelStyle: { paddingBottom: 4,fontSize: 10 },
+                tabBarStyle: { backgroundColor: darkMode ? navbarColorDark : navbarColorLight },
+                headerStyle: { backgroundColor: darkMode ? navbarColorDark : navbarColorLight },
+            })}
+            >
                 <Stack.Screen
                     name="OGnavigaatio"
                     component={OGnavigaatio}
