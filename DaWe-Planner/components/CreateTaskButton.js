@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     position: 'absolute', // Use absolute positioning
     right: 20, // Align to right edge
-    bottom: 60, // Align to bottom edge
+    bottom: 30, // Align to bottom edge
   },
   button: {
     backgroundColor: navbarColorLight,

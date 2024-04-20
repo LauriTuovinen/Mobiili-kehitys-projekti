@@ -207,11 +207,10 @@ function Home() {
     };
 
     return (
-    <View>
+    <View style={darkMode ? styles.DarkContainer : styles.container}>
     <ScrollView>
-        <SafeAreaView style={darkMode ? styles.DarkContainer : styles.container}>
+        <SafeAreaView >
             <StatusBar style={{ backgroundColor: darkMode ? bgColorDark : bgColorLight }} />
-            
                 <Text style={styles.header}>Upcoming tasks</Text>
                 <Text style={styles.secondadryHeader}>{formattedDay}</Text>
                     {tasks.map((t, i) => {
@@ -263,9 +262,9 @@ function Home() {
 //styles
 const styles = StyleSheet.create({
     container: {
+        flex: 1,
         backgroundColor: bgColorLight,
         width: '100%',
-        height: '100%',
     },
     DarkContainer: {
         backgroundColor: bgColorDark,

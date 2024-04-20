@@ -136,9 +136,9 @@ function Monthly() {
     };
 
     return (
-        <View>
+        <View style={darkMode ? styles.darkContainer : styles.container}>
             <ScrollView>
-            <View style={darkMode ? styles.darkContainer : styles.container}>
+            <View >
 
                 <StatusBar style={{ backgroundColor: darkMode ? navbarColorDark : navbarColorLight }} />
                 <Text style={{ marginTop: 5, marginLeft: 15, fontWeight: 'bold' }}>2024</Text>
