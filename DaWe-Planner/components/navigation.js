@@ -62,7 +62,6 @@ export function OGnavigaatio() {
             <Tab.Screen name={homeScreen} component={Home} goBack='history' />
             <Tab.Screen name={weeklyScreen} component={Weekly} />
             <Tab.Screen name={monthlyScreen} component={Monthly} />
-            <Tab.Screen name={createTaskScreen} component={CreateTask} />
             <Tab.Screen name={settingsScreen} component={Settings} />
         </Tab.Navigator>
     )
@@ -78,7 +77,6 @@ export default function Navigation() {
                 tabBarActiveTintColor: 'black',
                 tabBarInactiveTintColor: '#545454',
                 labelStyle: { paddingBottom: 4,fontSize: 10 },
-                tabBarStyle: { backgroundColor: darkMode ? navbarColorDark : navbarColorLight },
                 headerStyle: { backgroundColor: darkMode ? navbarColorDark : navbarColorLight },
             })}
             >
@@ -88,6 +86,7 @@ export default function Navigation() {
                     options={{ headerShown: false }}
                 />
                 <Stack.Screen name={taskInfoScreen} component={TaskInfo} />
+                <Stack.Screen name={createTaskScreen} component={CreateTask} />
             </Stack.Navigator>
         </NavigationContainer>
     )

@@ -60,8 +60,8 @@ export const TaskInfo = () => {
 
     // Render the component
     return (
+    <View style={darkMode ? styles.DarkContainer : styles.container}>
         <ScrollView>
-        <View style={darkMode ? styles.DarkContainer : styles.container}>
             {task ? (
                 <View>
                     <Text style={styles.taskName}>{task.name}</Text>
@@ -86,8 +86,8 @@ export const TaskInfo = () => {
             ) : (
                 <Text>Loading...</Text>
             )}
-        </View>
         </ScrollView>
+        </View>
     );
 };
 
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        backgroundColor: bgColorLight
+        backgroundColor: bgColorLight,
     },
     DarkContainer: {
         flex: 1,
@@ -112,8 +112,6 @@ const styles = StyleSheet.create({
     },
     taskContainer: {
         backgroundColor: cardColorLight,
-        borderWidth: 1,
-        borderColor: '#ccc',
         borderRadius: 5,
         padding: 10,
         marginBottom: 150,
@@ -125,8 +123,6 @@ const styles = StyleSheet.create({
     },
     DarkTaskContainer: {
         backgroundColor: cardColorDark,
-        borderWidth: 1,
-        borderColor: '#ccc',
         borderRadius: 5,
         padding: 10,
         marginBottom: 150,

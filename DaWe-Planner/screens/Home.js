@@ -207,12 +207,13 @@ function Home() {
     };
 
     return (
+    <View>
+    <ScrollView>
         <SafeAreaView style={darkMode ? styles.DarkContainer : styles.container}>
             <StatusBar style={{ backgroundColor: darkMode ? bgColorDark : bgColorLight }} />
-            <ScrollView>
+            
                 <Text style={styles.header}>Upcoming tasks</Text>
                 <Text style={styles.secondadryHeader}>{formattedDay}</Text>
-                <View style={styles.upcomingTaskView}>
                     {tasks.map((t, i) => {
                         //check condition for done and then check condition for DarkMode
                         const cardStyles = t.done === 1 ? darkMode ? styles.DarkDullCard : styles.dullCard : darkMode ? styles.DarkUpcomingTaskCard : styles.upcomingTaskCard;
@@ -251,10 +252,10 @@ function Home() {
                             </TouchableOpacity>
                         );
                     })}
-                </View>
-            </ScrollView>
-            <CreateTaskButton />
         </SafeAreaView>
+        </ScrollView>
+        <CreateTaskButton />
+        </View>
     );
 }
 
@@ -262,12 +263,11 @@ function Home() {
 //styles
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
         backgroundColor: bgColorLight,
         width: '100%',
+        height: '100%',
     },
     DarkContainer: {
-        flex: 1,
         backgroundColor: bgColorDark,
         width: '100%',
     },
@@ -298,6 +298,8 @@ const styles = StyleSheet.create({
         shadowRadius: 5,
         elevation: 10,
         marginBottom: 16,
+        borderRadius: 5,
+
     },
     DarkUpcomingTaskCard: {
         backgroundColor: cardColorDark,
@@ -308,6 +310,8 @@ const styles = StyleSheet.create({
         shadowRadius: 5,
         elevation: 10,
         marginBottom: 16,
+        borderRadius: 5,
+
     },
     dullCard: {
         opacity: 0.5,

@@ -36,7 +36,6 @@ const DayCard = ({ day, tasks = 0 }) => {
   )
 }
 
-
 export const WeeklyScreen = () => {
   const { darkMode } = useContext(DarkModeContext)
   const [days, setDays] = useState([]);
@@ -94,43 +93,51 @@ export const WeeklyScreen = () => {
         keyExtractor={(item) => item.day}
         showsVerticalScrollIndicator={false}
       />
-      <CreateTaskButton />
+          <CreateTaskButton />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: bgColorLight
+    backgroundColor: bgColorLight,
   },
   DarkContainer: {
-    flex: 1,
-    padding: 20,
     backgroundColor: bgColorDark
   },
   cardContainer: {
     backgroundColor: cardColorLight,
     padding: 20,
     margin: 5,
+    marginLeft: 20,
+    marginRight: 20,
     borderRadius: 5,
     height: 100,
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.3,
-    shadowRadius: 2,
+    shadowColor: '#000',
+    shadowOffset: {
+        width: 0,
+        height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   DarkCardContainer: {
     backgroundColor: cardColorDark,
     padding: 20,
     margin: 5,
+    marginLeft: 20,
+    marginRight: 20,
     borderRadius: 5,
     height: 100,
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.3,
-    shadowRadius: 2,
+    shadowColor: '#000',
+    shadowOffset: {
+        width: 0,
+        height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   cardText: {
     fontSize: 16,
