@@ -267,6 +267,7 @@ const styles = StyleSheet.create({
         width: '100%',
     },
     DarkContainer: {
+        flex: 1,
         backgroundColor: bgColorDark,
         width: '100%',
     },
