@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
     backgroundColor: bgColorLight,
   },
   DarkContainer: {
-    backgroundColor: bgColorDark
+    backgroundColor: bgColorDark,
   },
   cardContainer: {
     backgroundColor: cardColorLight,

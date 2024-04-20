@@ -438,7 +438,7 @@ const styles = StyleSheet.create({
         elevation: 10,
         width: 300,
         borderRadius: 5,
-
+        marginBottom: 24,
     },
     DarkCreateTaskCard: {
         backgroundColor: cardColorDark,
@@ -450,7 +450,7 @@ const styles = StyleSheet.create({
         elevation: 10,
         width: 300,
         borderRadius: 5,
-
+        marginBottom: 24,
     },
     font: {
         fontSize: 20,
