@@ -24,6 +24,7 @@ export default function CreateTaskButton() {
       <View style={styles.buttonContainer}>
         <Ionicons.Button
           name="add-outline"
+          color={'black'}
           size={32}
           onPress={pressHandler}
           style={darkMode ? styles.darkButton : styles.button}

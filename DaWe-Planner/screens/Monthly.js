@@ -105,10 +105,10 @@ function Monthly() {
             setMonthName('August')
             getWeeks(monthNumber)
         } else if (monthNumber == 9) {
-            setMonthName('Sebtember')
+            setMonthName('September')
             getWeeks(monthNumber)
         } else if (monthNumber == 10) {
-            setMonthName('Oktober')
+            setMonthName('October')
             getWeeks(monthNumber)
         } else if (monthNumber == 11) {
             setMonthName('November')
@@ -136,9 +136,9 @@ function Monthly() {
     };
 
     return (
-        <View
-            style={darkMode ? styles.darkContainer : styles.container}>
+        <View>
             <ScrollView>
+            <View style={darkMode ? styles.darkContainer : styles.container}>
 
                 <StatusBar style={{ backgroundColor: darkMode ? navbarColorDark : navbarColorLight }} />
                 <Text style={{ marginTop: 5, marginLeft: 15, fontWeight: 'bold' }}>2024</Text>
@@ -176,7 +176,8 @@ function Monthly() {
                             </Card>
                         </TouchableOpacity>
                     )
-                })}
+                })}        
+                </View>
             </ScrollView>
             <CreateTaskButton />
         </View>
@@ -209,6 +210,8 @@ const styles = StyleSheet.create({
         shadowRadius: 10,
         elevation: 5,
         marginBottom: 20,
+        borderRadius: 5,
+
 
     },
     darkWeeksCards: {
@@ -220,6 +223,8 @@ const styles = StyleSheet.create({
         shadowRadius: 10,
         elevation: 5,
         marginBottom: 20,
+        borderRadius: 5,
+
 
     }
 
