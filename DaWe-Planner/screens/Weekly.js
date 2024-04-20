@@ -100,9 +100,11 @@ export const WeeklyScreen = () => {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     backgroundColor: bgColorLight,
   },
   DarkContainer: {
+    flex: 1,
     backgroundColor: bgColorDark,
   },
   cardContainer: {
