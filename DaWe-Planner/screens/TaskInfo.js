@@ -100,7 +100,6 @@ const styles = StyleSheet.create({
     DarkContainer: {
         flex: 1,
         alignItems: 'center',
-        justifyContent: 'center',
         backgroundColor: bgColorDark
     },
     taskName: {
