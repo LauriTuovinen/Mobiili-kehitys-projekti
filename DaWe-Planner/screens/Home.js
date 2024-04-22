@@ -2,7 +2,6 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useContext, useEffect, useState } from 'react'
 import { Modal, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Card, Image } from '@rneui/themed';
-import hyi from '../assets/hyi.jpg'
 import database, { deleteTaskbyId } from "../components/database";
 import { useFocusEffect } from '@react-navigation/native';
 import { useRoute, useNavigation } from "@react-navigation/native";
@@ -25,6 +24,11 @@ const fallbackImages = [
     require('../assets/squares 2.jpg'),
     require('../assets/squares.jpg'),
     require('../assets/circles.jpg'),
+];
+const darkFallbackImages = [
+    require('../assets/darksquares 2.jpg'),
+    require('../assets/darksquares.jpg'),
+    require('../assets/darkcircles.jpg'),
 ];
 
 var moment = require('moment')
@@ -145,8 +149,13 @@ function Home() {
     useFocusEffect(
         React.useCallback(() => {
             fetchData()
-            const randomImageIndex = Math.floor(Math.random() * fallbackImages.length);
-            setrandomImage(fallbackImages[randomImageIndex])
+            if (darkMode === false) {
+                const randomImageIndex = Math.floor(Math.random() * fallbackImages.length);
+                setrandomImage(fallbackImages[randomImageIndex])
+            } else if (darkMode === true){
+                const randomImageIndex = Math.floor(Math.random() * darkFallbackImages.length);
+                setrandomImage(darkFallbackImages[randomImageIndex])
+            }
         }, [correctDay])
     )
 
