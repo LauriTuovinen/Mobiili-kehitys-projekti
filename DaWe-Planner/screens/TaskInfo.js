@@ -23,6 +23,8 @@ export const TaskInfo = () => {
     const route = useRoute()
     const { taskId } = route.params || { taskId: 1 }
     console.log(taskId);
+
+    //Fetches task fromd atabase
     useEffect(() => {
         const fetchTask = async () => {
             try {
@@ -39,6 +41,7 @@ export const TaskInfo = () => {
         fetchTask();
     }, [taskId]);
 
+    //Saves a modified version of image uri to database so that it can be fetched later
     const copyImageToLocalDirectory = async (imageUri) => {
         try {
             const fileName = imageUri.split('/').pop();

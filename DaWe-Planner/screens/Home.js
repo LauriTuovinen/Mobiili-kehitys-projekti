@@ -25,14 +25,16 @@ const bgColorDark = '#757575'
 var moment = require('moment')
 const db = database.db;
 
+//updates the "done" value of task
 const updateDone = async (id) => {
     database.updateTaskDoneById(db, id);
 }
+//deletes task
 const deleteTask = async (id) => {
     database.deleteTaskbyId(db, id);
 }
 
-
+//Logic for dropdown menu
 const DropdownMenu = ({ id, fetchData }) => {
     const [isOpen, setIsOpen] = useState(false);
 
@@ -109,6 +111,7 @@ function Home() {
         getTheme()
     }, []);
 
+    //Fetches data for tasks to be displayed
     const fetchData = async () => {
         try {
             const taskData = await database.getAllTasks(db);
@@ -123,7 +126,8 @@ function Home() {
                 }
 
             });
-
+        
+            //Modifies the uri of image so that it can be used by expo
             const tasksWithModifiedImages = await Promise.all(newTasks.map(async task => {
                 if (task.image) {
                     const localUri = await copyImageToLocalDirectory(task.image);

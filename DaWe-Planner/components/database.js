@@ -39,6 +39,8 @@ export const addTask = (db, taskName, description, priority, date, startTime, en
     });
 }
 */
+
+//Logic for adding tasks to database
 export const addTask = (db, taskName, description, priority, date, startTime, endTime, image, notification, tag, done) => {
     return new Promise((resolve, reject) => {
         db.transaction(tx => {
@@ -78,6 +80,7 @@ export const updateTask = (db, id) => {
     });
 }
 
+//This gets the amount of tasks from database based on a specific date
 export const getTaskAmount = (db, date) => {
     return new Promise((resolve, reject) => {
         db.transaction(tx => {
@@ -96,6 +99,7 @@ export const getTaskAmount = (db, date) => {
     });
 };
 
+//Logic for getting all tasks from database
 export const getAllTasks = (db) => {
     return new Promise((resolve, reject) => {
         db.transaction(tx => {
@@ -108,6 +112,7 @@ export const getAllTasks = (db) => {
     });
 };
 
+//Logic for getting task by specific id
 export const getTaskbyId = (db, id) => {
     return new Promise((resolve, reject) => {
         db.transaction(tx => {
@@ -127,6 +132,7 @@ export const getTaskbyId = (db, id) => {
     });
 };
 
+//Logic for updating the "done" value of task
 export const updateTaskDoneById = (db, id) => {
     return new Promise((resolve, reject) => {
         db.transaction(tx => {
@@ -148,7 +154,7 @@ export const updateTaskDoneById = (db, id) => {
     });
 };
 
-
+//Logic for deleting task by specific id
 export const deleteTaskbyId = (db, id) => {
     return new Promise((resolve, reject) => {
         db.transaction(tx => {
@@ -170,6 +176,7 @@ export const deleteTaskbyId = (db, id) => {
     });
 };
 
+//Logic for deleting tasks by specific date
 export const deleteTasksByDate = (db, date) => {
     console.log("delete by date")
     return new Promise((resolve, reject) => {

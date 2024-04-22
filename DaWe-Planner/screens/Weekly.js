@@ -19,6 +19,7 @@ const cardColorDark = '#979797'
 const navbarColorDark = '#b95970'
 const bgColorDark = '#757575'
 
+//Logic for daycard component
 const DayCard = ({ day, tasks = 0 }) => {
   const { darkMode } = useContext(DarkModeContext)
   const navigation = useNavigation()
@@ -42,6 +43,8 @@ export const WeeklyScreen = () => {
   const [tasks, setTasks] = useState([]);
   const route = useRoute();
   const { weekNumber } = route.params || { weekNumber: moment().week() }
+
+  //Fetches tasks for specified week using moment.js
   const fetchTasks = () => {
     const weekStart = moment().day("Monday").week(weekNumber).startOf('week')
     const weekDays = [];
