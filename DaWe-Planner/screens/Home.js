@@ -20,6 +20,14 @@ const cardColorDark = '#979797'
 const navbarColorDark = '#b95970'
 const bgColorDark = '#757575'
 
+
+const fallbackImages = [
+    require('../assets/squares 2.jpg'),
+    require('../assets/squares.jpg'),
+    require('../assets/circles.jpg'),
+]; 
+const randomImage = fallbackImages[Math.floor(Math.random() * fallbackImages.length)];
+
 var moment = require('moment')
 const db = database.db;
 
@@ -239,13 +247,13 @@ function Home() {
                                             <Text style={{ flex: 1, paddingLeft: 8, color: '#5c5c5c' }}>{t.startTime} - {t.endTime}</Text>
                                         </View>
                                         <Image
-                                            source={{ uri: t.image }} // t.image is the URI
+                                            source={t.image ? { uri: t.image } : randomImage} // t.image is the URI
                                             style={darkMode ? styles.darkImagePreview : styles.imagePreview}
                                             onPress={() => handleOpenPhoto(i)} // Open modal on press
                                         />
                                     </View>
                                     {/* Conditionally render the PhotoModal */}
-                                    {openPhotos[i] && <PhotoModal ImageSource={{ uri: t.image }} index={i} />}
+                                    {openPhotos[i] && <PhotoModal ImageSource={t.image ? { uri: t.image } : randomImage} index={i} />}
 
                                 </Card>
                             </TouchableOpacity>
