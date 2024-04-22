@@ -25,8 +25,7 @@ const fallbackImages = [
     require('../assets/squares 2.jpg'),
     require('../assets/squares.jpg'),
     require('../assets/circles.jpg'),
-]; 
-const randomImage = fallbackImages[Math.floor(Math.random() * fallbackImages.length)];
+];
 
 var moment = require('moment')
 const db = database.db;
@@ -90,6 +89,7 @@ function Home() {
     const { correctDay } = route.params || moment();
     const currentDay = moment().format('DD/MM/YYYY');
     const formattedDay = moment(correctDay).format('DD/MM/YYYY');
+    const [randomImage, setrandomImage] = useState(null);
 
     console.log(currentDay);
 
@@ -145,6 +145,8 @@ function Home() {
     useFocusEffect(
         React.useCallback(() => {
             fetchData()
+            const randomImageIndex = Math.floor(Math.random() * fallbackImages.length);
+            setrandomImage(fallbackImages[randomImageIndex])
         }, [correctDay])
     )
 
@@ -199,7 +201,7 @@ function Home() {
                     <View style={styles.viewModal}>
                         <Image
                             source={ImageSource}
-                            style={darkMode ? styles.darkPhotoModal :styles.photoModal}
+                            style={darkMode ? styles.darkPhotoModal : styles.photoModal}
                         />
                         <OwnButton title="close" onPress={() => handleClosePhoto(index)} color={darkMode ? navbarColorDark : navbarColorLight} />
                     </View>
@@ -215,12 +217,12 @@ function Home() {
     };
 
     return (
-    <View style={darkMode ? styles.DarkContainer : styles.container}>
-    <ScrollView>
-        <SafeAreaView >
-            <StatusBar style={{ backgroundColor: darkMode ? bgColorDark : bgColorLight }} />
-                <Text style={styles.header}>Upcoming tasks</Text>
-                <Text style={styles.secondadryHeader}>{formattedDay}</Text>
+        <View style={darkMode ? styles.DarkContainer : styles.container}>
+            <ScrollView>
+                <SafeAreaView >
+                    <StatusBar style={{ backgroundColor: darkMode ? bgColorDark : bgColorLight }} />
+                    <Text style={styles.header}>Upcoming tasks</Text>
+                    <Text style={styles.secondadryHeader}>{formattedDay}</Text>
                     {tasks.map((t, i) => {
                         //check condition for done and then check condition for DarkMode
                         const cardStyles = t.done === 1 ? darkMode ? styles.DarkDullCard : styles.dullCard : darkMode ? styles.DarkUpcomingTaskCard : styles.upcomingTaskCard;
@@ -234,11 +236,11 @@ function Home() {
                                         <Card.Title style={styles.font}>{t.name}</Card.Title>
 
                                     </View>
-                                        {t.done === 0 && ( 
-                                            <View style={styles.dropdownContainer}>
-                                                <DropdownMenu id={t.id} fetchData={fetchData} />
-                                            </View>
-                                        )}
+                                    {t.done === 0 && (
+                                        <View style={styles.dropdownContainer}>
+                                            <DropdownMenu id={t.id} fetchData={fetchData} />
+                                        </View>
+                                    )}
                                     <Card.Divider />
                                     {/* <Text style={{ paddingLeft: 13, paddingBottom: 5 }}>{t.date}</Text> */}
                                     <View style={{ flex: 1, flexDirection: 'row', }}>
@@ -259,9 +261,9 @@ function Home() {
                             </TouchableOpacity>
                         );
                     })}
-        </SafeAreaView>
-        </ScrollView>
-        <CreateTaskButton />
+                </SafeAreaView>
+            </ScrollView>
+            <CreateTaskButton />
         </View>
     );
 }
@@ -361,7 +363,7 @@ const styles = StyleSheet.create({
     viewModal: {
         width: '90%',
         height: '34%',
-        
+
     },
     font: {
         fontSize: 20,
@@ -425,22 +427,22 @@ const styles = StyleSheet.create({
         elevation: 5,
     },
     photoModal: {
-        height: '100%', 
-        width: '100%', 
+        height: '100%',
+        width: '100%',
         resizeMode: 'contain',
         borderColor: navbarColorLight,
         borderWidth: 4,
         borderRadius: 10
-        
+
     },
     darkPhotoModal: {
-        height: '100%', 
-        width: '100%', 
+        height: '100%',
+        width: '100%',
         resizeMode: 'contain',
         borderColor: navbarColorDark,
         borderWidth: 4,
         borderRadius: 10
-        
+
     },
     closeButton: {
         alignItems: 'center',
@@ -451,7 +453,7 @@ const styles = StyleSheet.create({
         elevation: 3,
         backgroundColor: navbarColorLight,
         margin: 16,
-    },    
+    },
     DarkButton: {
         alignItems: 'center',
         justifyContent: 'center',
@@ -463,10 +465,10 @@ const styles = StyleSheet.create({
         margin: 16,
     },
     imagePreview: {
-        width: 120, height: 120, borderRadius: 10, borderWidth: 2, borderColor: navbarColorLight 
+        width: 120, height: 120, borderRadius: 10, borderWidth: 2, borderColor: navbarColorLight
     },
     darkImagePreview: {
-        width: 120, height: 120, borderRadius: 10, borderWidth: 2, borderColor: navbarColorDark 
+        width: 120, height: 120, borderRadius: 10, borderWidth: 2, borderColor: navbarColorDark
     },
 });
 
