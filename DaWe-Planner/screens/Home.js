@@ -20,16 +20,7 @@ const navbarColorDark = '#b95970'
 const bgColorDark = '#757575'
 
 
-const fallbackImages = [
-    require('../assets/squares 2.jpg'),
-    require('../assets/squares.jpg'),
-    require('../assets/circles.jpg'),
-];
-const darkFallbackImages = [
-    require('../assets/darksquares 2.jpg'),
-    require('../assets/darksquares.jpg'),
-    require('../assets/darkcircles.jpg'),
-];
+
 
 var moment = require('moment')
 const db = database.db;
@@ -86,6 +77,7 @@ const DropdownMenu = ({ id, fetchData }) => {
 
 function Home() {
     const { darkMode } = useContext(DarkModeContext)
+    const { toggleDarkMode } = useContext(DarkModeContext)
     const [tasks, setTasks] = useState([]);
     const [openPhotos, setOpenPhotos] = useState(Array(tasks.length).fill(false)); // State to track modal open status
     const route = useRoute();
@@ -94,10 +86,16 @@ function Home() {
     const currentDay = moment().format('DD/MM/YYYY');
     const formattedDay = moment(correctDay).format('DD/MM/YYYY');
     const [randomImage, setrandomImage] = useState(null);
-
-    console.log(currentDay);
-
-    const { toggleDarkMode } = useContext(DarkModeContext)
+    
+    const fallbackImages = [
+            require('../assets/darksquares2.jpg'),
+            require('../assets/darksquares.jpg'),
+            require('../assets/darkcircles.jpg'),
+            require('../assets/squares2.jpg'),
+            require('../assets/squares.jpg'),
+            require('../assets/circles.jpg'),
+    ]
+    
     useEffect(() => {
         const getTheme = async () => {
             try {
@@ -149,13 +147,9 @@ function Home() {
     useFocusEffect(
         React.useCallback(() => {
             fetchData()
-            if (darkMode === false) {
                 const randomImageIndex = Math.floor(Math.random() * fallbackImages.length);
                 setrandomImage(fallbackImages[randomImageIndex])
-            } else if (darkMode === true){
-                const randomImageIndex = Math.floor(Math.random() * darkFallbackImages.length);
-                setrandomImage(darkFallbackImages[randomImageIndex])
-            }
+            
         }, [correctDay])
     )
 
