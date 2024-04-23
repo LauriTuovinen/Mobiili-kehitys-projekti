@@ -1,9 +1,9 @@
 import { Card, Icon, Text } from "@rneui/themed";
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Pressable, ScrollView, StatusBar, StyleSheet, Touchable, TouchableOpacity, View } from "react-native";
 import CreateTaskButton from "../components/CreateTaskButton";
 import 'moment/locale/en-gb'
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import database from "../components/database";
 import { DarkModeContext, DarkModeProvider } from '../components/themeContext'
 
@@ -79,45 +79,47 @@ function Monthly() {
     }
 
     //When monthNumber is changed, monthName is changed to reflect the monthNumber.
-    useEffect(() => {
-        if (monthNumber == 1) {
-            setMonthName('January')
-            getWeeks(monthNumber)
-        } else if (monthNumber == 2) {
-            setMonthName('February')
-            getWeeks(monthNumber)
-        } else if (monthNumber == 3) {
-            setMonthName('March')
-            getWeeks(monthNumber)
-        } else if (monthNumber == 4) {
-            setMonthName('April')
-            getWeeks(monthNumber)
-        } else if (monthNumber == 5) {
-            setMonthName('May')
-            getWeeks(monthNumber)
-        } else if (monthNumber == 6) {
-            setMonthName('June')
-            getWeeks(monthNumber)
-        } else if (monthNumber == 7) {
-            setMonthName('July')
-            getWeeks(monthNumber)
-        } else if (monthNumber == 8) {
-            setMonthName('August')
-            getWeeks(monthNumber)
-        } else if (monthNumber == 9) {
-            setMonthName('September')
-            getWeeks(monthNumber)
-        } else if (monthNumber == 10) {
-            setMonthName('October')
-            getWeeks(monthNumber)
-        } else if (monthNumber == 11) {
-            setMonthName('November')
-            getWeeks(monthNumber)
-        } else if (monthNumber == 12) {
-            setMonthName('December')
-            getWeeks(monthNumber)
-        }
-    }, [monthNumber]);
+    useFocusEffect(
+        React.useCallback(() => {
+            if (monthNumber == 1) {
+                setMonthName('January')
+                getWeeks(monthNumber)
+            } else if (monthNumber == 2) {
+                setMonthName('February')
+                getWeeks(monthNumber)
+            } else if (monthNumber == 3) {
+                setMonthName('March')
+                getWeeks(monthNumber)
+            } else if (monthNumber == 4) {
+                setMonthName('April')
+                getWeeks(monthNumber)
+            } else if (monthNumber == 5) {
+                setMonthName('May')
+                getWeeks(monthNumber)
+            } else if (monthNumber == 6) {
+                setMonthName('June')
+                getWeeks(monthNumber)
+            } else if (monthNumber == 7) {
+                setMonthName('July')
+                getWeeks(monthNumber)
+            } else if (monthNumber == 8) {
+                setMonthName('August')
+                getWeeks(monthNumber)
+            } else if (monthNumber == 9) {
+                setMonthName('September')
+                getWeeks(monthNumber)
+            } else if (monthNumber == 10) {
+                setMonthName('October')
+                getWeeks(monthNumber)
+            } else if (monthNumber == 11) {
+                setMonthName('November')
+                getWeeks(monthNumber)
+            } else if (monthNumber == 12) {
+                setMonthName('December')
+                getWeeks(monthNumber)
+            }
+        }, [monthNumber]))
+
 
     // Functions to decrease or increase the monthNumber.
     const decreaseMonth = () => {
@@ -138,45 +140,45 @@ function Monthly() {
     return (
         <View style={darkMode ? styles.darkContainer : styles.container}>
             <ScrollView>
-            <View >
+                <View >
 
-                <StatusBar style={{ backgroundColor: darkMode ? navbarColorDark : navbarColorLight }} />
-                <Text style={{ marginTop: 5, marginLeft: 15, fontWeight: 'bold' }}>2024</Text>
+                    <StatusBar style={{ backgroundColor: darkMode ? navbarColorDark : navbarColorLight }} />
+                    <Text style={{ marginTop: 5, marginLeft: 15, fontWeight: 'bold' }}>2024</Text>
 
-                <Text style={styles.header}>
-                    <Icon
-                        name='keyboard-arrow-left'
-                        size={40}
-                        color={darkMode ? navbarColorDark : navbarColorLight}
+                    <Text style={styles.header}>
+                        <Icon
+                            name='keyboard-arrow-left'
+                            size={40}
+                            color={darkMode ? navbarColorDark : navbarColorLight}
 
-                        onPress={decreaseMonth}
-                    />
-                    <Text style={{ fontWeight: 'bold', }}>{monthName}</Text>
+                            onPress={decreaseMonth}
+                        />
+                        <Text style={{ fontWeight: 'bold', }}>{monthName}</Text>
 
-                    <Icon
-                        name='keyboard-arrow-right'
-                        size={40}
-                        color={darkMode ? navbarColorDark : navbarColorLight}
+                        <Icon
+                            name='keyboard-arrow-right'
+                            size={40}
+                            color={darkMode ? navbarColorDark : navbarColorLight}
 
-                        onPress={increaseMonth}
-                    />
-                </Text>
+                            onPress={increaseMonth}
+                        />
+                    </Text>
 
-                {/* count total number of tasks per month */}
-                <Text style={{ marginLeft: 15, fontWeight: 'bold' }}>This month you have {weekNumbers.reduce((total, w) => total + w.numberOfTasks, 0)} tasks</Text>
-                {/* map through weekNumbers and display weeks of each month and the tasks in the month. Also each card has navigation to corresponding Weekly.js screen */}
-                {weekNumbers.map((w, i) => {
-                    return (
-                        <TouchableOpacity key={i} onPress={() => navigateToWeekly(w.weeks)}>
-                            <Card containerStyle={darkMode ? styles.darkWeeksCards : styles.weeksCards}>
-                                <View style={{ flexDirection: 'row', justifyContent: "space-evenly", alignItems: 'center' }}>
-                                    <Text style={{ fontSize: 45, fontWeight: 'bold', backgroundColor: 'transparent' }}>week {w.weeks}</Text>
-                                    <Text style={{ fontWeight: 'bold' }}>{w.numberOfTasks} tasks this week</Text>
-                                </View>
-                            </Card>
-                        </TouchableOpacity>
-                    )
-                })}        
+                    {/* count total number of tasks per month */}
+                    <Text style={{ marginLeft: 15, fontWeight: 'bold' }}>This month you have {weekNumbers.reduce((total, w) => total + w.numberOfTasks, 0)} tasks</Text>
+                    {/* map through weekNumbers and display weeks of each month and the tasks in the month. Also each card has navigation to corresponding Weekly.js screen */}
+                    {weekNumbers.map((w, i) => {
+                        return (
+                            <TouchableOpacity key={i} onPress={() => navigateToWeekly(w.weeks)}>
+                                <Card containerStyle={darkMode ? styles.darkWeeksCards : styles.weeksCards}>
+                                    <View style={{ flexDirection: 'row', justifyContent: "space-evenly", alignItems: 'center' }}>
+                                        <Text style={{ fontSize: 45, fontWeight: 'bold', backgroundColor: 'transparent' }}>week {w.weeks}</Text>
+                                        <Text style={{ fontWeight: 'bold' }}>{w.numberOfTasks} tasks this week</Text>
+                                    </View>
+                                </Card>
+                            </TouchableOpacity>
+                        )
+                    })}
                 </View>
             </ScrollView>
             <CreateTaskButton />
