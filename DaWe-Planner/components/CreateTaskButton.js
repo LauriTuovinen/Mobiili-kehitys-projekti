@@ -18,9 +18,6 @@ export default function CreateTaskButton() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View styles>
-      </View>
       <View style={styles.buttonContainer}>
         <Ionicons.Button
           name="add-outline"
@@ -30,7 +27,6 @@ export default function CreateTaskButton() {
           style={darkMode ? styles.darkButton : styles.button}
         />
       </View>
-    </SafeAreaView>
   );
 }
 
