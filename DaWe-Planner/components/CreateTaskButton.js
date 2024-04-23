@@ -1,7 +1,6 @@
 import { View, Button } from "react-native";
 import { StyleSheet } from "react-native";
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { SafeAreaView } from 'react-native-safe-area-context'; // Import SafeAreaView
 import { useNavigation } from "@react-navigation/native";
 import { useContext } from "react";
 import { DarkModeContext } from "./themeContext";
@@ -31,9 +30,6 @@ export default function CreateTaskButton() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   buttonContainer: {
     position: 'absolute', // Use absolute positioning
     right: 20, // Align to right edge
@@ -41,8 +37,7 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: navbarColorLight,
-    paddingHorizontal: 12,
-
+    paddingVertical: 12,   
   },
   darkButton: {
     backgroundColor: navbarColorDark,
