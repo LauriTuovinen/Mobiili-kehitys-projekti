@@ -85,8 +85,10 @@ function Home() {
     const route = useRoute();
     const navigation = useNavigation();
     const { correctDay } = route.params || moment();
+    console.log("Correct day: ", correctDay);
     const currentDay = moment().format('DD/MM/YYYY');
-    const formattedDay = moment(correctDay).format('DD/MM/YYYY');
+    const formattedDay = moment(correctDay.day, 'DD/MM/YYYY').format('DD/MM/YYYY');
+    console.log("Formatted day: ", formattedDay);
     const [randomImage, setrandomImage] = useState(null);
     
     const fallbackImages = [
